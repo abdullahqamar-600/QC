@@ -363,31 +363,31 @@ body {
       <div class="bento-title">Operations</div>
       <div class="ops-grid">
         <div class="ops-cell">
-          <div class="ops-num">84</div>
+          <div class="ops-num" id="ops-total">—</div>
           <div class="ops-label">Loans Today</div>
-          <div class="ops-sub">of 100 submitted · <span class="accent">↑12</span> vs yesterday<br>Done by ~2:40 PM</div>
+          <div class="ops-sub" id="ops-sub-total">Loading…</div>
         </div>
         <div class="ops-cell">
-          <div class="ops-num">61</div>
+          <div class="ops-num" id="ops-completed">—</div>
           <div class="ops-label">Completed</div>
-          <div class="ops-sub">73% success rate<br><span class="accent">avg confidence 91%</span></div>
+          <div class="ops-sub" id="ops-sub-completed">Loading…</div>
         </div>
         <div class="ops-cell">
-          <div class="ops-num">18</div>
+          <div class="ops-num" id="ops-pipeline">—</div>
           <div class="ops-label">In Pipeline</div>
-          <div class="ops-sub">avg 4.2 min/stage<br><span class="warn">Bottleneck: QC rules</span></div>
+          <div class="ops-sub" id="ops-sub-pipeline">Loading…</div>
         </div>
         <div class="ops-cell danger">
-          <div class="ops-num danger">5</div>
+          <div class="ops-num danger" id="ops-exceptions">—</div>
           <div class="ops-label">Exceptions</div>
-          <div class="ops-sub"><span class="err">3 share same root cause</span><br>Needs attention</div>
+          <div class="ops-sub" id="ops-sub-exceptions">Loading…</div>
         </div>
       </div>
     </div>
 
     <!-- Card 2: Stage Throughput -->
     <div class="bento-card" style="padding: var(--space-4);">
-      <div class="bento-title">Stage Throughput</div>
+      <div class="bento-title">Stage Throughput <span style="font-size:11px;font-weight:400;color:var(--color-neutral-400);margin-left:4px;">vs. prev batch</span></div>
       <div class="tp-list">
         <div class="tp-row"><div class="tp-label" style="color:var(--stage-ingest)">Ingest</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-ingest);width:18%"></div></div><div class="tp-time">0:28</div><div class="tp-delta down">↓7s</div></div>
         <div class="tp-row"><div class="tp-label" style="color:var(--stage-classify)">Classify</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-classify);width:38%"></div></div><div class="tp-time">1:02</div><div class="tp-delta flat">—</div></div>
@@ -461,24 +461,21 @@ body {
       <div class="kanban-summary">
         <div class="ks-item"><span class="ks-num success" id="ks-completed">3</span> <span>Completed</span></div>
         <div class="ks-item"><span class="ks-num info" id="ks-progress">3</span> <span>In Progress</span></div>
+        <div class="ks-item"><span class="ks-num danger" id="ks-failed">2</span> <span>Failed</span></div>
       </div>
 
       <div class="view-toggle">
         <button class="view-btn active" id="btn-simplified" onclick="setView('simplified')">Status</button>
         <button class="view-btn" id="btn-detailed" onclick="setView('detailed')">Stage</button>
-        <button class="view-btn" id="btn-grouped" onclick="setGrouping(true)">Grouped</button>
       </div>
+      <button class="view-btn" id="btn-grouped" onclick="setGrouping(true)" style="border:1px solid var(--border-color);border-radius:var(--border-radius-md);background:var(--color-white);">Grouped</button>
     </div>
 
-    <!-- Stage Breakdown -->
-    <div class="stage-bar-inline" style="margin-bottom: var(--space-3);">
-      <div class="stage-bar-seg" style="background:var(--stage-ingest); width:12.5%;" title="Ingest · 1"><span class="seg-label">Ingest</span> 1</div>
-      <div class="stage-bar-seg" style="background:var(--stage-classify); width:12.5%;" title="Classify · 1"><span class="seg-label">Classify</span> 1</div>
-      <div class="stage-bar-seg" style="background:var(--stage-qc-check); width:12.5%;" title="QC Check · 1"><span class="seg-label">QC</span> 1</div>
-      <div class="stage-bar-seg" style="background:var(--stage-code-map); width:12.5%;" title="Code Map · 1"><span class="seg-label">CodeMap</span> 1</div>
-      <div class="stage-bar-seg" style="background:var(--color-success-500); width:37.5%;" title="Completed · 3"><span class="seg-label">Done</span> 3</div>
-      <div class="stage-bar-seg" style="background:var(--color-danger-500); width:12.5%;" title="Failed · 1"><span class="seg-label">Failed</span> 1</div>
-    </div>
+    <!-- Error Strip (rendered dynamically) -->
+    <div id="error-strip-container"></div>
+
+    <!-- Stage Breakdown (rendered dynamically) -->
+    <div class="stage-bar-inline" id="stage-bar-container" style="margin-bottom: var(--space-3);"></div>
 
     <!-- Kanban board -->
     <div class="kanban-board" id="kanbanBoard"></div>
@@ -605,11 +602,6 @@ function groupCardHTML(loans, col) {
 /* ── SIMPLIFIED COLUMNS ── */
 const SIMPLIFIED_COLS = [
   {
-    id: 'errors', label: 'Errors', colorClass: 'danger',
-    icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#ef4444" stroke-width="1.5"/><line x1="8" y1="5" x2="8" y2="8" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11.5" r="0.75" fill="#ef4444"/></svg>`,
-    filter: l => l.status === 'failed'
-  },
-  {
     id: 'todo', label: 'To Do', colorClass: '',
     icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#d4d4d4" stroke-width="1.5"/></svg>`,
     filter: l => l.status === 'todo'
@@ -710,11 +702,109 @@ function renderBoard() {
     return colHTML(col, colLoans, isDetail);
   }).join('');
 
-  // Update summary
+  // Update summary counts
   const completed = filtered.filter(l => l.status === 'completed').length;
   const inprog    = filtered.filter(l => ['in-progress','blocked'].includes(l.status)).length;
+  const failed    = filtered.filter(l => l.status === 'failed').length;
   document.getElementById('ks-completed').textContent = completed;
   document.getElementById('ks-progress').textContent  = inprog;
+  document.getElementById('ks-failed').textContent    = failed;
+}
+
+/* ── RENDER METRICS (Operations card) ── */
+function renderMetrics() {
+  const total      = LOANS.length;
+  const completed  = LOANS.filter(l => l.status === 'completed').length;
+  const inPipeline = LOANS.filter(l => ['in-progress','blocked'].includes(l.status)).length;
+  const exceptions = LOANS.filter(l => l.status === 'failed').length;
+  const rate       = Math.round((completed / total) * 100);
+
+  document.getElementById('ops-total').textContent      = total;
+  document.getElementById('ops-completed').textContent  = completed;
+  document.getElementById('ops-pipeline').textContent   = inPipeline;
+  document.getElementById('ops-exceptions').textContent = exceptions;
+
+  document.getElementById('ops-sub-total').innerHTML      = `${total} in today's batch<br><span class="accent">Batch started 9:15 AM</span>`;
+  document.getElementById('ops-sub-completed').innerHTML  = `${rate}% success rate<br><span class="accent">avg confidence 91%</span>`;
+  document.getElementById('ops-sub-pipeline').innerHTML   = `avg 4.2 min/stage<br><span class="warn">Bottleneck: QC rules</span>`;
+  const shared = exceptions >= 2 ? `<span class="err">${exceptions - 1} share same root cause</span><br>` : '';
+  document.getElementById('ops-sub-exceptions').innerHTML = `${shared}Needs attention`;
+}
+
+/* ── RENDER STAGE BAR ── */
+function renderStageBar() {
+  const total = LOANS.length;
+  if (!total) return;
+
+  const STAGE_DEFS = [
+    { key:'ingest',     label:'Ingest',   cssVar:'--stage-ingest'     },
+    { key:'classify',   label:'Classify', cssVar:'--stage-classify'   },
+    { key:'qc-check',   label:'QC',       cssVar:'--stage-qc-check'   },
+    { key:'code-map',   label:'CodeMap',  cssVar:'--stage-code-map'   },
+    { key:'report-gen', label:'Report',   cssVar:'--stage-report-gen' },
+    { key:'uw-report',  label:'UW',       cssVar:'--stage-uw-report'  },
+  ];
+
+  const stageCounts = {};
+  let completedCount = 0, failedCount = 0;
+
+  LOANS.forEach(l => {
+    if (l.status === 'completed')  completedCount++;
+    else if (l.status === 'failed') failedCount++;
+    else if (l.stage) stageCounts[l.stage] = (stageCounts[l.stage] || 0) + 1;
+  });
+
+  const segs = [];
+  STAGE_DEFS.forEach(s => {
+    const count = stageCounts[s.key] || 0;
+    if (count > 0) {
+      const pct = (count / total * 100).toFixed(1);
+      segs.push(`<div class="stage-bar-seg" style="background:var(${s.cssVar});width:${pct}%;" title="${s.label} · ${count}"><span class="seg-label">${s.label}</span> ${count}</div>`);
+    }
+  });
+  if (completedCount > 0) {
+    const pct = (completedCount / total * 100).toFixed(1);
+    segs.push(`<div class="stage-bar-seg" style="background:var(--color-success-500);width:${pct}%;" title="Completed · ${completedCount}"><span class="seg-label">Done</span> ${completedCount}</div>`);
+  }
+  if (failedCount > 0) {
+    const pct = (failedCount / total * 100).toFixed(1);
+    segs.push(`<div class="stage-bar-seg" style="background:var(--color-danger-500);width:${pct}%;" title="Failed · ${failedCount}"><span class="seg-label">Failed</span> ${failedCount}</div>`);
+  }
+
+  document.getElementById('stage-bar-container').innerHTML = segs.join('');
+}
+
+/* ── RENDER ERROR STRIP ── */
+function renderErrorStrip() {
+  const failed = LOANS.filter(l => l.status === 'failed');
+  const container = document.getElementById('error-strip-container');
+  if (!failed.length) { container.innerHTML = ''; return; }
+
+  const cards = failed.map(l => {
+    const stageColor = l.stage ? `var(--stage-${l.stage})` : 'var(--color-danger-500)';
+    const stageLabel = l.stage ? l.stage.charAt(0).toUpperCase() + l.stage.slice(1) : 'Unknown';
+    return `
+      <div class="error-card" onclick="goLoan('${l.id}')">
+        <div class="error-card-top">
+          <span class="error-card-id">${l.id}</span>
+          <span class="error-card-stage" style="background:${stageColor}">${stageLabel}</span>
+        </div>
+        <div class="error-card-reason">${l.reason}</div>
+        <div class="error-card-footer">
+          <span class="error-card-date">${l.date}</span>
+        </div>
+      </div>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="error-strip" id="error-strip">
+      <div class="error-strip-header" onclick="document.getElementById('error-strip').classList.toggle('collapsed')">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2.5v4M7 9h.01M2 12.5l5-9 5 9H2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="error-strip-title">${failed.length} loan${failed.length > 1 ? 's' : ''} failed — requires attention</span>
+        <svg class="error-strip-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="error-strip-body">${cards}</div>
+    </div>`;
 }
 
 /* ── VIEW & GROUPING TOGGLES ── */
@@ -763,13 +853,11 @@ function showToast(msg) {
 }
 
 /* ── INIT ── */
+renderMetrics();
+renderStageBar();
+renderErrorStrip();
 renderBoard();
 </script>
-<!-- Design Switcher -->
-<div style="position: fixed; bottom: 20px; right: 20px; background: var(--color-white); border: 1px solid var(--border-color); border-radius: 20px; padding: 4px; display: flex; gap: 4px; box-shadow: var(--shadow-md); z-index: 9999;">
-  <a href="dashboard.html" style="text-decoration: none; padding: 6px 12px; border-radius: 16px; font-size: 12px; font-weight: 600; color: var(--color-neutral-900); background: #f4f4f5;">V1 (Current)</a>
-  <a href="dashboard-v2.html" style="text-decoration: none; padding: 6px 12px; border-radius: 16px; font-size: 12px; font-weight: 600; color: var(--color-neutral-500);">V2 (Exploration)</a>
-</div>
 
 </body>
 </html>

@@ -307,9 +307,12 @@ body {
 <header class="topbar" style="display:flex;align-items:center;">
   <a href="dashboard.html" class="topbar-logo" style="text-decoration:none;">
     <div class="topbar-logo-icon">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2h4v4H2V2zm6 0h4v4H8V2zm-6 6h4v4H2V8zm6 0h4v4H8V8z" fill="white"/></svg>
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+        <path d="M8 1.5L2.5 3.5V8c0 3.04 2.4 5.87 5.5 6.5 3.1-.63 5.5-3.46 5.5-6.5V3.5L8 1.5Z" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/>
+        <path d="M5.5 8L7 9.5L10.5 6" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </div>
-    Appraisal QC
+    QC Observer
   </a>
   <div class="topbar-divider"></div>
   <div class="pipeline-status">
@@ -323,7 +326,7 @@ body {
     </div>
     <div class="topbar-stat">
       <span class="topbar-stat-label">COMPLETED</span>
-      <span class="topbar-stat-value success">5</span>
+      <span class="topbar-stat-value success">3</span>
     </div>
     <div class="topbar-stat">
       <span class="topbar-stat-label">EXCEPTIONS</span>
@@ -688,6 +691,17 @@ const STAGE_BG = {
 let currentFilter = 'all';
 let currentState = 'in-progress';
 
+const LOAN_STATE_MAP = {
+  'LN-000121': 'error',
+  'LN-000122': 'error',
+  'LN-000123': 'in-progress',
+  'LN-000124': 'in-progress',
+  'LN-000125': 'complete',
+  'LN-000126': 'complete',
+  'LN-000127': 'complete',
+  'LN-000128': 'in-progress',
+};
+
 /* ── ICONS ── */
 const ICON_CHECK  = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const ICON_X      = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
@@ -915,6 +929,20 @@ function render() {
   // evidence
   document.getElementById('ev-groups').innerHTML = renderEvGroups(d);
 }
+
+// Read URL param and map to state
+(function initState() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if (id && LOAN_STATE_MAP[id]) {
+    currentState = LOAN_STATE_MAP[id];
+  }
+  // Sync demo-bar active button
+  document.querySelectorAll('.demo-btn').forEach(b => {
+    const key = b.textContent.trim().toLowerCase().replace(' ', '-');
+    b.classList.toggle('active', key === currentState);
+  });
+})();
 
 render();
 </script>
