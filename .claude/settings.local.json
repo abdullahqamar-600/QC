@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:api.github.com)",
+      "Read(//Users/test/.claude/**)",
+      "Bash(mkdir -p ~/.claude/skills)",
+      "Bash(cp -r /tmp/impeccable/plugin/skills/impeccable ~/.claude/skills/)",
+      "Bash(mkdir -p ~/.claude/plugins)",
+      "Bash(cp -r /tmp/impeccable/plugin ~/.claude/plugins/impeccable)",
+      "mcp__Claude_Preview__preview_start",
+      "WebSearch",
+      "mcp__Claude_in_Chrome__tabs_context_mcp"
+    ]
+  }
+}

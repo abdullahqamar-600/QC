@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QC Observer</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #EDEBE6;
+  --card: #FFFFFF;
+  --border: #DDD9D3;
+  --text: #1A1714;
+  --text-2: #6B6560;
+  --text-3: #9E9890;
+
+  --c-ingestion:      #3D7A38;
+  --c-grouping:       #5FAB52;
+  --c-classification: #3B87D1;
+  --c-qc-rules:       #5840A0;
+  --c-qc-mapping:     #8E54C8;
+  --c-qc-report:      #C24F82;
+  --c-uw-engine:      #C8521A;
+  --c-complete:       #B83030;
+
+  --red:      #B83030; --red-bg:    #FDF2F2; --red-lt: #fca5a5;
+  --green:    #2D7A2D; --green-bg:  #F2F9F2;
+  --blue:     #2B6CB0; --blue-bg:   #EBF4FF;
+  --amber:    #B45309; --amber-bg:  #FFFBEB;
+  --purple:   #5840A0; --purple-bg: #F3F0FA;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: block; }
+
+/* ── TOPNAV ── */
+.topnav {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo { font-weight: 700; font-size: 14px; letter-spacing: -0.02em; }
+.nav-crumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.nav-crumb span.cur { color: var(--text); font-weight: 500; }
+.nav-sep { color: var(--border); }
+.live-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-2);
+  margin-left: 4px;
+}
+.live-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: blink 2.2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+.topnav-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.ai-stat { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+.ai-stat-label { font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); }
+.ai-stat-value { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -.02em; }
+
+.back-btn {
+  background: none; border: none; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--text-2); cursor: pointer; padding: 0;
+}
+.back-btn:hover { color: var(--text); }
+
+/* ── PAGE ── */
+.page { padding: 28px 32px; max-width: 1360px; }
+
+/* ── METRIC CARDS ── */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 30px;
+}
+.metric-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px 16px;
+}
+.metric-label { font-size: 12px; color: var(--text-2); font-weight: 500; margin-bottom: 5px; }
+.metric-value {
+  font-size: 44px; font-weight: 700; line-height: 1;
+  letter-spacing: -.04em; margin-bottom: 6px;
+}
+.metric-value.dark   { color: var(--text); }
+.metric-value.green  { color: var(--green); }
+.metric-value.blue   { color: var(--blue); }
+.metric-value.red    { color: var(--red); }
+.metric-sub { font-size: 12px; color: var(--text-2); margin-bottom: 8px; }
+.metric-tag {
+  display: inline-block;
+  font-size: 11px; font-weight: 500;
+  padding: 2px 8px; border-radius: 4px;
+}
+.metric-tag.green  { background: var(--green-bg); color: var(--green); }
+.metric-tag.amber  { background: var(--amber-bg); color: var(--amber); }
+.metric-tag.red    { background: var(--red-bg);   color: var(--red); }
+.metric-tag.blue   { background: var(--blue-bg);  color: var(--blue); }
+.metric-conf { font-size: 11px; color: var(--text-3); margin-top: 3px; }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text-3); margin-bottom: 12px;
+}
+
+/* ── PIPELINE BAR ── */
+.pipeline-bar {
+  display: flex;
+  height: 52px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  cursor: pointer;
+  gap: 1px;
+  background: var(--border);
+}
+.pseg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px; font-weight: 700;
+  color: rgba(255,255,255,.95);
+  transition: filter .15s;
+  cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
+  user-select: none;
+}
+.pseg:hover { filter: brightness(1.12); }
+.pseg.seg-active { outline: 2px solid white; outline-offset: -3px; }
+
+/* ── LEGEND ── */
+.pipeline-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 20px;
+  margin-bottom: 28px;
+}
+.legend-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--text-2); cursor: pointer;
+}
+.legend-item:hover { color: var(--text); }
+.ldot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+/* ── TWO COL ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ── CARD ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 22px;
+}
+.card-title { font-size: 15px; font-weight: 600; margin-bottom: 18px; }
+
+/* ── THROUGHPUT TABLE ── */
+.tp-row { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
+.tp-row:last-child { margin-bottom: 0; }
+.tp-label { width: 128px; font-size: 13px; flex-shrink: 0; }
+.tp-bar-wrap { flex: 1; height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+.tp-bar { height: 100%; border-radius: 4px; }
+.tp-time { font-size: 12px; color: var(--text-2); width: 52px; text-align: right; flex-shrink: 0; }
+.tp-delta { font-size: 11px; font-weight: 500; width: 48px; flex-shrink: 0; }
+.delta-up   { color: #C0392B; }
+.delta-down { color: var(--green); }
+.delta-flat { color: var(--text-3); }
+
+/* ── EXCEPTION BREAKDOWN ── */
+.exc-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  margin-bottom: 14px; padding-bottom: 14px;
+  border-bottom: 1px solid #F0EDE8;
+  cursor: pointer;
+}
+.exc-row:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.exc-info { flex: 1; }
+.exc-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+.exc-loans { font-size: 11px; color: var(--blue); }
+.exc-loans:hover { text-decoration: underline; }
+.exc-bar-wrap { width: 100px; height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; margin-top: 6px; }
+.exc-bar { height: 100%; border-radius: 3px; }
+.exc-count { font-size: 16px; font-weight: 700; color: var(--red); width: 18px; text-align: right; flex-shrink: 0; }
+.exc-badge {
+  font-size: 10px; font-weight: 500;
+  padding: 2px 6px; border-radius: 3px;
+  flex-shrink: 0; margin-top: 2px;
+}
+.exc-badge.blocking { background: var(--red-bg); color: var(--red); }
+.exc-badge.retry    { background: var(--amber-bg); color: var(--amber); }
+
+/* ── SCREEN 2: LOAN LIST ── */
+.list-header { margin-bottom: 20px; }
+.list-title { font-size: 20px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 3px; }
+.list-sub { font-size: 13px; color: var(--text-2); }
+
+.stage-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+.spill {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 11px; border-radius: 20px;
+  border: 1px solid var(--border); background: var(--card);
+  font-size: 12px; font-weight: 500; color: var(--text-2);
+  cursor: pointer; transition: all .12s; white-space: nowrap;
+}
+.spill:hover { color: var(--text); border-color: var(--text-3); }
+.spill.active { color: #fff; border-color: transparent; }
+.spill-dot { width: 7px; height: 7px; border-radius: 2px; flex-shrink: 0; }
+.spill-count {
+  background: rgba(255,255,255,.25);
+  border-radius: 10px;
+  padding: 0px 5px;
+  font-size: 10px;
+}
+.spill:not(.active) .spill-count { background: var(--bg); color: var(--text-3); }
+
+/* ── LOAN TABLE ── */
+.loan-table-wrap {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.loan-table { width: 100%; border-collapse: collapse; }
+.loan-table th {
+  text-align: left;
+  padding: 9px 14px;
+  font-size: 10px; font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase; letter-spacing: .07em;
+  background: #FAFAF8;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.loan-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #F0EDE8;
+  vertical-align: middle;
+  font-size: 13px;
+}
+.loan-table tr:last-child td { border-bottom: none; }
+.loan-table tr.loan-row:hover td { background: #FAFAF8; cursor: pointer; }
+.loan-row.hidden { display: none; }
+
+.loan-id { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; color: var(--text); }
+.stage-pill-sm {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 10px;
+  font-size: 11px; font-weight: 500; color: #fff;
+}
+.mini-stages { display: flex; gap: 2px; }
+.mini-seg { width: 14px; height: 6px; border-radius: 1px; background: var(--bg); }
+.mini-seg.done { }
+.time-normal { color: var(--green); font-weight: 500; }
+.time-warn   { color: var(--amber); font-weight: 500; }
+.time-slow   { color: var(--red);   font-weight: 500; }
+.conf-badge {
+  font-size: 11px; font-weight: 600;
+  padding: 2px 7px; border-radius: 4px; display: inline-block;
+}
+.conf-high   { background: var(--green-bg); color: var(--green); }
+.conf-mid    { background: var(--amber-bg); color: var(--amber); }
+.conf-low    { background: var(--red-bg);   color: var(--red); }
+.conf-none   { color: var(--text-3); font-size: 12px; }
+.exc-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--red); }
+
+/* ── SCREEN 3: LOAN DETAIL ── */
+.detail-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 22px;
+}
+.loan-title-big { font-size: 22px; font-weight: 700; letter-spacing: -.03em; margin-bottom: 3px; }
+.loan-meta-sm { font-size: 12px; color: var(--text-2); }
+.status-running {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 20px;
+  background: var(--purple-bg); color: var(--purple);
+  font-size: 12px; font-weight: 600;
+}
+.status-dot-running {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--purple);
+  animation: blink 1.5s ease-in-out infinite;
+}
+
+/* ── ZONE ── */
+.zone {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.zone-head {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.zone-label {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text-3);
+}
+.zone-body { padding: 16px 20px; }
+
+/* ── FILES ── */
+.files-group-label {
+  font-size: 11px; font-weight: 600; color: var(--text-3);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+}
+.files-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.files-row:last-child { margin-bottom: 0; }
+.file-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 11px 13px;
+  flex: 1; min-width: 140px; max-width: 200px;
+}
+.file-tag {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--text-3); margin-bottom: 4px;
+}
+.file-name {
+  font-size: 12px; font-weight: 500;
+  color: var(--text); margin-bottom: 7px;
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.file-class { font-size: 11px; color: var(--text-2); }
+.file-conf { font-size: 11px; font-weight: 600; color: var(--green); }
+.file-status { font-size: 11px; font-weight: 500; }
+.fst-ready    { color: var(--green); }
+.fst-pending  { color: var(--text-3); }
+.fst-running  { color: var(--amber); }
+.output-card { border-style: dashed; }
+.output-card.ready { border-color: #86efac; }
+
+/* ── PROCESS TRACE ── */
+.trace-wrap { display: flex; align-items: flex-start; padding: 4px 0; }
+.trace-step { flex: 1; display: flex; flex-direction: column; align-items: flex-start; position: relative; }
+.trace-step:not(:last-child) .trace-connector {
+  position: absolute;
+  top: 14px; left: 28px;
+  right: 0;
+  height: 2px;
+  background: var(--border);
+  z-index: 0;
+}
+.trace-step.done .trace-connector { background: var(--border); }
+.trace-node {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  position: relative; z-index: 1; flex-shrink: 0;
+  margin-bottom: 8px;
+}
+.trace-node.done    { background: var(--text); color: #fff; }
+.trace-node.running {
+  background: #fff;
+  border: 2px solid var(--c-qc-rules);
+  color: var(--c-qc-rules);
+  animation: pulse-border 1.5s ease-in-out infinite;
+}
+.trace-node.pending { background: var(--bg); border: 2px solid var(--border); color: var(--text-3); }
+@keyframes pulse-border {
+  0%,100% { box-shadow: 0 0 0 0 rgba(88,64,160,.4); }
+  50%      { box-shadow: 0 0 0 5px rgba(88,64,160,0); }
+}
+.trace-step-inner { padding-right: 10px; }
+.trace-name { font-size: 11px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.trace-name.pending { color: var(--text-3); }
+.trace-time { font-size: 10px; color: var(--text-3); margin-top: 2px; }
+.trace-note { font-size: 10px; color: var(--text-2); margin-top: 4px; line-height: 1.4; }
+.trace-conf { font-size: 10px; font-weight: 600; color: var(--green); margin-top: 3px; }
+
+/* ── QC ZONE ── */
+.qc-summary {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 4px 0 16px;
+}
+.qc-metric {
+  flex: 1; padding: 14px 16px;
+  cursor: pointer; border-right: 1px solid var(--border);
+  transition: background .12s; position: relative;
+}
+.qc-metric:last-child { border-right: none; }
+.qc-metric:hover { background: #FAFAF8; }
+.qc-metric.active { background: #FAFAF8; }
+.qc-metric.active::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 2px;
+}
+.qc-metric[data-type="failed"].active::after  { background: var(--red); }
+.qc-metric[data-type="passed"].active::after  { background: var(--green); }
+.qc-metric[data-type="flagged"].active::after { background: var(--amber); }
+.qc-metric[data-type="pending"].active::after { background: var(--text-3); }
+
+.qc-m-label {
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--text-3); margin-bottom: 4px;
+}
+.qc-m-value { font-size: 30px; font-weight: 700; letter-spacing: -.03em; line-height: 1; }
+.qc-m-value.failed  { color: var(--red); }
+.qc-m-value.passed  { color: var(--green); }
+.qc-m-value.flagged { color: var(--amber); }
+.qc-m-value.pending { color: var(--text-3); }
+
+/* ── QC CATEGORIES ── */
+.qc-cat {
+  border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+  margin-bottom: 8px;
+}
+.qc-cat:last-child { margin-bottom: 0; }
+.qc-cat-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 14px; cursor: pointer;
+  background: #FAFAF8; user-select: none;
+}
+.qc-cat-head:hover { background: #F5F2EE; }
+.qc-cat-name { flex: 1; font-size: 13px; font-weight: 600; }
+.qc-cat-counts { display: flex; gap: 6px; }
+.qcc { font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 4px; }
+.qcc.failed  { background: var(--red-bg);   color: var(--red); }
+.qcc.passed  { background: var(--green-bg); color: var(--green); }
+.qcc.flagged { background: var(--amber-bg); color: var(--amber); }
+.qcc.pending { background: var(--bg);       color: var(--text-3); }
+.qc-chevron { font-size: 10px; color: var(--text-3); transition: transform .15s; }
+.qc-cat.open .qc-chevron { transform: rotate(180deg); }
+
+.qc-items { display: none; }
+.qc-cat.open .qc-items { display: block; }
+
+.qc-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 11px 14px;
+  border-top: 1px solid #F0EDE8;
+}
+.qc-item.hidden { display: none; }
+.qc-item-ico {
+  width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; flex-shrink: 0; margin-top: 1px; font-weight: 700;
+}
+.qc-item-ico.failed  { background: var(--red-bg);   color: var(--red); }
+.qc-item-ico.passed  { background: var(--green-bg); color: var(--green); }
+.qc-item-ico.flagged { background: var(--amber-bg); color: var(--amber); }
+.qc-item-ico.pending { background: var(--bg);       color: var(--text-3); }
+.qc-item-body { flex: 1; }
+.qc-item-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+.qc-item-note { font-size: 11px; color: var(--text-2); line-height: 1.45; }
+.qc-item-source { font-size: 10px; color: var(--text-3); font-style: italic; margin-top: 3px; }
+.qc-item-conf { font-size: 11px; font-weight: 600; flex-shrink: 0; margin-top: 1px; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════
+     SCREEN 1 — FLEET DASHBOARD
+════════════════════════════════════════════════ -->
+<div id="s-fleet" class="screen active">
+  <nav class="topnav">
+    <span class="logo">QC Observer</span>
+    <div class="live-wrap">
+      <div class="live-dot"></div>
+      Live · Apr 29, 2026
+    </div>
+    <div class="topnav-right">
+      <div class="ai-stat">
+        <div class="ai-stat-label">System confidence</div>
+        <div class="ai-stat-value">89%</div>
+      </div>
+      <div class="ai-stat">
+        <div class="ai-stat-label">Model agreement</div>
+        <div class="ai-stat-value">96%</div>
+      </div>
+      <div class="ai-stat">
+        <div class="ai-stat-label">Retry rate</div>
+        <div class="ai-stat-value">9.5%</div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <!-- Metric cards -->
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="metric-label">Loans today</div>
+        <div class="metric-value dark">84</div>
+        <div class="metric-sub">of 100 submitted · ↑12 vs yesterday</div>
+        <div class="metric-tag green">Done by ~2:40 PM</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Completed</div>
+        <div class="metric-value green">61</div>
+        <div class="metric-sub">73% success rate</div>
+        <div class="metric-conf">avg confidence <strong style="color:var(--text)">91%</strong></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">In pipeline</div>
+        <div class="metric-value blue">18</div>
+        <div class="metric-sub">avg 4.2 min/stage</div>
+        <div class="metric-tag amber">Bottleneck: QC rules</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Exceptions</div>
+        <div class="metric-value red">5</div>
+        <div class="metric-sub">3 share same root cause</div>
+        <div class="metric-tag red">Needs attention</div>
+      </div>
+    </div>
+
+    <!-- Pipeline bar -->
+    <div class="section-label">Pipeline stage distribution — click any segment to drill in</div>
+    <div class="pipeline-bar" id="pbar">
+      <div class="pseg" style="background:var(--c-ingestion);width:8.5%" data-stage="ingestion" onclick="goLoans('ingestion')">8</div>
+      <div class="pseg" style="background:var(--c-grouping);width:5.3%" data-stage="grouping" onclick="goLoans('grouping')">5</div>
+      <div class="pseg" style="background:var(--c-classification);width:9.6%" data-stage="classification" onclick="goLoans('classification')">9</div>
+      <div class="pseg" style="background:var(--c-qc-rules);width:16%" data-stage="qc-rules" onclick="goLoans('qc-rules')">15</div>
+      <div class="pseg" style="background:var(--c-qc-mapping);width:6.4%" data-stage="qc-mapping" onclick="goLoans('qc-mapping')">6</div>
+      <div class="pseg" style="background:var(--c-qc-report);width:10.6%" data-stage="qc-report" onclick="goLoans('qc-report')">10</div>
+      <div class="pseg" style="background:var(--c-uw-engine);width:8.5%" data-stage="uw-engine" onclick="goLoans('uw-engine')">8</div>
+      <div class="pseg" style="background:var(--c-complete);flex:1" data-stage="complete" onclick="goLoans('complete')">5 errors · 28 done</div>
+    </div>
+    <div class="pipeline-legend">
+      <div class="legend-item" onclick="goLoans('ingestion')"><div class="ldot" style="background:var(--c-ingestion)"></div>Ingestion</div>
+      <div class="legend-item" onclick="goLoans('grouping')"><div class="ldot" style="background:var(--c-grouping)"></div>Grouping</div>
+      <div class="legend-item" onclick="goLoans('classification')"><div class="ldot" style="background:var(--c-classification)"></div>Classification</div>
+      <div class="legend-item" onclick="goLoans('qc-rules')"><div class="ldot" style="background:var(--c-qc-rules)"></div>QC rules</div>
+      <div class="legend-item" onclick="goLoans('qc-mapping')"><div class="ldot" style="background:var(--c-qc-mapping)"></div>QC mapping</div>
+      <div class="legend-item" onclick="goLoans('qc-report')"><div class="ldot" style="background:var(--c-qc-report)"></div>QC report</div>
+      <div class="legend-item" onclick="goLoans('uw-engine')"><div class="ldot" style="background:var(--c-uw-engine)"></div>UW engine</div>
+      <div class="legend-item" onclick="goLoans('complete')"><div class="ldot" style="background:var(--c-complete)"></div>Exception / complete</div>
+    </div>
+
+    <!-- Two-col -->
+    <div class="two-col">
+      <!-- Throughput -->
+      <div class="card">
+        <div class="card-title">Stage throughput (avg time)</div>
+        <div class="tp-row">
+          <div class="tp-label">Ingestion</div>
+          <div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--c-ingestion);width:20%"></div></div>
+          <div class="tp-time">0.4 min</div>
+          <div class="tp-delta delta-flat">→ avg</div>
+        </div>
+        <div class="tp-row">
+          <div class="tp-label">Grouping</div>
+          <div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--c-grouping);width:15%"></div></div>
+          <div class="tp-time">0.3 min</div>
+          <div class="tp-delta delta-down">↓ 0.1</div>
+        </div>
+        <div class="tp-row">
+          <div class="tp-label">Classification</div>
+          <div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--c-classification);width:55%"></div></div>
+          <div class="tp-time">1.1 min</div>
+          <div class="tp-delta delta-up">↑ 0.2</div>
+        </div>
+        <div class="tp-row">
+          <div class="tp-label">QC rule engine</div>
+          <div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--c-qc-rules);width:100%"></div></div>
+          <div class="tp-time">2.0 min</div>
+          <div class="tp-delta delta-up">↑ 0.4</div>
+        </div>
+        <div class="tp-row">
+          <div class="tp-label">QC mapping</div>
+          <div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--c-qc-mapping);width:30%"></div></div>
+          <div class="tp-time">0.6 min</div>
+          <div class="tp-delta delta-flat">→ avg</div>
+        </div>
+        <div class="tp-row">
+          <div class="tp-label">QC report</div>
+          <div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--c-qc-report);width:40%"></div></div>
+          <div class="tp-time">0.8 min</div>
+          <div class="tp-delta delta-down">↓ 0.1</div>
+        </div>
+        <div class="tp-row">
+          <div class="tp-label">UW engine</div>
+          <div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--c-uw-engine);width:80%"></div></div>
+          <div class="tp-time">1.6 min</div>
+          <div class="tp-delta delta-down">↓ 0.2</div>
+        </div>
+      </div>
+
+      <!-- Exceptions -->
+      <div class="card">
+        <div class="card-title">Exception breakdown</div>
+        <div class="exc-row" onclick="goLoans('qc-rules')">
+          <div class="exc-info">
+            <div class="exc-name">Doc classification fail</div>
+            <div class="exc-loans" title="Click to view loans">FHA-2024-08454 · FHA-2024-08447</div>
+            <div class="exc-bar-wrap"><div class="exc-bar" style="width:40%;background:var(--red)"></div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+            <div class="exc-count">2</div>
+            <div class="exc-badge blocking">blocking</div>
+          </div>
+        </div>
+        <div class="exc-row" onclick="goLoans('qc-rules')">
+          <div class="exc-info">
+            <div class="exc-name">QC rule timeout</div>
+            <div class="exc-loans">FHA-2024-08443</div>
+            <div class="exc-bar-wrap"><div class="exc-bar" style="width:20%;background:var(--red)"></div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+            <div class="exc-count">1</div>
+            <div class="exc-badge retry">auto-retry</div>
+          </div>
+        </div>
+        <div class="exc-row" onclick="goLoans('ingestion')">
+          <div class="exc-info">
+            <div class="exc-name">Missing SSR file</div>
+            <div class="exc-loans">FHA-2024-08471</div>
+            <div class="exc-bar-wrap"><div class="exc-bar" style="width:20%;background:var(--red)"></div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+            <div class="exc-count">1</div>
+            <div class="exc-badge blocking">blocking</div>
+          </div>
+        </div>
+        <div class="exc-row" onclick="goLoans('uw-engine')">
+          <div class="exc-info">
+            <div class="exc-name">UW validation fail</div>
+            <div class="exc-loans">FHA-2024-08411</div>
+            <div class="exc-bar-wrap"><div class="exc-bar" style="width:20%;background:var(--red)"></div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+            <div class="exc-count">1</div>
+            <div class="exc-badge blocking">blocking</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     SCREEN 2 — LOAN QUEUE
+════════════════════════════════════════════════ -->
+<div id="s-loans" class="screen">
+  <nav class="topnav">
+    <button class="back-btn" onclick="goFleet()">← Fleet</button>
+    <span class="nav-sep">/</span>
+    <span style="font-size:13px;color:var(--text-2)">Active Pipeline</span>
+  </nav>
+
+  <div class="page">
+    <div class="list-header">
+      <div class="list-title" id="list-title">Active Pipeline · 18 loans</div>
+      <div class="list-sub" id="list-sub">All stages · continuous flow</div>
+    </div>
+
+    <!-- Stage pills -->
+    <div class="stage-pills" id="stage-pills">
+      <div class="spill active" data-stage="all" onclick="filterStage('all',this)" style="background:var(--text)">All <span class="spill-count">18</span></div>
+      <div class="spill" data-stage="ingestion" onclick="filterStage('ingestion',this)"><div class="spill-dot" style="background:var(--c-ingestion)"></div>Ingestion <span class="spill-count">3</span></div>
+      <div class="spill" data-stage="grouping" onclick="filterStage('grouping',this)"><div class="spill-dot" style="background:var(--c-grouping)"></div>Grouping <span class="spill-count">2</span></div>
+      <div class="spill" data-stage="classification" onclick="filterStage('classification',this)"><div class="spill-dot" style="background:var(--c-classification)"></div>Classification <span class="spill-count">4</span></div>
+      <div class="spill" data-stage="qc-rules" onclick="filterStage('qc-rules',this)"><div class="spill-dot" style="background:var(--c-qc-rules)"></div>QC rules <span class="spill-count">5</span></div>
+      <div class="spill" data-stage="qc-mapping" onclick="filterStage('qc-mapping',this)"><div class="spill-dot" style="background:var(--c-qc-mapping)"></div>QC mapping <span class="spill-count">2</span></div>
+      <div class="spill" data-stage="qc-report" onclick="filterStage('qc-report',this)"><div class="spill-dot" style="background:var(--c-qc-report)"></div>QC report <span class="spill-count">1</span></div>
+      <div class="spill" data-stage="uw-engine" onclick="filterStage('uw-engine',this)"><div class="spill-dot" style="background:var(--c-uw-engine)"></div>UW engine <span class="spill-count">1</span></div>
+    </div>
+
+    <div class="loan-table-wrap">
+      <table class="loan-table">
+        <thead>
+          <tr>
+            <th>Loan ID</th>
+            <th>Submitted</th>
+            <th>Current stage</th>
+            <th>Progress</th>
+            <th>Time in stage</th>
+            <th>Last confidence</th>
+            <th>Exception</th>
+          </tr>
+        </thead>
+        <tbody id="loan-tbody">
+          <!-- ingestion -->
+          <tr class="loan-row" data-stage="ingestion" onclick="goDetail('FHA-2024-08471')">
+            <td><span class="loan-id">FHA-2024-08471</span></td>
+            <td style="color:var(--text-2)">9:04 AM</td>
+            <td><span class="stage-pill-sm" style="background:var(--c-ingestion)">Ingestion</span></td>
+            <td><div class="mini-stages" id="mp-08471"></div></td>
+            <td><span class="time-normal">0.2 min</span></td>
+            <td><span class="conf-none">—</span></td>
+            <td><span class="exc-dot" title="Missing SSR file"></span></td>
+          </tr>
+          <tr class="loan-row" data-stage="ingestion" onclick="goDetail('FHA-2024-08472')">
+            <td><span class="loan-id">FHA-2024-08472</span></td>
+            <td style="color:var(--text-2)">9:05 AM</td>
+            <td><span class="stage-pill-sm" style="background:var(--c-ingestion)">Ingestion</span></td>
+            <td><div class="mini-stages" id="mp-08472"></div></td>
+            <td><span class="time-normal">0.1 min</span></td>
+            <td><span class="conf-none">—</span></td>
+            <td></td>
+          </tr>
+          <tr class="loan-row" data-stage="ingestion" onclick="goDetail('FHA-2024-08473')">
+            <td><span class="loan-id">FHA-2024-08473</span></td>
+            <td style="color:var(--text-2)">9:05 AM</td>
+            <td><span class="stage-pill-sm" style="background:var(--c-ingestion)">Ingestion</span></td>
+            <td><div class="mini-stages" id="mp-08473"></div></td>
+            <td><span class="time-normal">0.3 min</span></td>
+            <td><span class="conf-none">—</span></td>
+            <td></td>
+          </tr>
+          <!-- grouping -->
+          <tr class="loan-row" data-stage="grouping" onclick="goDetail('FHA-2024-08461')">
+            <td><span class="loan-id">FHA-2024-08461</span></td>
+            <td style="color:var(--text-2)">8:58 AM</td>
+            <td><span class="stage-pill-sm" style="background:var(--c-grouping)">Grouping</span></td>
+            <td><div class="mini-stages" id="mp-08461"></div></td>
+            <td><span class="time-normal">0.2 min</span></td>
+            <td><span class="conf-none">—</span></td>
+            <td></td>
+          </tr>
+          <tr class="loan-row" data-stage="grouping" onclick="goDetail('FHA-2024-08465')">
+            <td><span class="loan-id">FHA-2024-08465</span></td>
+            <td style="color:var(--text-2)">8:57 AM</td>
+            <td><span class="stage-pill-sm" style="background:var(--c-grouping)">Grouping</span></td>
+            <td><div class="mini-stages" id="mp-08465"></div></td>
+            <td><span class="time-warn">0.4 min</span></td>
+            <td><span class="conf-none">—</span></td>
+            <td></td>
+          </tr>
+          <!-- classification -->
+          <tr class="loan-row" data-stage="classification" onclick="goDetail('FHA-2024-08451')">
+            <td><span class="loan-id">FHA-2024-08451</span></td>
+            <td style="color:var(--text-2)">8:51 AM</td>
+            <td><span class="stage-pill-sm" style="background:var(--c-classification)">Classification</span></td>
+            <td><div class="mini-stages" id="mp-08451"></div></td>
+            <td><span class="time-normal">0.8 min</span></td>
+            <td><span class="conf-badge conf-high">97%</span></td>
+            <td></td>
+          </tr>
+          <tr class="loan-row" data-stage="classification" onclick="goDetail('FHA-2024-08452')">
+            <td><span class="loan-id">FHA-2024-08452</span></td>
+            <td style="color:var(--text-2)">8:50 AM</td>
+            <td><span class="stage-pill-sm" style="background:var(--c-classification)">Classification</span></td>
+            <td><div class="mini-stages" id="mp-08452"></div></td>
+            <td><span class="time-warn">1.2 min</span></td>
+            <td><span class="conf-badge conf-mid">94%</span></td>
+            <td></td>
+          </tr>
+          <tr class="loan-row" data-stage="classification" onclick="goDetail('FHA-2024-08453')">
+            <td><span class="loan-id">FHA-2024-08453</span></td>
+            <td style="color:var(--text-2)">8:50 AM</td>
+            <td><span class="stage-pill-sm" style="background:var(--c-classification)">Classification</span></td>
+            <td><div class="mini-stages" id="mp-08453"></div></td>
+            <td><span class="time-normal">0.9 min</span></td>
+            <td><span class="conf-badge conf-high">98%</span></td>
+            <td></td>
+          </tr>
+          <tr class="loan-row" data-stage="classification" onclick="goDetail('FHA-2024-08454')">
+            <td><span class="loan-id">FHA-2024-08454</span></td>
+            <td style="color:var(--text-2)">8:49 AM</td>
+            <td><span class="stage-pill-sm" style="background:var(--c-classification)">Classification</span></td>
+            <td><div class="mini-stages" id="mp-08454"></div></td>
+            <td><span class="time-slow">1.5 min</span></td>
+            <td><span class="conf-badge conf-low">84%</span></td>
+            <td><span class="exc-dot" title="Doc classification fail"></span></td>
+          </tr>
+          <!-- qc-rules -->
+          <tr class="loan-row" data-stage="qc-rules" onclick="goDetail('FHA-2024-08441')">
+            <td><span class="loan-id">FHA-2024-08441</span></td>
+            <td style="color:var(--text-2)">8:40 AM</td>
+            <td><span class="stage-pill-sm" style="background:var(--c-qc-rules)">QC rules</span></td>
+            <td><div class="mini-stages" id="mp-08441"></div></td>
+            <td><span class="time-normal">1.8 min</span></td>
+            <td><span class="conf-badge conf-high">91%</span></td>
+            <td></td>
+          </tr>
+          <tr class="loan-row" data-stage="qc-rules" onclick="goDetail('FHA-2024-08442')">
+            <td><span class="loan-id">FHA-2024-08442</span></td>
+            <td style="color:var(--text-2)">8:39 AM</td>
+            <td><span class="stage-pill-sm" style="background:var(--c-qc-rules)">QC rules</span></td>
+            <td><div class="mini-stages" id="mp-08442"></div></td>
+            <td><span class="time-warn">2.4 min</span></td>
+            <td><span class="conf-badge conf-mid">88%</span></td>
+            <td></td>
+          </tr>
+          <tr class="loan-row" data-stage="qc-rules" onclick="goDetail('FHA-2024-08443')">
+            <td><span class="loan-id">FHA-2024-08443</span></td>
+            <td style="color:var(--text-2)">8:38 AM</td>
+            <td><span class="stage-pill-sm" style="background:var(--c-qc-rules)">QC rules</span></td>
+            <td><div class="mini-stages" id="mp-08443"></div></td>
+            <td><span class="time-slow">3.1 min</span></td>
+            <td><span class="conf-badge conf-low">85%</span></td>
+            <td><span class="exc-dot" title="QC rule timeout"></span></td>
+          </tr>
+          <tr class="loan-row" data-stage="qc-rules" onclick="goDetail('FHA-2024-08444')">
+            <td><span class="loan-id">FHA-2024-08444</span></td>
+            <td style="color:var(--text-2)">8:37 AM</td>
+            <td><span class="stage-pill-sm" style="background:var(--c-qc-rules)">QC rules</span></td>
+            <td><div class="mini-stages" id="mp-08444"></div></td>
+            <td><span class="time-normal">1.5 min</span></td>
+            <td><span class="conf-badge conf-high">93%</span></td>
+            <td></td>
+          </tr>
+          <tr class="loan-row" data-stage="qc-rules" onclick="goDetail('FHA-2024-08445')">
+            <td><span class="loan-id">FHA-2024-08445</span></td>
+            <td style="color:var(--text-2)">8:37 AM</td>
+            <td><span class="stage-pill-sm" style="background:var(--c-qc-rules)">QC rules</span></td>
+            <td><div class="mini-stages" id="mp-08445"></div></td>
+            <td><span class="time-warn">2.0 min</span></td>
+            <td><span class="conf-badge conf-mid">90%</span></td>
+            <td></td>
+          </tr>
+          <!-- qc-mapping -->
+          <tr class="loan-row" data-stage="qc-mapping" onclick="goDetail('FHA-2024-08431')">
+            <td><span class="loan-id">FHA-2024-08431</span></td>
+            <td style="color:var(--text-2)">8:28 AM</td>
+            <td><span class="stage-pill-sm" style="background:var(--c-qc-mapping)">QC mapping</span></td>
+            <td><div class="mini-stages" id="mp-08431"></div></td>
+            <td><span class="time-normal">0.4 min</span></td>
+            <td><span class="conf-badge conf-high">96%</span></td>
+            <td></td>
+          </tr>
+          <tr class="loan-row" data-stage="qc-mapping" onclick="goDetail('FHA-2024-08432')">
+            <td><span class="loan-id">FHA-2024-08432</span></td>
+            <td style="color:var(--text-2)">8:27 AM</td>
+            <td><span class="stage-pill-sm" style="background:var(--c-qc-mapping)">QC mapping</span></td>
+            <td><div class="mini-stages" id="mp-08432"></div></td>
+            <td><span class="time-warn">0.7 min</span></td>
+            <td><span class="conf-badge conf-mid">92%</span></td>
+            <td></td>
+          </tr>
+          <!-- qc-report -->
+          <tr class="loan-row" data-stage="qc-report" onclick="goDetail('FHA-2024-08421')">
+            <td><span class="loan-id">FHA-2024-08421</span></td>
+            <td style="color:var(--text-2)">8:18 AM</td>
+            <td><span class="stage-pill-sm" style="background:var(--c-qc-report)">QC report</span></td>
+            <td><div class="mini-stages" id="mp-08421"></div></td>
+            <td><span class="time-normal">0.3 min</span></td>
+            <td><span class="conf-badge conf-high">94%</span></td>
+            <td></td>
+          </tr>
+          <!-- uw-engine -->
+          <tr class="loan-row" data-stage="uw-engine" onclick="goDetail('FHA-2024-08411')">
+            <td><span class="loan-id">FHA-2024-08411</span></td>
+            <td style="color:var(--text-2)">8:09 AM</td>
+            <td><span class="stage-pill-sm" style="background:var(--c-uw-engine)">UW engine</span></td>
+            <td><div class="mini-stages" id="mp-08411"></div></td>
+            <td><span class="time-normal">1.2 min</span></td>
+            <td><span class="conf-badge conf-mid">89%</span></td>
+            <td><span class="exc-dot" title="UW validation fail"></span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     SCREEN 3 — LOAN DETAIL
+════════════════════════════════════════════════ -->
+<div id="s-detail" class="screen">
+  <nav class="topnav">
+    <button class="back-btn" onclick="goLoans(null)">← Pipeline</button>
+    <span class="nav-sep">/</span>
+    <div class="nav-crumb">
+      <span>FHA-2024-08441</span>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="detail-header">
+      <div>
+        <div class="loan-title-big">FHA-2024-08441</div>
+        <div class="loan-meta-sm">Submitted 8:40 AM · 1 loan ID · 4 input files</div>
+      </div>
+      <div class="status-running">
+        <div class="status-dot-running"></div>
+        QC rules · 1.8 min elapsed
+      </div>
+    </div>
+
+    <!-- ZONE 1: FILES -->
+    <div class="zone">
+      <div class="zone-head">
+        <div class="zone-label">Files</div>
+        <span style="font-size:12px;color:var(--text-3);margin-left:auto">4 input · 4 output</span>
+      </div>
+      <div class="zone-body">
+        <div class="files-group-label">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;"></span>
+          Input files — received &amp; classified
+        </div>
+        <div class="files-row">
+          <div class="file-card">
+            <div class="file-tag">PDF · File 1</div>
+            <div class="file-name">APR_08441_v2.pdf</div>
+            <div class="file-class">Classified as <strong>Appraisal</strong></div>
+            <div class="file-conf">98% confidence</div>
+          </div>
+          <div class="file-card">
+            <div class="file-tag">PDF · File 2</div>
+            <div class="file-name">SSR_FNM_08441.pdf</div>
+            <div class="file-class">Classified as <strong>SSR Fannie Mae</strong></div>
+            <div class="file-conf">99% confidence</div>
+          </div>
+          <div class="file-card">
+            <div class="file-tag">PDF · File 3</div>
+            <div class="file-name">SSR_FRE_08441.pdf</div>
+            <div class="file-class">Classified as <strong>SSR Freddie Mac</strong></div>
+            <div class="file-conf">97% confidence</div>
+          </div>
+          <div class="file-card">
+            <div class="file-tag">XML · File 4</div>
+            <div class="file-name">SSR_08441_data.xml</div>
+            <div class="file-class">Structured SSR data</div>
+            <div class="file-conf">Auto-detected</div>
+          </div>
+        </div>
+
+        <div class="files-group-label" style="margin-top:4px;">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--amber);display:inline-block;animation:blink 2s infinite;"></span>
+          Output files — generating
+        </div>
+        <div class="files-row">
+          <div class="file-card output-card">
+            <div class="file-tag">JSON</div>
+            <div class="file-name">qc_results_08441.json</div>
+            <div class="file-status fst-running">⟳ Generating (step 4 in progress)</div>
+          </div>
+          <div class="file-card output-card">
+            <div class="file-tag">Excel</div>
+            <div class="file-name">qc_mapping_08441.xlsx</div>
+            <div class="file-status fst-pending">— Pending step 5</div>
+          </div>
+          <div class="file-card output-card">
+            <div class="file-tag">Report</div>
+            <div class="file-name">qc_report_08441.pdf</div>
+            <div class="file-status fst-pending">— Pending step 6</div>
+          </div>
+          <div class="file-card output-card">
+            <div class="file-tag">Report</div>
+            <div class="file-name">uw_report_08441.pdf</div>
+            <div class="file-status fst-pending">— Pending step 7</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ZONE 2: PROCESS TRACE -->
+    <div class="zone">
+      <div class="zone-head">
+        <div class="zone-label">Process trace</div>
+        <span style="font-size:12px;color:var(--text-3);margin-left:auto">Step 4 of 7 · running</span>
+      </div>
+      <div class="zone-body" style="padding-bottom:20px;">
+        <div class="trace-wrap">
+
+          <div class="trace-step done" style="position:relative;">
+            <div class="trace-connector"></div>
+            <div class="trace-node done">1</div>
+            <div class="trace-step-inner">
+              <div class="trace-name">Ingestion</div>
+              <div class="trace-time">0.4 min</div>
+              <div class="trace-note">4 files detected, triggered processing</div>
+              <div class="trace-conf">—</div>
+            </div>
+          </div>
+
+          <div class="trace-step done" style="position:relative;">
+            <div class="trace-connector"></div>
+            <div class="trace-node done">2</div>
+            <div class="trace-step-inner">
+              <div class="trace-name">Grouping</div>
+              <div class="trace-time">0.3 min</div>
+              <div class="trace-note">Loan #08441 extracted, 4 docs bundled</div>
+              <div class="trace-conf">—</div>
+            </div>
+          </div>
+
+          <div class="trace-step done" style="position:relative;">
+            <div class="trace-connector"></div>
+            <div class="trace-node done">3</div>
+            <div class="trace-step-inner">
+              <div class="trace-name">Classification</div>
+              <div class="trace-time">1.1 min</div>
+              <div class="trace-note">Appraisal 98% · FNM SSR 99% · FRE SSR 97%</div>
+              <div class="trace-conf" style="color:var(--green)">Avg 98%</div>
+            </div>
+          </div>
+
+          <div class="trace-step" style="position:relative;">
+            <div class="trace-connector"></div>
+            <div class="trace-node running">4</div>
+            <div class="trace-step-inner">
+              <div class="trace-name" style="color:var(--purple)">QC rules</div>
+              <div class="trace-time" style="color:var(--amber)">1.8 min · running</div>
+              <div class="trace-note">37 of 68 checkpoints evaluated</div>
+              <div class="trace-conf" style="color:var(--amber)">Partial: 91%</div>
+            </div>
+          </div>
+
+          <div class="trace-step" style="position:relative;">
+            <div class="trace-connector"></div>
+            <div class="trace-node pending">5</div>
+            <div class="trace-step-inner">
+              <div class="trace-name pending">QC mapping</div>
+              <div class="trace-time">—</div>
+            </div>
+          </div>
+
+          <div class="trace-step" style="position:relative;">
+            <div class="trace-connector"></div>
+            <div class="trace-node pending">6</div>
+            <div class="trace-step-inner">
+              <div class="trace-name pending">QC report</div>
+              <div class="trace-time">—</div>
+            </div>
+          </div>
+
+          <div class="trace-step" style="position:relative;">
+            <div class="trace-node pending">7</div>
+            <div class="trace-step-inner">
+              <div class="trace-name pending">UW engine</div>
+              <div class="trace-time">—</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ZONE 3: QC FINDINGS -->
+    <div class="zone">
+      <div class="zone-head">
+        <div class="zone-label">QC findings — 68 point checklist</div>
+        <span style="font-size:12px;color:var(--amber);margin-left:auto">37 evaluated · 31 pending</span>
+      </div>
+      <div style="padding:0 20px;">
+        <div class="qc-summary">
+          <div class="qc-metric active" data-type="failed" onclick="filterQC('failed',this)">
+            <div class="qc-m-label">Failed</div>
+            <div class="qc-m-value failed">34</div>
+          </div>
+          <div class="qc-metric" data-type="flagged" onclick="filterQC('flagged',this)">
+            <div class="qc-m-label">Flagged</div>
+            <div class="qc-m-value flagged">2</div>
+          </div>
+          <div class="qc-metric" data-type="passed" onclick="filterQC('passed',this)">
+            <div class="qc-m-label">Passed</div>
+            <div class="qc-m-value passed">1</div>
+          </div>
+          <div class="qc-metric" data-type="pending" onclick="filterQC('pending',this)">
+            <div class="qc-m-label">Pending</div>
+            <div class="qc-m-value pending">31</div>
+          </div>
+        </div>
+      </div>
+      <div class="zone-body" style="padding-top:0;" id="qc-categories"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────
+const STAGES = ['ingestion','grouping','classification','qc-rules','qc-mapping','qc-report','uw-engine'];
+const STAGE_COLORS = {
+  'ingestion':'#3D7A38','grouping':'#5FAB52','classification':'#3B87D1',
+  'qc-rules':'#5840A0','qc-mapping':'#8E54C8','qc-report':'#C24F82',
+  'uw-engine':'#C8521A'
+};
+
+const LOAN_STAGES = {
+  'FHA-2024-08471':0,'FHA-2024-08472':0,'FHA-2024-08473':0,
+  'FHA-2024-08461':1,'FHA-2024-08465':1,
+  'FHA-2024-08451':2,'FHA-2024-08452':2,'FHA-2024-08453':2,'FHA-2024-08454':2,
+  'FHA-2024-08441':3,'FHA-2024-08442':3,'FHA-2024-08443':3,'FHA-2024-08444':3,'FHA-2024-08445':3,
+  'FHA-2024-08431':4,'FHA-2024-08432':4,
+  'FHA-2024-08421':5,
+  'FHA-2024-08411':6
+};
+
+const QC_DATA = [
+  { cat:'Property Information', total:12, items:[
+    {s:'failed',n:'Subject property address consistent across all source documents',note:'Mismatch: Appraisal p.1 "123 Oak St" vs SSR FNM p.1 "123 Oak Street"',src:'Appraisal PDF p.1, SSR FNM PDF p.1',conf:99},
+    {s:'failed',n:'Property type classification consistent',note:'Appraisal: "Single-family residence" / SSR FNM XML: "1-unit" — normalization required',src:'Appraisal p.2, SSR FNM XML',conf:96},
+    {s:'failed',n:'Legal description matches county records reference',note:'Legal description present in Appraisal but absent in SSR FNM XML',src:'SSR FNM XML',conf:94},
+    {s:'failed',n:'Parcel ID present and consistent across documents',note:'Parcel ID found in Appraisal but not referenced in SSR FRE documentation',src:'SSR FRE PDF p.3',conf:99},
+    {s:'failed',n:'Flood zone designation documented',note:'Flood zone field blank; FEMA zone determination not referenced',src:'Appraisal PDF p.4',conf:88},
+    {s:'failed',n:'Site area within acceptable reporting variance',note:'Reported 0.28 acres deviates from county parcel data (0.31 acres)',src:'Appraisal PDF p.3',conf:92},
+    {s:'passed',n:'Census tract number present and valid',note:'Census tract 4521.02 confirmed valid',src:'Appraisal PDF p.1',conf:99},
+    {s:'pending',n:'Property rights appraised documented',note:null,src:null,conf:null},
+    {s:'pending',n:'Contract price and date reported',note:null,src:null,conf:null},
+    {s:'pending',n:'Listing history addressed',note:null,src:null,conf:null},
+    {s:'pending',n:'Current offering history addressed',note:null,src:null,conf:null},
+    {s:'pending',n:'Project information addressed (if applicable)',note:null,src:null,conf:null},
+  ]},
+  { cat:'Appraiser Credentials', total:8, items:[
+    {s:'failed',n:'Appraiser license number present in report',note:'License number field empty on signature page',src:'Appraisal PDF p.12',conf:99},
+    {s:'failed',n:'License expiration date within effective period',note:'Effective date Mar 15 2024; license expiration date not found in document',src:'Appraisal PDF p.12',conf:99},
+    {s:'failed',n:'Supervising appraiser co-signature present',note:'Trainee appraiser signature found; supervisor co-signature absent',src:'Appraisal PDF p.12',conf:95},
+    {s:'failed',n:'E&O insurance referenced or on file',note:'No E&O reference found in report or cover documentation',src:'Appraisal PDF p.1',conf:91},
+    {s:'flagged',n:'License state matches property location state',note:'License state appears to be "CA" — property is in "NV". Cross-state appraisal requires verification',src:'Appraisal PDF p.12',conf:73},
+    {s:'pending',n:'Appraiser certification statement complete',note:null,src:null,conf:null},
+    {s:'pending',n:'Prior services disclosed',note:null,src:null,conf:null},
+    {s:'pending',n:'USPAP compliance stated',note:null,src:null,conf:null},
+  ]},
+  { cat:'Neighborhood Analysis', total:10, items:[
+    {s:'failed',n:'Market conditions trend documented (increasing/stable/declining)',note:'"Stable" checked but no supporting data or commentary provided',src:'Appraisal PDF p.2',conf:95},
+    {s:'failed',n:'Supply and demand balance addressed',note:'Supply/demand field left blank',src:'Appraisal PDF p.2',conf:92},
+    {s:'failed',n:'Marketing time reported and supported',note:'"30–60 days" stated without supporting MLS data',src:'Appraisal PDF p.2',conf:96},
+    {s:'failed',n:'Neighborhood boundaries defined with specificity',note:'Boundaries described as "city limits" — insufficient specificity',src:'Appraisal PDF p.2',conf:88},
+    {s:'failed',n:'Predominant value range supported by data',note:'Range $320K–$420K not supported by comparable data in report',src:'Appraisal PDF p.2',conf:90},
+    {s:'pending',n:'Land use percentages add to 100%',note:null,src:null,conf:null},
+    {s:'pending',n:'Proximity to employment centers addressed',note:null,src:null,conf:null},
+    {s:'pending',n:'One-unit housing price range current',note:null,src:null,conf:null},
+    {s:'pending',n:'One-unit housing age range current',note:null,src:null,conf:null},
+    {s:'pending',n:'Owner-occupied percentage stated',note:null,src:null,conf:null},
+  ]},
+  { cat:'Site & Improvements', total:14, items:[
+    {s:'failed',n:'Gross living area calculated correctly',note:'GLA 1,842 sqft reported vs 1,764 sqft derived from room dimensions (78 sqft / 4.4% variance)',src:'Appraisal PDF p.5–6',conf:97},
+    {s:'failed',n:'Year built consistent across all documents',note:'Appraisal: 1987 / SSR FNM XML: 1989 — 2-year discrepancy',src:'Appraisal p.5, SSR FNM XML',conf:99},
+    {s:'failed',n:'Effective age justified in reconciliation',note:'Effective age 10 yrs stated for 37-year-old structure; no renovation history provided',src:'Appraisal PDF p.5',conf:88},
+    {s:'failed',n:'Condition rating consistent with SSR assessment',note:'Appraisal: C3 / SSR FNM: C4 — condition rating mismatch',src:'Appraisal p.5, SSR FNM PDF p.2',conf:91},
+    {s:'failed',n:'Functional utility adequately addressed',note:'Functional obsolescence section empty despite atypical floor plan noted in report',src:'Appraisal PDF p.6',conf:85},
+    {s:'failed',n:'Adverse site conditions addressed',note:'Adjacent commercial zoning not addressed in appraisal commentary',src:'Appraisal PDF p.3',conf:94},
+    {s:'failed',n:'Zoning compliance confirmed',note:'Property zoned R-2, used as single family — legal conforming status not addressed',src:'Appraisal PDF p.3',conf:92},
+    {s:'failed',n:'Energy efficiency features noted',note:'No documentation despite solar panels visible in exterior photo',src:'Appraisal PDF p.7',conf:87},
+    {s:'pending',n:'Foundation type documented',note:null,src:null,conf:null},
+    {s:'pending',n:'Basement/crawl space addressed',note:null,src:null,conf:null},
+    {s:'pending',n:'Heating/cooling systems documented',note:null,src:null,conf:null},
+    {s:'pending',n:'Garage/parking documented',note:null,src:null,conf:null},
+    {s:'pending',n:'Pool/amenities noted',note:null,src:null,conf:null},
+    {s:'pending',n:'Updates within last 15 years documented',note:null,src:null,conf:null},
+  ]},
+  { cat:'Sales Comparison', total:12, items:[
+    {s:'failed',n:'Minimum 3 comparable closed sales used',note:'Only 2 closed sales provided; 3rd comparable is an active listing',src:'Appraisal PDF p.8',conf:99},
+    {s:'failed',n:'Comparable selection proximity within guidelines',note:'Comp #2 is 3.2 miles from subject; exceeds 1-mile suburban guideline',src:'Appraisal PDF p.8',conf:93},
+    {s:'failed',n:'Time adjustment applied when sales older than 3 months',note:'Comp #1 sold 5 months ago, no time adjustment applied',src:'Appraisal PDF p.9',conf:95},
+    {s:'failed',n:'GLA adjustment rate documented and supported',note:'$45/sqft GLA adjustment applied without market support data',src:'Appraisal PDF p.9',conf:89},
+    {s:'failed',n:'Net/gross adjustment limits not exceeded',note:'Comp #3 net adjustment: 18% (exceeds 15% guideline)',src:'Appraisal PDF p.9',conf:96},
+    {s:'failed',n:'Distressed/REO sales excluded or addressed',note:'Comp #1 appears distressed; not addressed in appraiser commentary',src:'Appraisal PDF p.8',conf:91},
+    {s:'flagged',n:'Comparable sale date within 12-month window',note:'Comp #3 sale date 14 months prior. May require waiver or substitution — agent uncertain',src:'Appraisal PDF p.8',conf:78},
+    {s:'pending',n:'Location adjustments supported',note:null,src:null,conf:null},
+    {s:'pending',n:'Condition adjustments supported',note:null,src:null,conf:null},
+    {s:'pending',n:'View adjustments documented',note:null,src:null,conf:null},
+    {s:'pending',n:'Concession adjustments applied',note:null,src:null,conf:null},
+    {s:'pending',n:'Indicated value range reasonable',note:null,src:null,conf:null},
+  ]},
+  { cat:'Reconciliation & Value', total:8, items:[
+    {s:'failed',n:'Final value conclusion supported by all approaches used',note:'Only sales comparison approach used; income approach omitted without justification',src:'Appraisal PDF p.11',conf:93},
+    {s:'failed',n:'Exposure time estimated',note:'Exposure time not stated in reconciliation section',src:'Appraisal PDF p.11',conf:88},
+    {s:'failed',n:'Extraordinary assumptions listed',note:'Appraiser assumes as-is condition without inspection; extraordinary assumption not declared',src:'Appraisal PDF p.11',conf:91},
+    {s:'failed',n:'Value conclusion within comparable range',note:'Concluded value $378,000 exceeds adjusted comp range $342K–$367K by $11,000',src:'Appraisal PDF p.11',conf:95},
+    {s:'failed',n:'Hypothetical conditions formally stated',note:'Hypothetical condition referenced in addendum but not formally stated in report body',src:'Appraisal PDF p.11',conf:87},
+    {s:'pending',n:'Marketing time estimated',note:null,src:null,conf:null},
+    {s:'pending',n:'Cost approach reconciled (if applicable)',note:null,src:null,conf:null},
+    {s:'pending',n:'Final certification complete',note:null,src:null,conf:null},
+  ]},
+  { cat:'SSR Compliance', total:4, items:[
+    {s:'pending',n:'SSR fields consistent with appraisal data',note:null,src:null,conf:null},
+    {s:'pending',n:'SSR risk score within acceptable range',note:null,src:null,conf:null},
+    {s:'pending',n:'Overvaluation flag addressed',note:null,src:null,conf:null},
+    {s:'pending',n:'SSR message codes documented',note:null,src:null,conf:null},
+  ]},
+];
+
+// ── INIT ──────────────────────────────────────────
+let activeQCFilter = 'failed';
+let prevScreen = 'fleet';
+
+function buildMiniStages() {
+  Object.entries(LOAN_STAGES).forEach(([id, stageIdx]) => {
+    const el = document.getElementById('mp-' + id.split('-')[2]);
+    if (!el) return;
+    STAGES.forEach((st, i) => {
+      const seg = document.createElement('div');
+      seg.className = 'mini-seg';
+      seg.style.width = '14px';
+      seg.style.height = '6px';
+      seg.style.borderRadius = '1px';
+      seg.style.background = i <= stageIdx ? STAGE_COLORS[st] : '#E5E1DB';
+      el.appendChild(seg);
+    });
+  });
+}
+
+function buildQC() {
+  const container = document.getElementById('qc-categories');
+  container.innerHTML = '';
+  QC_DATA.forEach((cat, ci) => {
+    const failC  = cat.items.filter(i=>i.s==='failed').length;
+    const passC  = cat.items.filter(i=>i.s==='passed').length;
+    const flagC  = cat.items.filter(i=>i.s==='flagged').length;
+    const pendC  = cat.items.filter(i=>i.s==='pending').length;
+
+    const badges = [];
+    if(failC) badges.push(`<span class="qcc failed">${failC} failed</span>`);
+    if(flagC) badges.push(`<span class="qcc flagged">${flagC} flagged</span>`);
+    if(passC) badges.push(`<span class="qcc passed">${passC} passed</span>`);
+    if(pendC) badges.push(`<span class="qcc pending">${pendC} pending</span>`);
+
+    const statusIcon = {failed:'✕',passed:'✓',flagged:'!',pending:'·'};
+    const items = cat.items.map((item, ii) => {
+      const confStr = item.conf ? `<span class="qc-item-conf" style="color:${item.conf>=90?'var(--green)':item.conf>=80?'var(--amber)':'var(--red)'}">${item.conf}%</span>` : '';
+      const note = item.note ? `<div class="qc-item-note">${item.note}</div>` : '';
+      const src  = item.src  ? `<div class="qc-item-source">Source: ${item.src}</div>` : '';
+      return `
+        <div class="qc-item qc-filter-item" data-status="${item.s}">
+          <div class="qc-item-ico ${item.s}">${statusIcon[item.s]}</div>
+          <div class="qc-item-body">
+            <div class="qc-item-name">${item.n}</div>
+            ${note}${src}
+          </div>
+          ${confStr}
+        </div>`;
+    }).join('');
+
+    const div = document.createElement('div');
+    div.className = 'qc-cat' + (ci === 0 ? ' open' : '');
+    div.innerHTML = `
+      <div class="qc-cat-head" onclick="toggleCat(this)">
+        <div class="qc-cat-name">${cat.cat} <span style="font-size:11px;font-weight:400;color:var(--text-3)">(${cat.total})</span></div>
+        <div class="qc-cat-counts">${badges.join('')}</div>
+        <div class="qc-chevron">▼</div>
+      </div>
+      <div class="qc-items">${items}</div>`;
+    container.appendChild(div);
+  });
+  applyQCFilter();
+}
+
+// ── NAVIGATION ─────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function goFleet() { show('s-fleet'); }
+
+function goLoans(stage) {
+  prevScreen = document.querySelector('.screen.active').id;
+  show('s-loans');
+  if (stage) filterStage(stage, document.querySelector(`.spill[data-stage="${stage}"]`));
+  else        filterStage('all', document.querySelector('.spill[data-stage="all"]'));
+}
+
+function goDetail(loanId) {
+  prevScreen = 's-loans';
+  show('s-detail');
+}
+
+// ── STAGE FILTER ────────────────────────────────────
+function filterStage(stage, el) {
+  // pills
+  document.querySelectorAll('.spill').forEach(p => {
+    p.classList.remove('active');
+    p.style.background = '';
+    p.style.color = '';
+  });
+  if (el) {
+    el.classList.add('active');
+    const color = stage === 'all' ? 'var(--text)' : STAGE_COLORS[stage] || '#666';
+    el.style.background = color;
+    el.style.color = '#fff';
+  }
+
+  // rows
+  const rows = document.querySelectorAll('.loan-row');
+  let visible = 0;
+  rows.forEach(r => {
+    const match = stage === 'all' || r.dataset.stage === stage;
+    r.classList.toggle('hidden', !match);
+    if (match) visible++;
+  });
+
+  const stageLabel = stage === 'all' ? 'All stages' : el ? el.textContent.trim() : stage;
+  document.getElementById('list-title').textContent =
+    (stage === 'all' ? 'Active Pipeline' : stageLabel.replace(/\d+/,'').trim()) + ' · ' + visible + ' loan' + (visible!==1?'s':'');
+  document.getElementById('list-sub').textContent =
+    stage === 'all' ? 'All stages · continuous flow' : 'Filtered by stage · click any row to inspect';
+}
+
+// ── QC FILTER ───────────────────────────────────────
+function filterQC(type, el) {
+  activeQCFilter = type;
+  document.querySelectorAll('.qc-metric').forEach(m => m.classList.remove('active'));
+  if (el) el.classList.add('active');
+  applyQCFilter();
+}
+
+function applyQCFilter() {
+  document.querySelectorAll('.qc-filter-item').forEach(item => {
+    item.classList.toggle('hidden', item.dataset.status !== activeQCFilter);
+  });
+  // auto-expand cats that have visible items
+  document.querySelectorAll('.qc-cat').forEach(cat => {
+    const hasVisible = cat.querySelectorAll('.qc-filter-item:not(.hidden)').length > 0;
+    if (hasVisible) cat.classList.add('open');
+    else cat.classList.remove('open');
+  });
+}
+
+function toggleCat(head) {
+  head.closest('.qc-cat').classList.toggle('open');
+}
+
+// ── BOOT ────────────────────────────────────────────
+buildMiniStages();
+buildQC();
+</script>
+</body>
+</html>

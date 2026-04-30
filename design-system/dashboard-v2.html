@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QC Observer — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="components.css">
+<style>
+
+/* ── SHELL ── */
+html, body { height: 100%; }
+body {
+  background: var(--color-neutral-100);
+  min-width: 1024px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  flex-shrink: 0;
+  padding: 0 var(--space-8);
+  gap: var(--space-4);
+}
+
+/* Topbar internals */
+.topbar-logo {
+  display: flex; align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-900);
+  letter-spacing: var(--letter-spacing-tight);
+}
+.topbar-logo-icon {
+  width: 26px; height: 26px;
+  border-radius: var(--border-radius-md);
+  background: var(--color-neutral-900);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.topbar-divider { width: 1px; height: 16px; background: var(--border-color); flex-shrink: 0; }
+.pipeline-status {
+  display: flex; align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-neutral-500);
+}
+.pipeline-dot {
+  width: 6px; height: 6px;
+  border-radius: var(--border-radius-pill);
+  background: var(--color-success-500);
+  animation: blink 2.2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.pipeline-status strong { font-weight: var(--font-weight-semibold); color: var(--color-success-600); }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: var(--space-5); }
+.topbar-stat { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+.topbar-stat-label {
+  font-size: 10px; font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase; color: var(--color-neutral-400);
+}
+.topbar-stat-value {
+  font-size: var(--font-size-md); font-weight: var(--font-weight-bold);
+  color: var(--color-neutral-900); letter-spacing: var(--letter-spacing-tight);
+}
+.topbar-stat-value.success { color: var(--color-success-600); }
+.topbar-stat-value.danger  { color: var(--color-danger-600); }
+.user-avatar {
+  width: 28px; height: 28px;
+  border-radius: var(--border-radius-pill);
+  background: var(--stage-qc-check);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: var(--font-weight-bold);
+  color: var(--color-white); letter-spacing: var(--letter-spacing-wide);
+}
+
+/* ── PAGE LAYOUT ── */
+.page-wrap {
+  padding: var(--space-8) 60px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  gap: var(--space-6);
+  align-items: flex-start;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* ── COMPACT OBSERVABILITY CARD ── */
+/* extends .card from components.css */
+.obs-card {
+  flex: 0 0 33%;
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-xl);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 80px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
+.obs-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+.obs-header-title {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  color: var(--color-neutral-400);
+}
+
+/* Date filter — segmented pill */
+.date-filter {
+  display: flex; gap: 1px;
+  background: var(--color-neutral-200);
+  border-radius: var(--border-radius-md);
+  padding: 2px;
+}
+.date-btn {
+  padding: 3px var(--space-3);
+  border-radius: 5px;
+  border: none;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-neutral-500);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+.date-btn.active {
+  background: var(--color-white);
+  color: var(--color-neutral-900);
+  font-weight: var(--font-weight-semibold);
+  box-shadow: var(--shadow-xs);
+}
+.date-btn:hover:not(.active) { color: var(--color-neutral-700); }
+
+/* Metrics panel — scannable row sections */
+.metrics-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.metrics-row {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-3) 0 var(--space-3) var(--space-3);
+  border-left: 3px solid var(--color-neutral-200);
+  border-radius: 0;
+}
+.metrics-row.row-ops      { border-left-color: var(--color-info-500); }
+.metrics-row.row-quality   { border-left-color: var(--stage-qc-check); }
+.metrics-row.row-feedback  { border-left-color: var(--color-success-500); }
+
+.metrics-row-label {
+  writing-mode: vertical-lr;
+  transform: rotate(180deg);
+  font-size: 8px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-neutral-400);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 14px;
+  flex-shrink: 0;
+}
+.metrics-row.row-ops .metrics-row-label      { color: var(--color-info-500); }
+.metrics-row.row-quality .metrics-row-label   { color: var(--stage-qc-check); }
+.metrics-row.row-feedback .metrics-row-label  { color: var(--color-success-500); }
+
+.metrics-row-items {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+  flex: 1;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+}
+.stat-label {
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  color: var(--color-neutral-400);
+  margin-bottom: 2px;
+}
+.stat-value {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-neutral-900);
+  line-height: 1;
+}
+.stat-value.success { color: var(--color-success-600); }
+.stat-value.info    { color: var(--color-info-600); }
+.stat-value.danger  { color: var(--color-danger-600); }
+.stat-meta { font-size: 10px; color: var(--color-neutral-400); margin-top: 4px; }
+
+/* Confidence gauge */
+.confidence-gauge {
+  display: flex; align-items: center; gap: var(--space-2); margin-top: 4px;
+}
+.confidence-bar-track {
+  flex: 1; height: 4px; background: var(--color-neutral-200);
+  border-radius: var(--border-radius-pill); overflow: hidden;
+}
+.confidence-bar-fill {
+  height: 100%; border-radius: var(--border-radius-pill);
+  transition: width var(--transition-base);
+}
+
+/* Token pill */
+.token-pill {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 1px 6px; border-radius: 3px;
+  font-size: 9px; font-weight: var(--font-weight-semibold);
+}
+.token-pill.token-in  { background: var(--tag-blue-bg);  color: var(--tag-blue-text); }
+.token-pill.token-out { background: var(--tag-green-bg); color: var(--tag-green-text); }
+
+/* Sentiment bar */
+.sentiment-bar {
+  display: flex; height: 4px; border-radius: var(--border-radius-pill); overflow: hidden; margin-top: 4px;
+}
+.sentiment-up   { background: var(--color-success-500); }
+.sentiment-down { background: var(--color-danger-500); }
+
+/* Model tag in throughput */
+.tp-model {
+  font-size: 8px; font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-400); background: var(--color-neutral-100);
+  padding: 1px 4px; border-radius: 3px; margin-left: 2px;
+  white-space: nowrap;
+}
+
+/* Layer label */
+.layer-label {
+  display: inline-block; font-size: 8px; font-weight: var(--font-weight-bold);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 1px 5px; border-radius: 3px; margin-bottom: 6px;
+}
+.layer-label.l1 { background: var(--tag-blue-bg);   color: var(--tag-blue-text); }
+.layer-label.l3 { background: var(--tag-purple-bg); color: var(--tag-purple-text); }
+.layer-label.l4 { background: var(--tag-green-bg);  color: var(--tag-green-text); }
+
+/* Charts row inside obs card */
+.obs-content-merged {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+.obs-metrics-side { flex: 1; }
+.obs-charts-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding-left: var(--space-6);
+  border-left: 1px solid var(--border-color);
+}
+.obs-chart-label {
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  color: var(--color-neutral-400);
+  margin-bottom: var(--space-2);
+}
+
+/* Stage bar */
+.stage-bar { height: 20px; border-radius: var(--border-radius-sm); overflow: hidden; display: flex; margin-bottom: var(--space-2); }
+.stage-seg { display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: var(--font-weight-bold); color: rgba(255,255,255,.9); cursor: pointer; transition: opacity var(--transition-fast); }
+.stage-seg:hover { opacity: .8; }
+.stage-legend { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); }
+.stage-legend-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--color-neutral-500); }
+.stage-ldot { width: 6px; height: 6px; border-radius: var(--border-radius-pill); flex-shrink: 0; }
+
+/* Throughput */
+.tp-list { display: flex; flex-direction: column; gap: 5px; }
+.tp-row  { display: flex; align-items: center; gap: var(--space-2); }
+.tp-label { font-size: 10px; color: var(--color-neutral-500); width: 80px; flex-shrink: 0; }
+.tp-bar-wrap { flex: 1; height: 4px; background: var(--color-neutral-100); border-radius: var(--border-radius-pill); overflow: hidden; }
+.tp-bar { height: 100%; border-radius: var(--border-radius-pill); }
+.tp-time { font-size: 10px; color: var(--color-neutral-400); width: 30px; text-align: right; flex-shrink: 0; }
+.tp-delta { font-size: 10px; font-weight: var(--font-weight-semibold); width: 24px; text-align: right; flex-shrink: 0; }
+.tp-delta.up   { color: var(--color-danger-600); }
+.tp-delta.down { color: var(--color-success-600); }
+.tp-delta.flat { color: var(--color-neutral-400); }
+
+/* ── KANBAN SECTION ── */
+.kanban-section {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 0;
+}
+
+/* Toolbar */
+.kanban-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+/* Search */
+.search-wrap { position: relative; flex: 0 0 200px; }
+.search-wrap svg { position: absolute; left: var(--space-3); top: 50%; transform: translateY(-50%); color: var(--color-neutral-400); pointer-events: none; }
+.search-wrap .input { padding-left: var(--space-8); font-size: var(--font-size-sm); }
+.search-shortcut {
+  position: absolute; right: var(--space-2); top: 50%; transform: translateY(-50%);
+  font-size: 10px; color: var(--color-neutral-400);
+  background: var(--color-neutral-100); border: 1px solid var(--border-color);
+  border-radius: 3px; padding: 1px 4px; font-family: var(--font-family-mono);
+}
+
+/* Selects */
+.filter-select {
+  padding: var(--space-1) var(--space-7) var(--space-1) var(--space-3);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  background: var(--color-white);
+  color: var(--color-neutral-700);
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a3a3a3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-2) center;
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+.filter-select:hover { border-color: var(--border-color-hover); }
+.filter-select:focus { border-color: var(--color-neutral-400); outline: none; }
+
+.toolbar-spacer { flex: 1; }
+
+/* Kanban summary counts */
+.kanban-summary { display: flex; align-items: center; gap: var(--space-5); }
+.ks-item { display: flex; align-items: center; gap: 4px; font-size: var(--font-size-sm); color: var(--color-neutral-500); }
+.ks-num { font-weight: var(--font-weight-bold); }
+.ks-num.success { color: var(--color-success-600); }
+.ks-num.info    { color: var(--color-info-500); }
+.ks-num.danger  { color: var(--color-danger-600); }
+
+/* View toggle — Simplified | Detailed segmented */
+.view-toggle {
+  display: flex; gap: 1px;
+  background: var(--color-neutral-200);
+  border-radius: var(--border-radius-md);
+  padding: 2px;
+  flex-shrink: 0;
+}
+.view-btn {
+  padding: 4px var(--space-3);
+  border-radius: 5px; border: none;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-neutral-500);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+.view-btn.active {
+  background: var(--color-white);
+  color: var(--color-neutral-900);
+  font-weight: var(--font-weight-semibold);
+  box-shadow: var(--shadow-xs);
+}
+
+/* Error strip */
+.error-strip {
+  background: var(--color-danger-50);
+  border: 1px solid var(--color-danger-100);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.error-strip-header {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  user-select: none;
+}
+.error-strip-header:hover { background: rgba(220,38,38,.04); }
+.error-strip-title { font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); text-transform: uppercase; letter-spacing: var(--letter-spacing-wider); color: var(--color-danger-600); }
+.error-strip-chevron { margin-left: auto; color: var(--color-danger-600); transition: transform var(--transition-base); opacity: .7; }
+.error-strip.collapsed .error-strip-chevron { transform: rotate(-90deg); }
+.error-strip.collapsed .error-strip-body { display: none; }
+
+.error-strip-body {
+  display: flex; gap: var(--space-2);
+  padding: var(--space-2) var(--space-4) var(--space-3);
+  overflow-x: auto;
+  border-top: 1px solid var(--color-danger-100);
+}
+.error-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-danger-100);
+  border-radius: var(--border-radius-md);
+  padding: var(--space-3) var(--space-3);
+  min-width: 200px;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: box-shadow var(--transition-fast);
+}
+.error-card:hover { box-shadow: var(--shadow-sm); }
+.error-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+.error-card-id { font-family: var(--font-family-mono); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-danger-600); }
+.error-card-stage { font-size: 10px; font-weight: var(--font-weight-semibold); padding: 2px 6px; border-radius: 3px; color: var(--color-white); }
+.error-card-reason { font-size: var(--font-size-xs); color: var(--color-neutral-500); margin-bottom: var(--space-2); }
+.error-card-footer { display: flex; align-items: center; justify-content: space-between; }
+.error-card-date { font-size: 10px; color: var(--color-neutral-400); }
+
+/* ── KANBAN BOARD ── */
+.kanban-board {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+  flex: 1;
+  min-height: 0;
+  align-items: flex-start;
+}
+
+/* Column */
+.kanban-col {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-neutral-50);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  max-height: 100%;
+}
+.kanban-col-error {
+  background: var(--color-danger-50);
+  border: 1px solid var(--color-danger-100);
+}
+.kanban-board.detailed .kanban-col {
+  flex: 0 0 220px;
+  min-width: 220px;
+  max-width: 220px;
+}
+
+/* Column header */
+.kanban-col-header {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-3) var(--space-3) var(--space-2);
+  flex-shrink: 0;
+}
+.col-icon { width: 16px; height: 16px; flex-shrink: 0; }
+.col-title { font-size: var(--font-size-xs); font-weight: var(--font-weight-bold); text-transform: uppercase; letter-spacing: var(--letter-spacing-wider); color: var(--color-neutral-500); flex: 1; }
+.col-count { font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); color: var(--color-neutral-400); }
+
+/* Column body */
+.kanban-col-body {
+  padding: 0 var(--space-2) var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  overflow-y: auto;
+  flex: 1;
+}
+.kanban-col-empty {
+  padding: var(--space-8) var(--space-3);
+  text-align: center;
+  font-size: var(--font-size-xs);
+  color: var(--color-neutral-300);
+}
+
+/* ── LOAN CARD ── */
+.loan-card {
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--space-3);
+  cursor: pointer;
+  transition: box-shadow var(--transition-fast);
+}
+.loan-card.loan-card-error {
+  border-color: var(--color-danger-300);
+  background: #fffcfc;
+}
+.loan-card:hover { box-shadow: var(--shadow-md); }
+
+.loan-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 2px; gap: var(--space-2); }
+.loan-card-id { font-size: var(--font-size-base); font-weight: var(--font-weight-bold); color: var(--color-neutral-900); letter-spacing: var(--letter-spacing-tight); }
+.loan-card-sub { font-family: var(--font-family-mono); font-size: 10px; color: var(--color-neutral-400); margin-bottom: var(--space-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Status icons */
+.icon-todo {
+  width: 16px; height: 16px; border-radius: var(--border-radius-pill);
+  border: 1.5px solid var(--color-neutral-300);
+  flex-shrink: 0; margin-top: 2px;
+}
+.icon-progress {
+  width: 16px; height: 16px; border-radius: var(--border-radius-pill);
+  background: linear-gradient(to right, var(--color-info-500) 50%, transparent 50%);
+  border: 1.5px solid var(--color-info-500);
+  flex-shrink: 0; margin-top: 2px;
+}
+.icon-blocked {
+  width: 16px; height: 16px; border-radius: var(--border-radius-pill);
+  background: linear-gradient(to right, var(--color-warning-500) 50%, transparent 50%);
+  border: 1.5px solid var(--color-warning-500);
+  flex-shrink: 0; margin-top: 2px;
+}
+.icon-complete {
+  width: 16px; height: 16px; border-radius: var(--border-radius-pill);
+  background: var(--color-success-500);
+  border: 1.5px solid var(--color-success-500);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 2px;
+}
+
+/* File chips */
+.loan-card-files { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: var(--space-2); }
+.file-chip {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 10px; font-weight: var(--font-weight-semibold);
+  letter-spacing: .02em;
+}
+.file-chip.pdf { background: var(--tag-red-bg);   color: var(--tag-red-text); }
+.file-chip.ssr { background: var(--tag-blue-bg);  color: var(--tag-blue-text); }
+.file-chip.xml { background: var(--tag-green-bg); color: var(--tag-green-text); }
+
+/* Progress for in-progress cards */
+.loan-progress-bar-wrap { margin-bottom: var(--space-1); }
+.loan-progress-bar-track { height: 3px; background: var(--color-neutral-200); border-radius: var(--border-radius-pill); overflow: hidden; margin-bottom: 3px; }
+.loan-progress-bar-fill  { height: 100%; background: var(--color-info-500); border-radius: var(--border-radius-pill); }
+.loan-progress-steps { font-size: 10px; color: var(--color-neutral-500); }
+
+.loan-card-footer { display: flex; align-items: center; justify-content: flex-end; }
+.loan-card-date { font-size: 10px; color: var(--color-neutral-400); }
+
+/* Detailed view — slightly tighter cards */
+.kanban-board.detailed .loan-card { padding: var(--space-2) var(--space-3); }
+.kanban-board.detailed .loan-card-id { font-size: var(--font-size-sm); }
+.kanban-board.detailed .loan-card-sub { font-size: 9px; margin-bottom: var(--space-1); }
+
+/* ── GROUP CARD ── */
+.group-card {
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--space-4);
+  position: relative;
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  z-index: 1;
+  margin-bottom: var(--space-4);
+  margin-right: 4px;
+}
+.group-card::before, .group-card::after {
+  content: '';
+  position: absolute;
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  z-index: -1;
+  transition: transform var(--transition-fast);
+}
+.group-card::before {
+  top: 4px; left: 4px; right: -4px; bottom: -4px;
+  background: #fafafa;
+}
+.group-card::after {
+  top: 8px; left: 8px; right: -8px; bottom: -8px;
+  background: #f5f5f5;
+}
+.group-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-sm);
+}
+.group-card:hover::before { transform: translate(2px, 2px); }
+.group-card:hover::after  { transform: translate(4px, 4px); }
+
+.group-card-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-neutral-900);
+  margin-bottom: 2px;
+  letter-spacing: var(--letter-spacing-tight);
+}
+.group-card-meta {
+  font-size: var(--font-size-xs);
+  color: var(--color-neutral-500);
+  margin-bottom: var(--space-3);
+}
+.group-card-vendors {
+  display: flex; gap: var(--space-1); flex-wrap: wrap;
+}
+.group-card-vendors .badge { font-size: 9px; padding: 2px 6px; }
+
+/* Stage dot for detailed column headers */
+.col-stage-dot { width: 8px; height: 8px; border-radius: var(--border-radius-pill); flex-shrink: 0; }
+
+/* Toast */
+.toast-wrap {
+  position: fixed; bottom: var(--space-6); left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  z-index: var(--z-toast);
+  transition: transform var(--transition-slow);
+  pointer-events: none;
+}
+.toast-wrap.show { transform: translateX(-50%) translateY(0); }
+
+</style>
+</head>
+<body>
+
+<!-- ── TOPBAR ── -->
+<header class="topbar">
+  <div class="topbar-logo">
+    <div class="topbar-logo-icon">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+        <path d="M8 1.5L2.5 3.5V8c0 3.04 2.4 5.87 5.5 6.5 3.1-.63 5.5-3.46 5.5-6.5V3.5L8 1.5Z" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/>
+        <path d="M5.5 8L7 9.5L10.5 6" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    QC Observer
+  </div>
+  <div class="topbar-divider"></div>
+  <div class="pipeline-status">
+    <div class="pipeline-dot"></div>
+    Pipeline <strong>Running</strong>
+    &nbsp;·&nbsp; Last batch 9:41 AM
+  </div>
+  <div class="topbar-right">
+    <div class="user-avatar">SU</div>
+  </div>
+</header>
+
+<!-- ── PAGE ── -->
+<div class="page-wrap">
+
+  <!-- ── COMPACT OBSERVABILITY CARD ── -->
+  <div class="card obs-card">
+    <div class="obs-header">
+      <span class="obs-header-title">AI Observability</span>
+      <div class="date-filter">
+        <button class="date-btn active" onclick="setDate(this,'all')">All</button>
+        <button class="date-btn" onclick="setDate(this,'daily')">Daily</button>
+        <button class="date-btn" onclick="setDate(this,'weekly')">Weekly</button>
+        <button class="date-btn" onclick="setDate(this,'monthly')">Monthly</button>
+      </div>
+    </div>
+
+    <!-- Merged content: Metrics + Charts -->
+    <div class="obs-content-merged">
+      
+      <!-- Left: Compact Metrics -->
+      <div class="obs-metrics-side">
+        <div class="metrics-rows">
+
+          <!-- Row 1: Operations -->
+          <div class="metrics-row row-ops">
+            <div class="metrics-row-label">Ops</div>
+            <div class="metrics-row-items">
+              <div class="stat-item">
+                <div class="stat-label">Loans Today</div>
+                <div class="stat-value">8</div>
+                <div class="stat-meta">2 batches · 32 files</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Avg Time</div>
+                <div class="stat-value">8m 43s</div>
+                <div class="stat-meta">↑ 40s vs yday</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Token Usage</div>
+                <div class="stat-value" style="font-size:var(--font-size-lg)">284K</div>
+                <div style="display:flex; gap:4px; margin-top:4px;">
+                  <span class="token-pill token-in">In 196K</span>
+                  <span class="token-pill token-out">Out 88K</span>
+                </div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Est. Cost</div>
+                <div class="stat-value" style="font-size:var(--font-size-lg)">$1.42</div>
+                <div class="stat-meta">$0.18/loan avg</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: AI Quality -->
+          <div class="metrics-row row-quality">
+            <div class="metrics-row-label">Quality</div>
+            <div class="metrics-row-items">
+              <div class="stat-item">
+                <div class="stat-label">Confidence</div>
+                <div class="stat-value" style="color:var(--color-success-600)">91%</div>
+                <div class="confidence-gauge">
+                  <div class="confidence-bar-track"><div class="confidence-bar-fill" style="width:91%; background:var(--color-success-500)"></div></div>
+                </div>
+                <div class="stat-meta">Classif. 94% · UW 88%</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Tech Errors</div>
+                <div class="stat-value danger">1</div>
+                <div class="stat-meta">LLM parse failure</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Guardrails</div>
+                <div class="stat-value" style="color:var(--color-warning-600)">1</div>
+                <div class="stat-meta">Out-of-scope query</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Grounding</div>
+                <div class="stat-value" style="color:var(--color-success-600)">0</div>
+                <div class="stat-meta">No hallucinations</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Feedback -->
+          <div class="metrics-row row-feedback">
+            <div class="metrics-row-label">Feedback</div>
+            <div class="metrics-row-items">
+              <div class="stat-item">
+                <div class="stat-label">UW Agreement</div>
+                <div class="stat-value" style="color:var(--color-success-600)">96%</div>
+                <div class="stat-meta">Target ≥ 95%</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Sentiment</div>
+                <div class="stat-value">83%</div>
+                <div class="sentiment-bar">
+                  <div class="sentiment-up" style="width:83%"></div>
+                  <div class="sentiment-down" style="width:17%"></div>
+                </div>
+                <div class="stat-meta">5 👍  1 👎</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Flags</div>
+                <div class="stat-value" style="color:var(--color-warning-600)">3</div>
+                <div class="stat-meta">Need human review</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Success Rate</div>
+                <div class="stat-value">37.5%</div>
+                <div class="stat-meta">Week avg 74%</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Right: Charts -->
+      <div class="obs-charts-side">
+        <div>
+          <div class="obs-chart-label">Stage Breakdown</div>
+          <div class="stage-bar">
+            <div class="stage-seg" style="background:var(--stage-ingest);   width:12.5%" title="Ingest · 1">1</div>
+            <div class="stage-seg" style="background:var(--stage-classify); width:12.5%" title="Classify · 1">1</div>
+            <div class="stage-seg" style="background:var(--stage-qc-check); width:12.5%" title="QC Check · 1">1</div>
+            <div class="stage-seg" style="background:var(--stage-code-map); width:12.5%" title="Code Map · 1">1</div>
+            <div class="stage-seg" style="background:var(--color-success-500);width:37.5%" title="Completed · 3">3</div>
+            <div class="stage-seg" style="background:var(--color-danger-500); width:12.5%" title="Failed · 1">✕</div>
+          </div>
+          <div class="stage-legend">
+            <div class="stage-legend-item"><div class="stage-ldot" style="background:var(--stage-ingest)"></div>Ingest 1</div>
+            <div class="stage-legend-item"><div class="stage-ldot" style="background:var(--stage-classify)"></div>Classify 1</div>
+            <div class="stage-legend-item"><div class="stage-ldot" style="background:var(--stage-qc-check)"></div>QC Check 1</div>
+            <div class="stage-legend-item"><div class="stage-ldot" style="background:var(--stage-code-map)"></div>Code Map 1</div>
+            <div class="stage-legend-item"><div class="stage-ldot" style="background:var(--color-success-500)"></div><span style="color:var(--color-success-600);font-weight:600">Done 3</span></div>
+            <div class="stage-legend-item"><div class="stage-ldot" style="background:var(--color-danger-500)"></div><span style="color:var(--color-danger-600);font-weight:600">Failed 1</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="obs-chart-label">Avg Stage Time · Model</div>
+          <div class="tp-list">
+            <div class="tp-row"><div class="tp-label" style="color:var(--stage-ingest)">Ingest</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-ingest);width:18%"></div></div><div class="tp-time">0:28</div><div class="tp-delta down">↓7s</div><span class="tp-model">—</span></div>
+            <div class="tp-row"><div class="tp-label" style="color:var(--stage-classify)">Classify</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-classify);width:38%"></div></div><div class="tp-time">1:02</div><div class="tp-delta flat">—</div><span class="tp-model">Haiku</span></div>
+            <div class="tp-row"><div class="tp-label" style="color:var(--stage-qc-check)">QC Check</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-qc-check);width:100%"></div></div><div class="tp-time">2:44</div><div class="tp-delta up">↑18s</div><span class="tp-model">Sonnet</span></div>
+            <div class="tp-row"><div class="tp-label" style="color:var(--stage-code-map)">Code Map</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-code-map);width:55%"></div></div><div class="tp-time">1:31</div><div class="tp-delta down">↓4s</div><span class="tp-model">Sonnet</span></div>
+            <div class="tp-row"><div class="tp-label" style="color:var(--stage-report-gen)">Report Gen</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-report-gen);width:42%"></div></div><div class="tp-time">1:08</div><div class="tp-delta flat">—</div><span class="tp-model">Sonnet</span></div>
+            <div class="tp-row"><div class="tp-label" style="color:var(--stage-uw-report)">UW Report</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-uw-report);width:68%"></div></div><div class="tp-time">1:50</div><div class="tp-delta up">↑22s</div><span class="tp-model">Sonnet</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /obs-card -->
+
+  <!-- ── KANBAN SECTION ── -->
+  <div class="kanban-section">
+
+    <!-- Toolbar -->
+    <div class="kanban-toolbar">
+      <div class="search-wrap">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <input class="input" id="searchInput" type="text" placeholder="Search loans…" oninput="renderBoard()">
+        <span class="search-shortcut">/</span>
+      </div>
+
+      <div style="width: 1px; height: 24px; background: var(--border-color); margin: 0 var(--space-2);"></div>
+
+      <!-- Sorting -->
+      <div style="display:flex; align-items:center; gap:var(--space-2);">
+        <span style="font-size:10px; color:var(--color-neutral-400); text-transform:uppercase; font-weight:600;">Sort</span>
+        <select class="filter-select" id="sortSelect" onchange="renderBoard()">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+        </select>
+      </div>
+
+      <div style="width: 1px; height: 24px; background: var(--border-color); margin: 0 var(--space-2);"></div>
+
+      <!-- Filtering -->
+      <div style="display:flex; align-items:center; gap:var(--space-2);">
+        <span style="font-size:10px; color:var(--color-neutral-400); text-transform:uppercase; font-weight:600;">Filter</span>
+        <select class="filter-select" id="dateFilter" onchange="renderBoard()">
+          <option value="">All time</option>
+          <option value="today">Today</option>
+          <option value="week">This week</option>
+        </select>
+      </div>
+
+      <div class="toolbar-spacer"></div>
+
+      <div class="kanban-summary">
+        <div class="ks-item"><span class="ks-num success" id="ks-completed">3</span> <span>Completed</span></div>
+        <div class="ks-item"><span class="ks-num info" id="ks-progress">3</span> <span>In Progress</span></div>
+      </div>
+
+      <div style="width: 1px; height: 24px; background: var(--border-color); margin: 0 var(--space-2);"></div>
+
+      <div style="display:flex; align-items:center; gap:var(--space-2);">
+        <span style="font-size:10px; color:var(--color-neutral-400); text-transform:uppercase; font-weight:600;">View</span>
+        <div class="view-toggle">
+          <button class="view-btn active" id="btn-simplified" onclick="setView('simplified')">Status</button>
+          <button class="view-btn" id="btn-detailed" onclick="setView('detailed')">Stage</button>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:var(--space-2);">
+        <span style="font-size:10px; color:var(--color-neutral-400); text-transform:uppercase; font-weight:600;">Grouping</span>
+        <div class="view-toggle">
+          <button class="view-btn active" id="btn-ungrouped" onclick="setGrouping(false)">Ungrouped</button>
+          <button class="view-btn" id="btn-grouped" onclick="setGrouping(true)">Grouped</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kanban board -->
+    <div class="kanban-board" id="kanbanBoard"></div>
+
+  </div><!-- /kanban-section -->
+</div><!-- /page-wrap -->
+
+<!-- Toast -->
+<div class="toast-wrap" id="toastWrap"><div class="toast"><span id="toastMsg"></span></div></div>
+
+<script>
+/* ── DATA ── */
+const LOANS = [
+  { id:'LN-000121', sub:'LN000121-1776867001', status:'failed',      stageIndex:0, stepsComplete:0, stage:'ingest',     vendor:'fannie',  files:['PDF','XML'],        reason:'Missing SSR FNM file',           date:'Apr 30, 9:41 AM' },
+  { id:'LN-000122', sub:'LN000122-1776867002', status:'failed',      stageIndex:1, stepsComplete:1, stage:'classify',   vendor:'freddie', files:['PDF','SSR','XML'],   reason:'LLM parse error',                date:'Apr 30, 9:39 AM' },
+  { id:'LN-000123', sub:'LN000123-1776867003', status:'blocked',     stageIndex:2, stepsComplete:2, stage:'qc-check',   vendor:'fannie',  files:['PDF','SSR','XML'],   reason:'Appraiser license unverifiable', date:'Apr 30, 9:38 AM' },
+  { id:'LN-000124', sub:'LN000124-1776867004', status:'in-progress', stageIndex:3, stepsComplete:3, stage:'code-map',   vendor:'fannie',  files:['PDF','SSR','XML'],   reason:'Flag — Sales comp date',         date:'Apr 30, 9:37 AM' },
+  { id:'LN-000125', sub:'LN000125-1776866005', status:'completed',   stageIndex:5, stepsComplete:6, stage:'',           vendor:'fannie',  files:['PDF','SSR','XML'],   reason:'1 flag — GLA discrepancy',       date:'Apr 30, 8:22 AM' },
+  { id:'LN-000126', sub:'LN000126-1776866006', status:'completed',   stageIndex:5, stepsComplete:6, stage:'',           vendor:'freddie', files:['PDF','SSR','XML'],   reason:'All clear',                      date:'Apr 30, 8:20 AM' },
+  { id:'LN-000127', sub:'LN000127-1776866007', status:'completed',   stageIndex:5, stepsComplete:6, stage:'',           vendor:'freddie', files:['PDF','SSR','XML'],   reason:'All clear',                      date:'Apr 30, 8:18 AM' },
+  { id:'LN-000128', sub:'LN000128-1776866008', status:'in-progress', stageIndex:1, stepsComplete:1, stage:'classify',   vendor:'fannie',  files:['PDF','SSR','XML'],   reason:'Low confidence on doc type',     date:'Apr 30, 8:15 AM' },
+];
+
+const STAGE_NAMES = ['Ingest','Classify','QC Checklist','Code Mapping','Report Gen','UW Report'];
+const STAGE_KEYS  = ['ingest','classify','qc-check','code-map','report-gen','uw-report'];
+const STAGE_VARS  = ['--stage-ingest','--stage-classify','--stage-qc-check','--stage-code-map','--stage-report-gen','--stage-uw-report'];
+
+let currentView = 'simplified';
+let isGrouped   = false;
+
+/* ── ICONS ── */
+function statusIcon(status) {
+  if (status === 'completed')   return `<div class="icon-complete"><svg width="8" height="8" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
+  if (status === 'in-progress') return `<div class="icon-progress"></div>`;
+  if (status === 'blocked')     return `<div class="icon-blocked"></div>`;
+  if (status === 'failed')      return `<div class="icon-todo" style="border-color:var(--color-danger-500); background:var(--color-danger-50); display:flex; align-items:center; justify-content:center;"><svg width="8" height="8" viewBox="0 0 10 10" fill="none"><path d="M2 2L8 8M8 2L2 8" stroke="var(--color-danger-500)" stroke-width="1.5" stroke-linecap="round"/></svg></div>`;
+  return `<div class="icon-todo"></div>`;
+}
+
+/* ── FILE CHIPS ── */
+function fileChips(files) {
+  return files.map(f => `<span class="file-chip ${f.toLowerCase()}">${f}</span>`).join('');
+}
+
+/* ── LOAN CARD HTML ── */
+function loanCardHTML(l) {
+  const progressBar = (l.status === 'in-progress' || l.status === 'blocked')
+    ? `<div class="loan-progress-bar-wrap">
+         <div class="loan-progress-bar-track"><div class="loan-progress-bar-fill" style="width:${Math.round((l.stepsComplete/6)*100)}%"></div></div>
+         <div class="loan-progress-steps">${l.stepsComplete} of 6 steps complete</div>
+       </div>`
+    : '';
+  const reasonText = (l.status === 'failed')
+    ? `<div style="font-size: var(--font-size-xs); color: var(--color-danger-600); margin-bottom: var(--space-2);">${l.reason}</div>`
+    : '';
+  const errorClass = (l.status === 'failed') ? ' loan-card-error' : '';
+  return `
+    <div class="loan-card${errorClass}" onclick="goLoan('${l.id}')">
+      <div class="loan-card-header">
+        <span class="loan-card-id">${l.id}</span>
+        ${statusIcon(l.status)}
+      </div>
+      <div class="loan-card-sub">${l.sub}</div>
+      <div class="loan-card-files">${fileChips(l.files)}</div>
+      ${reasonText}
+      ${progressBar}
+      <div class="loan-card-footer">
+        <div class="loan-card-date">${l.date}</div>
+      </div>
+    </div>`;
+}
+
+/* ── GROUP CARD HTML ── */
+function groupCardHTML(loans, col) {
+  if (!loans.length) return '';
+  const vendors = {};
+  let errorCount = 0;
+  loans.forEach(l => {
+    const v = l.vendor.charAt(0).toUpperCase() + l.vendor.slice(1);
+    vendors[v] = (vendors[v] || 0) + 1;
+    if (l.status === 'failed') errorCount++;
+  });
+  
+  const vendorTags = Object.entries(vendors).map(([v, c]) => `<span class="badge badge-gray">${c} ${v}</span>`).join('');
+  const errorTag = errorCount > 0 ? `<div style="margin-top:var(--space-2); font-size:10px; color:var(--color-danger-600); font-weight:600;">${errorCount} Need Attention</div>` : '';
+  
+  let msg = "On track";
+  if (col.id === 'todo') msg = "Need to plan";
+  if (col.id === 'progress') msg = "Processing";
+  if (col.id === 'done') msg = "Ready for review";
+  if (col.id === 'errors' || errorCount > 0) msg = "Action required";
+
+  return `
+    <div class="group-card" onclick="alert('Viewing grouped details for ${loans.length} loans...')">
+      <div class="group-card-title">${loans.length} Loans</div>
+      <div class="group-card-meta">${msg}</div>
+      <div class="group-card-vendors">${vendorTags}</div>
+      ${errorTag}
+    </div>
+  `;
+}
+
+/* ── SIMPLIFIED COLUMNS ── */
+const SIMPLIFIED_COLS = [
+  {
+    id: 'errors', label: 'Errors', colorClass: 'danger',
+    icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#ef4444" stroke-width="1.5"/><line x1="8" y1="5" x2="8" y2="8" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11.5" r="0.75" fill="#ef4444"/></svg>`,
+    filter: l => l.status === 'failed'
+  },
+  {
+    id: 'todo', label: 'To Do', colorClass: '',
+    icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#d4d4d4" stroke-width="1.5"/></svg>`,
+    filter: l => l.status === 'todo'
+  },
+  {
+    id: 'progress', label: 'In Progress', colorClass: 'info',
+    icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1A7 7 0 0 0 8 15 Z" fill="#3b82f6"/><circle cx="8" cy="8" r="7" stroke="#3b82f6" stroke-width="1.5"/></svg>`,
+    filter: l => ['in-progress','blocked'].includes(l.status)
+  },
+  {
+    id: 'done', label: 'Completed', colorClass: 'success',
+    icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="#22c55e"/><path d="M5 8l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    filter: l => l.status === 'completed'
+  },
+];
+
+/* ── DETAILED COLUMNS ── */
+const DETAILED_COLS = [
+  { id:'ingest',     label:'Ingest',       stageVar:'--stage-ingest',     filter: l => l.stage === 'ingest' },
+  { id:'classify',   label:'Classify',     stageVar:'--stage-classify',   filter: l => l.stage === 'classify' },
+  { id:'qc-check',   label:'QC Checklist', stageVar:'--stage-qc-check',   filter: l => l.stage === 'qc-check' },
+  { id:'code-map',   label:'Code Mapping', stageVar:'--stage-code-map',   filter: l => l.stage === 'code-map' },
+  { id:'report-gen', label:'Report Gen',   stageVar:'--stage-report-gen', filter: l => l.stage === 'report-gen' },
+  { id:'uw-report',  label:'UW Report',    stageVar:'--stage-uw-report',  filter: l => l.stage === 'uw-report' },
+  { id:'done',       label:'Done',         stageVar: null,                filter: l => l.status === 'completed' },
+];
+
+/* ── FILTER LOANS ── */
+function getFiltered() {
+  const search   = document.getElementById('searchInput').value.toLowerCase().trim();
+
+  return LOANS.filter(l => {
+    if (search && !l.id.toLowerCase().includes(search)) return false;
+    return true;
+  });
+}
+
+
+
+/* ── RENDER KANBAN COLUMN ── */
+function colHTML(col, loans, isDetailed) {
+  // Sort loans so that failed ones appear at the top of the column
+  loans.sort((a, b) => {
+    if (a.status === 'failed' && b.status !== 'failed') return -1;
+    if (b.status === 'failed' && a.status !== 'failed') return 1;
+    return 0;
+  });
+
+  const count = loans.length;
+  const stageColor = col.stageVar ? `var(${col.stageVar})` : 'var(--color-success-500)';
+
+  let header = '';
+  if (isDetailed) {
+    header = `
+      <div class="kanban-col-header">
+        <div class="col-stage-dot" style="background:${stageColor}"></div>
+        <span class="col-title">${col.label}</span>
+        <span class="col-count">${count}</span>
+      </div>`;
+  } else {
+    const countColor = col.colorClass === 'success' ? 'var(--color-success-600)' : col.colorClass === 'info' ? 'var(--color-info-500)' : 'var(--color-neutral-400)';
+    header = `
+      <div class="kanban-col-header">
+        ${col.icon}
+        <span class="col-title">${col.label}</span>
+        <span class="col-count" style="color:${countColor}">${count}</span>
+      </div>`;
+  }
+
+  let body = '';
+  if (loans.length === 0) {
+    body = `<div class="kanban-col-empty">No loans</div>`;
+  } else if (isGrouped) {
+    body = groupCardHTML(loans, col);
+  } else {
+    body = loans.map(l => loanCardHTML(l)).join('');
+  }
+
+  const colClass = col.id === 'errors' ? 'kanban-col kanban-col-error' : 'kanban-col';
+
+  return `
+    <div class="${colClass}">
+      ${header}
+      <div class="kanban-col-body">${body}</div>
+    </div>`;
+}
+
+/* ── RENDER BOARD ── */
+function renderBoard() {
+  const filtered = getFiltered();
+  const board    = document.getElementById('kanbanBoard');
+  const cols     = currentView === 'simplified' ? SIMPLIFIED_COLS : DETAILED_COLS;
+  const isDetail = currentView === 'detailed';
+
+  board.className = `kanban-board${isDetail ? ' detailed' : ''}`;
+  board.innerHTML = cols.map(col => {
+    const colLoans = filtered.filter(col.filter);
+    return colHTML(col, colLoans, isDetail);
+  }).join('');
+
+  // Update summary
+  const completed = filtered.filter(l => l.status === 'completed').length;
+  const inprog    = filtered.filter(l => ['in-progress','blocked'].includes(l.status)).length;
+  document.getElementById('ks-completed').textContent = completed;
+  document.getElementById('ks-progress').textContent  = inprog;
+}
+
+/* ── VIEW & GROUPING TOGGLES ── */
+function setView(mode) {
+  currentView = mode;
+  document.getElementById('btn-simplified').classList.toggle('active', mode === 'simplified');
+  document.getElementById('btn-detailed').classList.toggle('active', mode === 'detailed');
+  renderBoard();
+}
+
+function setGrouping(grouped) {
+  isGrouped = grouped;
+  document.getElementById('btn-ungrouped').classList.toggle('active', !grouped);
+  document.getElementById('btn-grouped').classList.toggle('active', grouped);
+  renderBoard();
+}
+
+/* ── DATE FILTER (obs card) ── */
+function setDate(btn, period) {
+  document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ── NAVIGATION ── */
+function goLoan(id) { window.location.href = 'loan-detail.html?id=' + id; }
+
+/* ── RETRY ── */
+function retryLoan(e, id) {
+  e.stopPropagation();
+  const btn = e.currentTarget;
+  btn.textContent = '…'; btn.disabled = true;
+  setTimeout(() => { btn.textContent = 'Queued'; showToast(id + ' re-queued'); }, 800);
+}
+
+/* ── TOAST ── */
+function showToast(msg) {
+  document.getElementById('toastMsg').textContent = msg;
+  const w = document.getElementById('toastWrap');
+  w.classList.add('show');
+  setTimeout(() => w.classList.remove('show'), 2800);
+}
+
+/* ── INIT ── */
+renderBoard();
+</script>
+<!-- Design Switcher -->
+<div style="position: fixed; bottom: 20px; right: 20px; background: var(--color-white); border: 1px solid var(--border-color); border-radius: 20px; padding: 4px; display: flex; gap: 4px; box-shadow: var(--shadow-md); z-index: 9999;">
+  <a href="dashboard.html" style="text-decoration: none; padding: 6px 12px; border-radius: 16px; font-size: 12px; font-weight: 600; color: var(--color-neutral-500);">V1 (Current)</a>
+  <a href="dashboard-v2.html" style="text-decoration: none; padding: 6px 12px; border-radius: 16px; font-size: 12px; font-weight: 600; color: var(--color-neutral-900); background: #f4f4f5;">V2 (Exploration)</a>
+</div>
+
+</body>
+</html>

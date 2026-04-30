@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design System — ASMobbin / Peec AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="components.css">
+  <style>
+    /* Showcase-only styles */
+    body { background: #f8f8f8; }
+
+    .ds-page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: var(--space-10) var(--space-6);
+    }
+
+    .ds-header {
+      margin-bottom: var(--space-12);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: var(--space-8);
+    }
+
+    .ds-header h1 {
+      font-size: var(--font-size-4xl);
+      font-weight: var(--font-weight-bold);
+      letter-spacing: var(--letter-spacing-tight);
+      color: var(--color-neutral-900);
+      margin-bottom: var(--space-2);
+    }
+
+    .ds-header p {
+      font-size: var(--font-size-base);
+      color: var(--color-neutral-500);
+    }
+
+    .ds-section {
+      margin-bottom: var(--space-12);
+    }
+
+    .ds-section-title {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      letter-spacing: var(--letter-spacing-wider);
+      text-transform: uppercase;
+      color: var(--color-neutral-400);
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .ds-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      align-items: flex-start;
+      margin-bottom: var(--space-6);
+    }
+
+    .ds-block {
+      background: var(--color-white);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+    }
+
+    .ds-label {
+      font-size: var(--font-size-xs);
+      color: var(--color-neutral-400);
+      margin-bottom: var(--space-2);
+    }
+
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: var(--space-3);
+    }
+
+    .swatch {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .swatch-color {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: var(--border-radius-md);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .swatch-name {
+      font-size: 10px;
+      color: var(--color-neutral-500);
+      font-family: var(--font-family-mono);
+    }
+
+    .swatch-hex {
+      font-size: 10px;
+      color: var(--color-neutral-400);
+      font-family: var(--font-family-mono);
+    }
+
+    /* Demo shell */
+    .demo-shell {
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-xl);
+      overflow: hidden;
+      height: 560px;
+      background: var(--color-white);
+    }
+  </style>
+</head>
+<body>
+<div class="ds-page">
+
+  <!-- HEADER -->
+  <div class="ds-header">
+    <h1>Design System</h1>
+    <p>ASMobbin / Peec AI — visual language, tokens, and components</p>
+  </div>
+
+  <!-- ======================================================
+       COLOR
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Color</div>
+
+    <div class="ds-block">
+      <div class="ds-label">Brand — Orange</div>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="swatch-color" style="background:#fff7ed"></div>
+          <div class="swatch-name">50</div>
+          <div class="swatch-hex">#fff7ed</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#ffedd5"></div>
+          <div class="swatch-name">100</div>
+          <div class="swatch-hex">#ffedd5</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#fdba74"></div>
+          <div class="swatch-name">300</div>
+          <div class="swatch-hex">#fdba74</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#fb923c"></div>
+          <div class="swatch-name">400</div>
+          <div class="swatch-hex">#fb923c</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#f97316"></div>
+          <div class="swatch-name">500 ★</div>
+          <div class="swatch-hex">#f97316</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-label">Neutral</div>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="swatch-color" style="background:#fafafa"></div>
+          <div class="swatch-name">50</div>
+          <div class="swatch-hex">#fafafa</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#f5f5f5"></div>
+          <div class="swatch-name">100</div>
+          <div class="swatch-hex">#f5f5f5</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#e5e5e5"></div>
+          <div class="swatch-name">200</div>
+          <div class="swatch-hex">#e5e5e5</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#d4d4d4"></div>
+          <div class="swatch-name">300</div>
+          <div class="swatch-hex">#d4d4d4</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#a3a3a3"></div>
+          <div class="swatch-name">400</div>
+          <div class="swatch-hex">#a3a3a3</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#737373"></div>
+          <div class="swatch-name">500</div>
+          <div class="swatch-hex">#737373</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#525252"></div>
+          <div class="swatch-name">600</div>
+          <div class="swatch-hex">#525252</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#404040"></div>
+          <div class="swatch-name">700</div>
+          <div class="swatch-hex">#404040</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#262626"></div>
+          <div class="swatch-name">800</div>
+          <div class="swatch-hex">#262626</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#171717"></div>
+          <div class="swatch-name">900 ★</div>
+          <div class="swatch-hex">#171717</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-label">Semantic</div>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="swatch-color" style="background:#22c55e"></div>
+          <div class="swatch-name">success</div>
+          <div class="swatch-hex">#22c55e</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#eab308"></div>
+          <div class="swatch-name">warning</div>
+          <div class="swatch-hex">#eab308</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#ef4444"></div>
+          <div class="swatch-name">danger</div>
+          <div class="swatch-hex">#ef4444</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#3b82f6"></div>
+          <div class="swatch-name">info</div>
+          <div class="swatch-hex">#3b82f6</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       TYPOGRAPHY
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Typography</div>
+    <div class="ds-block">
+      <div style="display:flex; flex-direction:column; gap:var(--space-4);">
+        <div>
+          <div class="ds-label">font-size-5xl / 700 / tight</div>
+          <div style="font-size:var(--font-size-5xl);font-weight:var(--font-weight-bold);letter-spacing:var(--letter-spacing-tight);line-height:1.1;color:var(--color-neutral-900)">Track your brand in AI</div>
+        </div>
+        <div>
+          <div class="ds-label">font-size-3xl / 700 / tight</div>
+          <div style="font-size:var(--font-size-3xl);font-weight:var(--font-weight-bold);letter-spacing:var(--letter-spacing-tight);color:var(--color-neutral-900)">50 / 50</div>
+        </div>
+        <div>
+          <div class="ds-label">font-size-2xl / 600</div>
+          <div style="font-size:var(--font-size-2xl);font-weight:var(--font-weight-semibold);color:var(--color-neutral-900)">Sign in</div>
+        </div>
+        <div>
+          <div class="ds-label">font-size-lg / 600</div>
+          <div style="font-size:var(--font-size-lg);font-weight:var(--font-weight-semibold);color:var(--color-neutral-900)">Current plan</div>
+        </div>
+        <div>
+          <div class="ds-label">font-size-base / 400 — body</div>
+          <div style="font-size:var(--font-size-base);color:var(--color-neutral-700);line-height:var(--line-height-relaxed)">Contact <strong>@ElitePromoter</strong>. Ask them for a collaboration or brand inclusion.</div>
+        </div>
+        <div>
+          <div class="ds-label">font-size-sm / 400 — secondary</div>
+          <div style="font-size:var(--font-size-sm);color:var(--color-neutral-500)">Plan limits and billing details</div>
+        </div>
+        <div>
+          <div class="ds-label">font-size-xs / 500 — label / uppercase</div>
+          <div style="font-size:var(--font-size-xs);font-weight:var(--font-weight-medium);letter-spacing:var(--letter-spacing-wider);text-transform:uppercase;color:var(--color-neutral-400)">General</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       BUTTONS
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Buttons</div>
+    <div class="ds-block">
+      <div class="ds-label">Variants</div>
+      <div class="ds-row">
+        <button class="btn btn-primary btn-md">Primary</button>
+        <button class="btn btn-brand btn-md">Brand</button>
+        <button class="btn btn-secondary btn-md">Secondary</button>
+        <button class="btn btn-ghost btn-md">Ghost</button>
+        <button class="btn btn-danger btn-md">Danger</button>
+        <button class="btn btn-primary btn-md" disabled>Disabled</button>
+      </div>
+      <div class="ds-label">Sizes</div>
+      <div class="ds-row" style="align-items:center;">
+        <button class="btn btn-secondary btn-xs">XSmall</button>
+        <button class="btn btn-secondary btn-sm">Small</button>
+        <button class="btn btn-secondary btn-md">Medium</button>
+        <button class="btn btn-secondary btn-lg">Large</button>
+      </div>
+      <div class="ds-label">Action row (Done / Decline / Todo)</div>
+      <div class="ds-row">
+        <button class="btn btn-done">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Done
+        </button>
+        <button class="btn btn-decline">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="3" y1="3" x2="9" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="9" y1="3" x2="3" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Decline
+        </button>
+        <button class="btn btn-todo">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1.5" y="1.5" width="9" height="9" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+          Todo
+        </button>
+      </div>
+      <div class="ds-label">Social / OAuth</div>
+      <div style="max-width:320px; display:flex; flex-direction:column; gap:var(--space-2);">
+        <button class="btn-social">
+          <svg class="social-icon" viewBox="0 0 18 18" fill="none">
+            <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
+            <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+            <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+            <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+          </svg>
+          Sign in with Google
+        </button>
+        <button class="btn-social">
+          <svg class="social-icon" viewBox="0 0 21 21" fill="none">
+            <rect width="10" height="10" fill="#F25022"/>
+            <rect x="11" width="10" height="10" fill="#7FBA00"/>
+            <rect y="11" width="10" height="10" fill="#00A4EF"/>
+            <rect x="11" y="11" width="10" height="10" fill="#FFB900"/>
+          </svg>
+          Sign in with Microsoft
+        </button>
+        <button class="btn-social">Sign in with SSO</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       FORM ELEMENTS
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Form Elements</div>
+    <div class="ds-block" style="max-width:480px;">
+      <div style="display:flex;flex-direction:column;gap:var(--space-4);">
+        <div class="input-group">
+          <label class="input-label">Email</label>
+          <input class="input" type="email" placeholder="my@email.com">
+          <span class="input-hint">Please use your work email address.</span>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Search</label>
+          <div class="search-input-wrap">
+            <svg class="search-input-icon" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"/><line x1="10.5" y1="10.5" x2="14" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <input class="input" type="text" placeholder="Search">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ds-block">
+      <div class="ds-label">Filter dropdowns</div>
+      <div class="ds-row">
+        <div class="select-trigger">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="4" cy="4" r="1" fill="currentColor"/><circle cx="4" cy="10" r="1" fill="currentColor"/><circle cx="10" cy="4" r="1" fill="currentColor"/><circle cx="10" cy="10" r="1" fill="currentColor"/></svg>
+          All Tags
+          <svg class="select-trigger-icon" viewBox="0 0 14 14" fill="none"><polyline points="4,5 7,8 10,5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="select-trigger">
+          All Models
+          <svg class="select-trigger-icon" viewBox="0 0 14 14" fill="none"><polyline points="4,5 7,8 10,5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="select-trigger">
+          All Countries
+          <svg class="select-trigger-icon" viewBox="0 0 14 14" fill="none"><polyline points="4,5 7,8 10,5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="select-trigger">
+          All Topics
+          <svg class="select-trigger-icon" viewBox="0 0 14 14" fill="none"><polyline points="4,5 7,8 10,5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       BADGES & TAGS
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Badges & Tags</div>
+    <div class="ds-block">
+      <div class="ds-label">Pill badges</div>
+      <div class="ds-row" style="flex-wrap:wrap;">
+        <span class="badge badge-gray">branded</span>
+        <span class="badge badge-gray">non-branded</span>
+        <span class="badge badge-red">informational</span>
+        <span class="badge badge-orange">transactional</span>
+        <span class="badge badge-yellow">UI/UX Project</span>
+        <span class="badge badge-blue">branded, informational</span>
+        <span class="badge badge-green">non-branded, informational</span>
+        <span class="badge badge-purple">US</span>
+      </div>
+      <div class="ds-label mt-4">Status badges</div>
+      <div class="ds-row">
+        <span class="status-badge status-badge-trial">Trial</span>
+        <span class="status-badge status-badge-active">Active</span>
+        <span class="status-badge status-badge-paused">Daily</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       PROGRESS
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Progress</div>
+    <div class="ds-block" style="max-width:600px;">
+      <div style="display:flex;flex-direction:column;gap:var(--space-5);">
+        <div>
+          <div class="ds-label">Default (8px)</div>
+          <div class="progress-bar-wrap"><div class="progress-bar" style="width:60%"></div></div>
+        </div>
+        <div>
+          <div class="ds-label">Full / at limit (brand orange)</div>
+          <div class="progress-bar-wrap progress-bar-thick"><div class="progress-bar progress-bar-full progress-bar-thick" style="width:100%"></div></div>
+        </div>
+        <div>
+          <div class="ds-label">Partial</div>
+          <div class="progress-bar-wrap"><div class="progress-bar" style="width:30%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       CARDS
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Cards</div>
+
+    <div class="ds-label mb-2">Action cards (UGC recommendations)</div>
+    <div class="grid-actions mb-6">
+      <div class="action-card">
+        <div class="action-card-body">
+          <div class="action-card-difficulty">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="9" width="3" height="4" rx="0.5" fill="currentColor"/><rect x="5.5" y="6" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="10" y="3" width="3" height="10" rx="0.5" fill="currentColor" opacity="0.3"/></svg>
+            Medium
+          </div>
+          Contact <a href="#">@ElitePromoter</a>. Ask them for a collaboration or brand inclusion.
+        </div>
+        <div class="action-card-footer">
+          <button class="btn btn-done">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Done
+          </button>
+          <button class="btn btn-decline">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="3" y1="3" x2="9" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="9" y1="3" x2="3" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Decline
+          </button>
+          <button class="btn btn-todo">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1.5" y="1.5" width="9" height="9" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+            Todo
+          </button>
+        </div>
+      </div>
+      <div class="action-card">
+        <div class="action-card-body">
+          <div class="action-card-difficulty">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="9" width="3" height="4" rx="0.5" fill="currentColor"/><rect x="5.5" y="6" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="10" y="3" width="3" height="10" rx="0.5" fill="currentColor" opacity="0.3"/></svg>
+            Medium
+          </div>
+          Create videos around the topic "Definitive guide succeed 2021 hidden" and mention your own brand favorably.
+        </div>
+        <div class="action-card-footer">
+          <button class="btn btn-done"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Done</button>
+          <button class="btn btn-decline"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="3" y1="3" x2="9" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="9" y1="3" x2="3" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> Decline</button>
+          <button class="btn btn-todo"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1.5" y="1.5" width="9" height="9" rx="1" stroke="currentColor" stroke-width="1.5"/></svg> Todo</button>
+        </div>
+      </div>
+      <div class="action-card">
+        <div class="action-card-body">
+          <div class="action-card-difficulty">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="9" width="3" height="4" rx="0.5" fill="currentColor"/><rect x="5.5" y="6" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="10" y="3" width="3" height="10" rx="0.5" fill="currentColor" opacity="0.3"/></svg>
+            Medium
+          </div>
+          Take inspiration from <a href="#">Adplexity Tutorial - Native Ads Spy Tool For Affiliates</a>. Can you create similar videos?
+        </div>
+        <div class="action-card-footer">
+          <button class="btn btn-done"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Done</button>
+          <button class="btn btn-decline"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="3" y1="3" x2="9" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="9" y1="3" x2="3" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> Decline</button>
+          <button class="btn btn-todo"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1.5" y="1.5" width="9" height="9" rx="1" stroke="currentColor" stroke-width="1.5"/></svg> Todo</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-label mb-2">Stat cards</div>
+    <div class="grid-2 mb-6" style="max-width:600px;">
+      <div class="stat-card">
+        <div class="stat-card-label">
+          Assigned Prompts
+          <span class="info-icon">?</span>
+        </div>
+        <div class="stat-card-value">50 <span style="font-size:var(--font-size-2xl);color:var(--color-neutral-400);font-weight:var(--font-weight-medium);">/ 50</span></div>
+        <div class="progress-bar-wrap progress-bar-thick mt-3" style="height:14px;">
+          <div class="progress-bar progress-bar-thick" style="width:100%;background:var(--color-brand-500);border-radius:var(--border-radius-sm);"></div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">
+          Active Prompts
+          <span class="info-icon">?</span>
+        </div>
+        <div class="stat-card-value">50</div>
+      </div>
+    </div>
+
+    <div class="ds-label mb-2">Quote / testimonial card</div>
+    <div class="quote-card">
+      <div class="quote-text">"Peec avoids the issues we see with other SEO/AEO platforms, where there's often an overload of features and information that isn't of primary importance. It keeps things simple – set up your prompts, see your AI visibility, and act on top citations."</div>
+      <div class="quote-author">
+        <div class="quote-avatar" style="background:var(--color-neutral-300);"></div>
+        <div>
+          <div class="quote-author-name">Ethan Smith</div>
+          <div class="quote-author-title">CEO</div>
+        </div>
+        <div class="quote-logo" style="font-weight:var(--font-weight-bold);font-size:var(--font-size-sm);letter-spacing:0.05em;">GRAPHITE</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       TABLE
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Table</div>
+    <div class="table-wrap">
+      <div class="table-toolbar">
+        <div class="search-input-wrap" style="width:200px;">
+          <svg class="search-input-icon" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"/><line x1="10.5" y1="10.5" x2="14" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <input class="input" type="text" placeholder="Search" style="height:32px;padding-top:0;padding-bottom:0;">
+        </div>
+        <button class="btn btn-primary btn-sm">+ Add new project</button>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Project <span class="sort-icon">▲▼</span></th>
+            <th>Domain <span class="sort-icon">▲▼</span></th>
+            <th>Active / Max Prompts <span class="sort-icon">▲▼</span></th>
+            <th>Models <span class="sort-icon">▲▼</span></th>
+            <th>Frequency <span class="sort-icon">▲▼</span></th>
+            <th>Created At <span class="sort-icon">▲▼</span></th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="table-cell-primary">
+                <span class="source-dot source-dot-orange" style="width:8px;height:8px;border-radius:50%;display:inline-block;"></span>
+                ASMobbin
+              </div>
+            </td>
+            <td>content-mobbin.com</td>
+            <td style="font-weight:var(--font-weight-medium);">50 / 50</td>
+            <td>
+              <div style="display:flex;gap:4px;">
+                <div style="width:20px;height:20px;border-radius:4px;background:var(--color-neutral-900);display:flex;align-items:center;justify-content:center;">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" fill="white" opacity="0.8"/></svg>
+                </div>
+                <div style="width:20px;height:20px;border-radius:4px;background:var(--color-danger-500);"></div>
+                <div style="width:20px;height:20px;border-radius:4px;background:var(--tag-blue-text);"></div>
+              </div>
+            </td>
+            <td><span class="status-badge status-badge-paused">Daily</span></td>
+            <td class="text-muted">17 hr. ago</td>
+            <td><span class="status-badge status-badge-trial">Trial</span></td>
+            <td>
+              <button class="btn btn-icon">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><polyline points="3,6 8,11 13,6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       SIDEBAR NAV LIST (isolated)
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Sidebar Navigation</div>
+    <div class="ds-block" style="max-width:220px;padding:0;overflow:hidden;border-radius:var(--border-radius-lg);">
+      <div style="background:var(--surface-sidebar);padding:var(--space-4) 0;">
+        <div style="padding: var(--space-2) var(--space-4) var(--space-4);">
+          <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="white"/><rect x="8" y="1" width="5" height="5" rx="1" fill="white"/><rect x="1" y="8" width="5" height="5" rx="1" fill="white"/><rect x="8" y="8" width="5" height="5" rx="1" fill="white" opacity="0.4"/></svg>
+            </div>
+            ASMobbin
+          </div>
+        </div>
+
+        <div class="sidebar-section-label">General</div>
+        <ul class="sidebar-nav">
+          <li class="sidebar-nav-item">
+            <svg class="sidebar-nav-item-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+            Overview
+          </li>
+          <li class="sidebar-nav-item">
+            <svg class="sidebar-nav-item-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/><line x1="5" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Prompts
+          </li>
+          <li class="sidebar-nav-item">
+            <svg class="sidebar-nav-item-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="4" x2="8" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="10.5" r="0.75" fill="currentColor"/></svg>
+            Sources
+          </li>
+        </ul>
+
+        <div class="sidebar-section-label">
+          Actions
+          <span class="sidebar-badge">Beta</span>
+        </div>
+        <ul class="sidebar-nav">
+          <li class="sidebar-nav-item active">
+            <svg class="sidebar-nav-item-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/><line x1="5" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Earned
+            <span class="sidebar-nav-meta">Off-page</span>
+          </li>
+          <li class="sidebar-nav-item">
+            <svg class="sidebar-nav-item-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+            Owned
+            <span class="sidebar-nav-meta">On-page</span>
+          </li>
+          <li class="sidebar-nav-item">
+            <svg class="sidebar-nav-item-icon" viewBox="0 0 16 16" fill="none"><polyline points="3,10 6,6 9,8 13,4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Impact
+          </li>
+        </ul>
+
+        <div class="sidebar-section-label">Project</div>
+        <ul class="sidebar-nav">
+          <li class="sidebar-nav-item">Settings</li>
+          <li class="sidebar-nav-item">
+            Brands
+            <span class="sidebar-nav-meta">10+</span>
+          </li>
+          <li class="sidebar-nav-item">Tags</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       CHANNEL LIST
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Channel / Source List</div>
+    <div class="ds-block" style="max-width:500px;padding:0;overflow:hidden;">
+      <div style="padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--border-color);">
+        <div class="section-title">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="section-title-icon"><polyline points="2,12 5,7 8,10 11,5 14,8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Top channels
+        </div>
+      </div>
+      <div style="padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--border-color);font-size:var(--font-size-xs);color:var(--color-neutral-400);display:flex;align-items:center;gap:4px;">
+        Top YouTubers
+        <span class="info-icon">?</span>
+      </div>
+      <div style="display:flex;flex-direction:column;">
+        <div class="list-item" style="position:relative;border-radius:0;">
+          <div style="position:absolute;left:0;top:0;height:100%;width:100%;background:var(--color-neutral-50);border-radius:0;z-index:0;"></div>
+          <div style="width:20px;height:20px;border-radius:4px;background:#ff0000;display:flex;align-items:center;justify-content:center;z-index:1;flex-shrink:0;">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="white"><polygon points="3,2 8,5 3,8"/></svg>
+          </div>
+          <span class="list-item-label" style="z-index:1;">@ElitePromoter</span>
+          <span class="list-item-count" style="z-index:1;">7</span>
+        </div>
+        <div class="list-item" style="position:relative;border-radius:0;border-top:1px solid var(--border-color);">
+          <div style="position:absolute;left:0;top:0;height:100%;width:30%;background:var(--color-neutral-50);border-radius:0;z-index:0;"></div>
+          <div style="width:20px;height:20px;border-radius:4px;background:#ff0000;display:flex;align-items:center;justify-content:center;z-index:1;flex-shrink:0;">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="white"><polygon points="3,2 8,5 3,8"/></svg>
+          </div>
+          <span class="list-item-label" style="z-index:1;">@MarketUnlockTV</span>
+          <span class="list-item-count" style="z-index:1;">3</span>
+        </div>
+        <div class="list-item" style="position:relative;border-radius:0;border-top:1px solid var(--border-color);">
+          <div style="width:20px;height:20px;border-radius:4px;background:#ff0000;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="white"><polygon points="3,2 8,5 3,8"/></svg>
+          </div>
+          <span class="list-item-label">@cpvlab</span>
+          <span class="list-item-count">2</span>
+        </div>
+        <div class="list-item" style="position:relative;border-radius:0;border-top:1px solid var(--border-color);">
+          <div style="width:20px;height:20px;border-radius:4px;background:#ff0000;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="white"><polygon points="3,2 8,5 3,8"/></svg>
+          </div>
+          <span class="list-item-label">@MobideaOfficial</span>
+          <span class="list-item-count">2</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       TAGS LIST
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Tags List</div>
+    <div class="table-wrap" style="max-width:600px;">
+      <table class="table">
+        <thead>
+          <tr>
+            <th style="width:100%;">Tags</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag-chip badge-gray">branded</span></td>
+            <td><button class="btn btn-secondary btn-xs">Edit</button></td>
+          </tr>
+          <tr>
+            <td><span class="tag-chip badge-gray">non-branded</span></td>
+            <td><button class="btn btn-secondary btn-xs">Edit</button></td>
+          </tr>
+          <tr>
+            <td><span class="tag-chip badge-red">informational</span></td>
+            <td><button class="btn btn-secondary btn-xs">Edit</button></td>
+          </tr>
+          <tr>
+            <td><span class="tag-chip badge-orange">transactional</span></td>
+            <td><button class="btn btn-secondary btn-xs">Edit</button></td>
+          </tr>
+          <tr>
+            <td><span class="tag-chip badge-yellow">UI/UX Project</span></td>
+            <td><button class="btn btn-secondary btn-xs">Edit</button></td>
+          </tr>
+          <tr>
+            <td><span class="tag-chip badge-blue">branded, informational</span></td>
+            <td><button class="btn btn-secondary btn-xs">Edit</button></td>
+          </tr>
+          <tr>
+            <td><span class="tag-chip badge-green">non-branded, informational</span></td>
+            <td><button class="btn btn-secondary btn-xs">Edit</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       DARK SIDEBAR
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Dark Sidebar (Sana AI)</div>
+    <div style="display:flex;gap:var(--space-6);align-items:flex-start;">
+      <!-- Dark sidebar preview -->
+      <div style="width:220px;height:460px;border-radius:var(--border-radius-lg);overflow:hidden;border:1px solid var(--border-color);flex-shrink:0;">
+        <div class="sidebar-dark" style="width:220px;height:100%;padding-top:var(--space-3);">
+          <!-- Logo -->
+          <div class="sidebar-logo" style="color:var(--color-on-dark-primary);padding:var(--space-3) var(--space-4);margin-bottom:var(--space-2);">
+            <div class="sidebar-logo-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="white"/><rect x="8" y="1" width="5" height="5" rx="1" fill="white"/><rect x="1" y="8" width="5" height="5" rx="1" fill="white" opacity="0.4"/></svg></div>
+            AS Mobbin
+          </div>
+          <!-- Nav items -->
+          <ul class="sidebar-nav">
+            <li class="sidebar-nav-item" style="color:var(--color-on-dark-secondary);padding:var(--space-2) var(--space-4);">
+              <svg class="sidebar-nav-item-icon" viewBox="0 0 16 16" fill="none"><line x1="3" y1="4" x2="13" y2="4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="3" y1="8" x2="13" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              + New chat
+            </li>
+            <li class="sidebar-nav-item" style="color:var(--color-on-dark-secondary);padding:var(--space-2) var(--space-4);">
+              <svg class="sidebar-nav-item-icon" viewBox="0 0 16 16" fill="none"><polygon points="8,2 14,8 8,14 2,8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Workflows
+            </li>
+            <li class="sidebar-nav-item" style="color:var(--color-on-dark-secondary);padding:var(--space-2) var(--space-4);">
+              <svg class="sidebar-nav-item-icon" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"/><line x1="10.5" y1="10.5" x2="14" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Search
+            </li>
+            <li class="sidebar-nav-item" style="color:var(--color-on-dark-secondary);padding:var(--space-2) var(--space-4);">
+              <svg class="sidebar-nav-item-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.5"/><line x1="5" y1="3" x2="5" y2="1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="11" y1="3" x2="11" y2="1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Meetings
+            </li>
+          </ul>
+          <div class="sidebar-section-label" style="color:var(--color-on-dark-muted);margin-top:var(--space-4);padding:0 var(--space-4) var(--space-1);">Folders</div>
+          <ul class="sidebar-nav">
+            <li class="sidebar-nav-item active" style="background:var(--surface-sidebar-dark-active);color:var(--color-on-dark-primary);padding:var(--space-2) var(--space-4);">
+              <svg class="sidebar-nav-item-icon" viewBox="0 0 16 16" fill="none"><path d="M2 4.5A1.5 1.5 0 013.5 3h3l1.5 2h4A1.5 1.5 0 0113.5 6.5v6A1.5 1.5 0 0112 14H3.5A1.5 1.5 0 012 12.5v-8z" stroke="currentColor" stroke-width="1.5"/></svg>
+              AS Mobbin
+            </li>
+            <li class="sidebar-nav-item" style="color:var(--color-on-dark-secondary);padding:var(--space-2) var(--space-4);">
+              <svg class="sidebar-nav-item-icon" viewBox="0 0 16 16" fill="none"><path d="M2 4.5A1.5 1.5 0 013.5 3h3l1.5 2h4A1.5 1.5 0 0113.5 6.5v6A1.5 1.5 0 0112 14H3.5A1.5 1.5 0 012 12.5v-8z" stroke="currentColor" stroke-width="1.5"/></svg>
+              Demo folder
+            </li>
+          </ul>
+          <!-- Footer upgrade -->
+          <div class="sidebar-dark-footer">
+            <div class="sidebar-dark-upgrade">
+              <div class="sidebar-dark-upgrade-title">7 meetings and 20 messages left this month</div>
+              <div class="sidebar-dark-upgrade-sub">Upgrade for unlimited use</div>
+              <button class="btn-upgrade">Upgrade</button>
+            </div>
+            <div class="sidebar-dark-branding">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="rgba(255,255,255,0.4)"/><rect x="8" y="1" width="5" height="5" rx="1" fill="rgba(255,255,255,0.4)"/><rect x="1" y="8" width="5" height="5" rx="1" fill="rgba(255,255,255,0.4)"/></svg>
+              Sana AI
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Gradient avatars -->
+      <div class="ds-block" style="flex:1;">
+        <div class="ds-label">Gradient AI avatars</div>
+        <div class="ds-row" style="align-items:center;">
+          <div class="avatar-ai avatar-ai-xl"><svg width="36" height="36" viewBox="0 0 36 36" fill="none"><rect x="4" y="4" width="12" height="12" rx="2" fill="white"/><rect x="20" y="4" width="12" height="12" rx="2" fill="white"/><rect x="4" y="20" width="12" height="12" rx="2" fill="white" opacity="0.5"/></svg></div>
+          <div class="avatar-ai avatar-ai-lg"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3" y="3" width="9" height="9" rx="1.5" fill="white"/><rect x="16" y="3" width="9" height="9" rx="1.5" fill="white"/><rect x="3" y="16" width="9" height="9" rx="1.5" fill="white" opacity="0.5"/></svg></div>
+          <div class="avatar-ai avatar-ai-md"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="1" fill="white"/><rect x="11" y="2" width="7" height="7" rx="1" fill="white"/><rect x="2" y="11" width="7" height="7" rx="1" fill="white" opacity="0.5"/></svg></div>
+          <div class="avatar-ai avatar-ai-sm"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="4" height="4" rx="0.5" fill="white"/><rect x="7" y="1" width="4" height="4" rx="0.5" fill="white"/><rect x="1" y="7" width="4" height="4" rx="0.5" fill="white" opacity="0.5"/></svg></div>
+        </div>
+        <div class="ds-label" style="margin-top:var(--space-4);">Letter avatars</div>
+        <div class="ds-row">
+          <div class="avatar-letter" style="background:#8b5cf6;">R</div>
+          <div class="avatar-letter" style="background:var(--color-neutral-900);">S</div>
+          <div class="avatar-letter" style="background:#06b6d4;">A</div>
+          <div class="avatar-letter" style="background:#f97316;">P</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       WORKFLOW CARD
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Workflow Card (Sana AI)</div>
+    <div class="workflow-card" style="max-width:720px;">
+      <div class="workflow-card-hero">
+        <div class="avatar-ai avatar-ai-xl"><svg width="36" height="36" viewBox="0 0 36 36" fill="none"><rect x="4" y="4" width="12" height="12" rx="2" fill="white"/><rect x="20" y="4" width="12" height="12" rx="2" fill="white"/><rect x="4" y="20" width="12" height="12" rx="2" fill="white" opacity="0.5"/></svg></div>
+        <div class="workflow-card-meta">
+          <div class="workflow-card-title">Leverage consumer insights</div>
+          <div class="workflow-card-subtitle">customer data to understand what people want and improve products and services</div>
+          <div class="workflow-card-actions">
+            <button class="btn-run">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polygon points="2,1 11,6 2,11" fill="white"/></svg>
+              Run now
+            </button>
+            <button class="btn btn-secondary btn-sm">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 4l2 2-2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Edit info
+            </button>
+            <button class="btn-like">
+              <span class="btn-like-heart">♥</span> 1
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="workflow-card-info">
+        <div class="workflow-card-info-item">
+          <div class="workflow-card-info-label">Created by</div>
+          <div class="workflow-card-info-value">
+            <div class="avatar-ai avatar-ai-sm"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="1" y="1" width="3" height="3" rx="0.5" fill="white"/><rect x="6" y="1" width="3" height="3" rx="0.5" fill="white"/><rect x="1" y="6" width="3" height="3" rx="0.5" fill="white" opacity="0.5"/></svg></div>
+            Sana AI
+          </div>
+        </div>
+        <div class="workflow-card-info-item">
+          <div class="workflow-card-info-label">Category</div>
+          <div class="workflow-card-info-value">Marketing</div>
+        </div>
+        <div class="workflow-card-info-item">
+          <div class="workflow-card-info-label">Used</div>
+          <div class="workflow-card-info-value">0 times</div>
+        </div>
+      </div>
+
+      <div class="workflow-steps-label">Process</div>
+      <div class="workflow-step">
+        <div class="workflow-step-num">1</div>
+        <div class="workflow-step-content">
+          <div class="workflow-step-title">How can we use data analytics to predict customer needs and proactively address them, enhancing customer satisfaction?</div>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-step-num">2</div>
+        <div class="workflow-step-content">
+          <div class="workflow-step-title">Identify top friction points and trends</div>
+          <div class="workflow-step-desc">Analyze the uploaded customer behavior logs, support tickets, and purchase history. Identify the top 3 recurring friction points and 2 emerging positive trends.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       TAB NAVIGATION
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Tab Navigation</div>
+    <div class="ds-block" style="padding:0;">
+      <div class="tab-bar">
+        <div class="tab active">Active</div>
+        <div class="tab">Suggested <span class="tab-count">+30</span></div>
+        <div class="tab">Inactive</div>
+      </div>
+      <div style="padding:var(--space-4) var(--space-5);">
+        <div class="metrics-toolbar" style="padding:0;border:none;margin-bottom:var(--space-3);">
+          <div class="metrics-toolbar-item">Visibility <strong>54%</strong></div>
+          <div class="metrics-toolbar-sep"></div>
+          <div class="metrics-toolbar-item">Sentiment <span class="sentiment-dot"></span><strong>62</strong></div>
+          <div class="metrics-toolbar-sep"></div>
+          <div class="metrics-toolbar-item">Position <strong>#1.0</strong></div>
+        </div>
+        <div style="font-size:var(--font-size-sm);color:var(--color-neutral-500);">Table content appears here…</div>
+      </div>
+    </div>
+
+    <!-- Domains / URLs tabs variant -->
+    <div class="ds-block" style="padding:0;margin-top:var(--space-4);">
+      <div class="tab-bar">
+        <div class="tab active">Domains</div>
+        <div class="tab">URLs</div>
+      </div>
+      <div style="padding:var(--space-4) var(--space-5);font-size:var(--font-size-sm);color:var(--color-neutral-500);">Source usage chart appears here…</div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       DOMAIN TYPE BADGES
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Domain Type Badges (Peec AI Analytics)</div>
+    <div class="ds-block">
+      <div class="ds-label">All domain types</div>
+      <div class="ds-row" style="flex-wrap:wrap;">
+        <span class="domain-badge domain-badge-ugc">UGC</span>
+        <span class="domain-badge domain-badge-reference">Reference</span>
+        <span class="domain-badge domain-badge-competitor">Competitor</span>
+        <span class="domain-badge domain-badge-institutional">Institutional</span>
+        <span class="domain-badge domain-badge-other">Other</span>
+        <span class="domain-badge domain-badge-corporate">Corporate</span>
+        <span class="domain-badge domain-badge-editorial">Editorial</span>
+        <span class="domain-badge domain-badge-you">You</span>
+      </div>
+      <div class="ds-label" style="margin-top:var(--space-4);">In a table row context</div>
+      <div class="table-wrap" style="max-width:640px;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Source</th>
+              <th>Domain Type</th>
+              <th style="text-align:right;">Used</th>
+              <th style="text-align:right;">Avg. Citations</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-muted">1</td>
+              <td class="table-cell-primary" style="gap:var(--space-2);">linkedin.com</td>
+              <td><span class="domain-badge domain-badge-ugc">UGC</span></td>
+              <td style="text-align:right;">75%</td>
+              <td style="text-align:right;">0.4</td>
+            </tr>
+            <tr>
+              <td class="text-muted">2</td>
+              <td class="table-cell-primary">youtube.com</td>
+              <td><span class="domain-badge domain-badge-ugc">UGC</span></td>
+              <td style="text-align:right;">57%</td>
+              <td style="text-align:right;">0.4</td>
+            </tr>
+            <tr>
+              <td class="text-muted">3</td>
+              <td class="table-cell-primary">reddit.com</td>
+              <td><span class="domain-badge domain-badge-ugc">UGC</span></td>
+              <td style="text-align:right;">50%</td>
+              <td style="text-align:right;">0.2</td>
+            </tr>
+            <tr>
+              <td class="text-muted">4</td>
+              <td class="table-cell-primary">mobbin.com</td>
+              <td><span class="domain-badge domain-badge-reference">Reference</span></td>
+              <td style="text-align:right;">37%</td>
+              <td style="text-align:right;">1.8</td>
+            </tr>
+            <tr>
+              <td class="text-muted">5</td>
+              <td class="table-cell-primary">adplexity.com</td>
+              <td><span class="domain-badge domain-badge-competitor">Competitor</span></td>
+              <td style="text-align:right;">27%</td>
+              <td style="text-align:right;">1.1</td>
+            </tr>
+            <tr>
+              <td class="text-muted">6</td>
+              <td class="table-cell-primary">designcode.io</td>
+              <td><span class="domain-badge domain-badge-institutional">Institutional</span></td>
+              <td style="text-align:right;">25%</td>
+              <td style="text-align:right;">1.1</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       CITATION CHIPS & DOCUMENT EDITOR
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Citation Chips (Document Editor)</div>
+    <div class="ds-block" style="max-width:680px;padding:0;overflow:hidden;">
+      <!-- Toolbar -->
+      <div class="doc-toolbar">
+        <div style="display:flex;flex-direction:column;">
+          <div class="doc-toolbar-title">Follow up project AS Mobbin</div>
+          <div class="doc-toolbar-sub">Updated today at 13:18</div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:var(--space-2);">
+          <button class="btn btn-secondary btn-sm">Open in Google Docs</button>
+          <button class="btn btn-primary btn-sm">Share</button>
+        </div>
+      </div>
+      <!-- Body excerpt -->
+      <div class="doc-body" style="padding:var(--space-6) var(--space-8);">
+        <p>
+          Thanks again for the productive kickoff session for Project AS Mobbin. As a quick recap, we aligned on the three core pillars for the initiative: cross-platform migration, real-time analytics integration, and a full visual redesign aligned with the 2026 branding guidelines, with a target of increasing DAU by 20%. <span class="citation-chip">MINUTES OF MEETING PROJECT AS …</span>
+        </p>
+        <p>
+          On the technical side, we confirmed the move toward a serverless architecture with a centralized API gateway, micro-frontend architecture, NoSQL for behavioral data, and CI/CD pipelines, with feature flags as a key mechanism for controlled UI rollouts and testing.
+          <span class="citation-chip">MINUTES OF MEETING PROJECT AS …</span>
+          <span class="citation-chip">MINUTES OF MEETING PROJECT AS …</span>
+          <span class="citation-chip">MINUTES OF MEETING PROJECT AS …</span>
+        </p>
+      </div>
+    </div>
+    <div class="ds-label" style="margin-top:var(--space-4);">Chip variants</div>
+    <div class="ds-row" style="flex-wrap:wrap;">
+      <span class="citation-chip">MINUTES OF MEETING PROJECT AS …</span>
+      <span class="citation-chip">Source document · page 3</span>
+      <span class="citation-chip">Annual Report 2025</span>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       TAG POPUP
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Tag Popup / Popover</div>
+    <div class="ds-block" style="max-width:320px;padding:0;overflow:hidden;">
+      <div class="tag-popup" style="position:relative;box-shadow:none;border:none;">
+        <div class="tag-popup-section">
+          <div class="tag-popup-tags">
+            <span class="badge badge-red">informational</span>
+            <span class="badge badge-purple">US</span>
+            <span class="badge badge-purple">design</span>
+          </div>
+        </div>
+        <div class="tag-popup-divider"></div>
+        <div class="tag-popup-section">
+          <div class="tag-popup-section-label">Assignable tags</div>
+          <div class="tag-popup-tags">
+            <span class="badge badge-dark">branded</span>
+            <span class="badge badge-dark">non-branded</span>
+            <span class="badge badge-red">transactional</span>
+            <span class="badge badge-gray">-</span>
+            <span class="badge badge-gray">0.00</span>
+          </div>
+        </div>
+        <div class="tag-popup-divider"></div>
+        <input class="tag-popup-input" type="text" placeholder="Create or find a tag">
+        <div class="tag-popup-hint">New tag(s) will be added on top of existing ones</div>
+      </div>
+    </div>
+    <div class="ds-label" style="margin-top:var(--space-4);">Dark tag badges</div>
+    <div class="ds-row">
+      <span class="badge badge-dark">branded</span>
+      <span class="badge badge-dark">non-branded</span>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       SELECTION BAR
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Selection Bar (bulk actions)</div>
+    <div style="border:1px solid var(--border-color);border-radius:var(--border-radius-lg);overflow:hidden;">
+      <div style="background:var(--color-white);padding:var(--space-3) var(--space-5);display:flex;align-items:center;gap:var(--space-4);border-bottom:1px solid var(--border-color);box-shadow:0 -4px 12px rgba(0,0,0,0.06);">
+        <div class="selection-bar-count">4 Prompts selected</div>
+        <div style="margin-left:auto;display:flex;gap:var(--space-2);">
+          <button class="btn btn-secondary btn-sm">Archive</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       DEPLOYMENT CARD
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Deployment / Status Steps</div>
+    <div style="max-width:480px;">
+      <!-- Dot pattern header -->
+      <div class="dot-pattern-bg" style="border-radius:var(--border-radius-xl) var(--border-radius-xl) 0 0;border:1px solid var(--border-color);border-bottom:none;padding:var(--space-6);">
+      </div>
+      <!-- Card -->
+      <div class="deploy-card" style="border-radius:0 0 var(--border-radius-xl) var(--border-radius-xl);">
+        <div class="deploy-card-header">
+          <div class="avatar-letter" style="background:#8b5cf6;">R</div>
+          <div class="deploy-card-title">
+            <strong>react-starter-kit</strong>
+            <span class="deploy-branch"> · main</span>
+            &nbsp;is deploying
+          </div>
+        </div>
+        <div class="deploy-steps">
+          <div class="deploy-step">
+            <div class="deploy-step-icon"></div>
+            <div class="deploy-step-label pending">Creating resources</div>
+          </div>
+          <div class="deploy-step">
+            <div class="deploy-step-icon"></div>
+            <div class="deploy-step-label pending">Build logs</div>
+          </div>
+          <div class="deploy-step">
+            <div class="deploy-step-icon"></div>
+            <div class="deploy-step-label pending">Deployment logs</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       SIGN-IN PANEL
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Auth Panel</div>
+    <div class="auth-panel" style="box-shadow:var(--shadow-lg);">
+      <div class="auth-logo" style="display:flex;align-items:center;justify-content:center;">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="1" fill="white"/><rect x="11" y="2" width="7" height="7" rx="1" fill="white"/><rect x="2" y="11" width="7" height="7" rx="1" fill="white" opacity="0.5"/></svg>
+      </div>
+      <div style="text-align:center;">
+        <div class="auth-title">Sign in</div>
+        <div class="auth-subtitle mt-1">Sign in using Google or Microsoft.</div>
+      </div>
+      <div style="width:100%;display:flex;flex-direction:column;gap:var(--space-2);">
+        <button class="btn-social">
+          <svg class="social-icon" viewBox="0 0 18 18" fill="none">
+            <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
+            <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+            <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+            <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+          </svg>
+          Sign in with Google
+        </button>
+        <button class="btn-social">
+          <svg class="social-icon" viewBox="0 0 21 21" fill="none"><rect width="10" height="10" fill="#F25022"/><rect x="11" width="10" height="10" fill="#7FBA00"/><rect y="11" width="10" height="10" fill="#00A4EF"/><rect x="11" y="11" width="10" height="10" fill="#FFB900"/></svg>
+          Sign in with Microsoft
+        </button>
+        <button class="btn-social">Sign in with SSO</button>
+      </div>
+      <div class="auth-divider">Or continue with</div>
+      <div class="input-group" style="width:100%;">
+        <label class="input-label">Email</label>
+        <input class="input" type="email" placeholder="my@email.com">
+        <span class="input-hint">Please use your work email address.</span>
+      </div>
+      <button class="btn btn-primary btn-block btn-md" style="width:100%;">✦ Send Magic Link</button>
+      <div class="auth-footer">Don't have an account? <a href="#">Sign up</a></div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       TOAST
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Notifications / Toast</div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-3);max-width:360px;">
+      <div class="toast-branded card" style="display:flex;gap:var(--space-3);padding:var(--space-4);">
+        <div style="font-size:20px;">🔥</div>
+        <div>
+          <div class="toast-title font-semibold">All set! Your brand tracking is ready.</div>
+          <div style="font-size:var(--font-size-xs);color:var(--color-neutral-500);margin-top:4px;line-height:var(--line-height-relaxed);">You can now track how your brand shows up across AI search engines.</div>
+          <button class="btn btn-primary btn-sm mt-3" style="width:100%;">Explore brand visibility</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       SPACING SCALE
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Spacing Scale (4px grid)</div>
+    <div class="ds-block">
+      <div style="display:flex;flex-direction:column;gap:var(--space-3);">
+        <div style="display:flex;align-items:center;gap:var(--space-4);" class="text-sm text-muted">
+          <span style="width:60px;">--space-1</span>
+          <div style="height:12px;width:4px;background:var(--color-brand-500);border-radius:2px;"></div>
+          <span>4px</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-4);" class="text-sm text-muted">
+          <span style="width:60px;">--space-2</span>
+          <div style="height:12px;width:8px;background:var(--color-brand-500);border-radius:2px;"></div>
+          <span>8px</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-4);" class="text-sm text-muted">
+          <span style="width:60px;">--space-3</span>
+          <div style="height:12px;width:12px;background:var(--color-brand-500);border-radius:2px;"></div>
+          <span>12px</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-4);" class="text-sm text-muted">
+          <span style="width:60px;">--space-4</span>
+          <div style="height:12px;width:16px;background:var(--color-brand-500);border-radius:2px;"></div>
+          <span>16px</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-4);" class="text-sm text-muted">
+          <span style="width:60px;">--space-6</span>
+          <div style="height:12px;width:24px;background:var(--color-brand-500);border-radius:2px;"></div>
+          <span>24px</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-4);" class="text-sm text-muted">
+          <span style="width:60px;">--space-8</span>
+          <div style="height:12px;width:32px;background:var(--color-brand-500);border-radius:2px;"></div>
+          <span>32px</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-4);" class="text-sm text-muted">
+          <span style="width:60px;">--space-12</span>
+          <div style="height:12px;width:48px;background:var(--color-brand-500);border-radius:2px;"></div>
+          <span>48px</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-4);" class="text-sm text-muted">
+          <span style="width:60px;">--space-16</span>
+          <div style="height:12px;width:64px;background:var(--color-brand-500);border-radius:2px;"></div>
+          <span>64px</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       SHADOW SCALE
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Elevation / Shadows</div>
+    <div class="ds-row">
+      <div style="background:white;border-radius:var(--border-radius-md);padding:var(--space-5);box-shadow:var(--shadow-xs);min-width:120px;text-align:center;" class="text-sm text-muted">xs</div>
+      <div style="background:white;border-radius:var(--border-radius-md);padding:var(--space-5);box-shadow:var(--shadow-sm);min-width:120px;text-align:center;" class="text-sm text-muted">sm</div>
+      <div style="background:white;border-radius:var(--border-radius-md);padding:var(--space-5);box-shadow:var(--shadow-md);min-width:120px;text-align:center;" class="text-sm text-muted">md</div>
+      <div style="background:white;border-radius:var(--border-radius-md);padding:var(--space-5);box-shadow:var(--shadow-lg);min-width:120px;text-align:center;" class="text-sm text-muted">lg</div>
+      <div style="background:white;border-radius:var(--border-radius-md);padding:var(--space-5);box-shadow:var(--shadow-xl);min-width:120px;text-align:center;" class="text-sm text-muted">xl</div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       FULL APP SHELL DEMO
+  ====================================================== -->
+  <div class="ds-section">
+    <div class="ds-section-title">Full App Shell (Actions / UGC view)</div>
+    <div class="demo-shell">
+      <div class="app-shell" style="height:100%;">
+        <!-- Sidebar -->
+        <div class="sidebar" style="width:180px;">
+          <div style="padding:var(--space-3) var(--space-3) var(--space-2);">
+            <div class="sidebar-logo" style="padding:var(--space-2) var(--space-1);">
+              <div class="sidebar-logo-icon" style="width:24px;height:24px;">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="4" height="4" rx="0.5" fill="white"/><rect x="7" y="1" width="4" height="4" rx="0.5" fill="white"/><rect x="1" y="7" width="4" height="4" rx="0.5" fill="white" opacity="0.5"/></svg>
+              </div>
+              <span style="font-size:13px;">ASMobbin</span>
+            </div>
+          </div>
+          <div class="sidebar-section-label" style="font-size:10px;">General</div>
+          <ul class="sidebar-nav">
+            <li class="sidebar-nav-item" style="font-size:13px;padding:6px 12px;">Overview</li>
+            <li class="sidebar-nav-item" style="font-size:13px;padding:6px 12px;">Prompts</li>
+            <li class="sidebar-nav-item" style="font-size:13px;padding:6px 12px;">Sources</li>
+          </ul>
+          <div class="sidebar-section-label" style="font-size:10px;">Actions <span class="sidebar-badge" style="font-size:9px;">Beta</span></div>
+          <ul class="sidebar-nav">
+            <li class="sidebar-nav-item active" style="font-size:13px;padding:6px 12px;">Earned <span class="sidebar-nav-meta" style="font-size:10px;">Off-page</span></li>
+            <li class="sidebar-nav-item" style="font-size:13px;padding:6px 12px;">Owned <span class="sidebar-nav-meta" style="font-size:10px;">On-page</span></li>
+            <li class="sidebar-nav-item" style="font-size:13px;padding:6px 12px;">Impact</li>
+          </ul>
+          <div class="sidebar-section-label" style="font-size:10px;">Project</div>
+          <ul class="sidebar-nav">
+            <li class="sidebar-nav-item" style="font-size:13px;padding:6px 12px;">Settings</li>
+            <li class="sidebar-nav-item" style="font-size:13px;padding:6px 12px;">Brands <span class="sidebar-nav-meta" style="font-size:10px;">10+</span></li>
+            <li class="sidebar-nav-item" style="font-size:13px;padding:6px 12px;">Tags</li>
+          </ul>
+        </div>
+
+        <!-- Main -->
+        <div class="main">
+          <!-- Topbar -->
+          <div class="topbar">
+            <div class="topbar-breadcrumb" style="font-size:13px;">
+              <span>Actions</span>
+              <span class="topbar-breadcrumb-sep">/</span>
+              <span>UGC</span>
+              <span class="topbar-breadcrumb-sep">/</span>
+              <span class="topbar-breadcrumb-current">youtube.com</span>
+            </div>
+            <div class="topbar-actions">
+              <span class="trial-badge" style="font-size:12px;">You're on trial</span>
+            </div>
+          </div>
+
+          <!-- Filter bar -->
+          <div class="filter-bar" style="padding:8px 16px;">
+            <div class="select-trigger" style="font-size:12px;padding:4px 10px;">All Tags <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="2,4 5,7 8,4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            <div class="select-trigger" style="font-size:12px;padding:4px 10px;">All Models <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="2,4 5,7 8,4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            <div class="select-trigger" style="font-size:12px;padding:4px 10px;">All Countries <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="2,4 5,7 8,4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            <div class="select-trigger" style="font-size:12px;padding:4px 10px;">All Topics <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="2,4 5,7 8,4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          </div>
+
+          <!-- Content -->
+          <div class="content" style="padding:16px;display:flex;gap:16px;">
+            <!-- Left col -->
+            <div style="width:160px;flex-shrink:0;border-right:1px solid var(--border-color);padding-right:16px;">
+              <div style="font-size:11px;color:var(--color-neutral-400);margin-bottom:8px;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;">UGC</div>
+              <div style="display:flex;flex-direction:column;gap:2px;">
+                <div style="display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:4px;background:var(--color-neutral-100);font-size:12px;font-weight:500;">
+                  <div class="source-dot source-dot-orange" style="width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0;"></div>
+                  youtube.com
+                  <span style="margin-left:auto;width:16px;height:16px;border-radius:3px;background:#ff0000;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="white"><polygon points="2,1 7,4 2,7"/></svg>
+                  </span>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:4px;font-size:12px;color:var(--color-neutral-600);">
+                  <div class="source-dot" style="width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0;background:var(--color-danger-500);"></div>
+                  reddit.com
+                  <span style="margin-left:auto;width:16px;height:16px;border-radius:3px;background:#ff4500;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="white"><circle cx="4" cy="4" r="3"/></svg>
+                  </span>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:4px;font-size:12px;color:var(--color-neutral-600);">
+                  <div class="source-dot" style="width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0;background:var(--color-brand-500);"></div>
+                  g2.com
+                  <span style="margin-left:auto;width:16px;height:16px;border-radius:3px;background:#ff492c;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="white"><text x="1" y="7" font-size="7" font-weight="bold">g</text></svg>
+                  </span>
+                </div>
+              </div>
+              <div style="font-size:11px;color:var(--color-neutral-400);margin:12px 0 8px;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;">Editorial</div>
+              <div style="display:flex;flex-direction:column;gap:2px;">
+                <div style="padding:4px 6px;font-size:12px;color:var(--color-neutral-600);">Profile</div>
+                <div style="padding:4px 6px;font-size:12px;color:var(--color-neutral-600);">Comparison</div>
+                <div style="padding:4px 6px;font-size:12px;color:var(--color-neutral-600);">Listicle</div>
+              </div>
+            </div>
+
+            <!-- Right col -->
+            <div style="flex:1;overflow:hidden;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="width:20px;height:20px;border-radius:4px;background:#ff0000;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="white"><polygon points="2,1 8,5 2,9"/></svg>
+                  </div>
+                  <span style="font-size:14px;font-weight:600;">youtube.com</span>
+                </div>
+                <button class="btn btn-secondary btn-xs">About youtube.com</button>
+              </div>
+              <!-- Mini action cards -->
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;">
+                <div class="action-card" style="border-radius:8px;">
+                  <div class="action-card-body" style="padding:10px;font-size:12px;">
+                    <div style="font-size:10px;color:var(--color-neutral-400);margin-bottom:6px;display:flex;align-items:center;gap:4px;">
+                      <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><rect x="1" y="9" width="3" height="4" rx="0.5" fill="currentColor"/><rect x="5.5" y="6" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="10" y="3" width="3" height="10" rx="0.5" fill="currentColor" opacity="0.3"/></svg>
+                      Medium
+                    </div>
+                    Contact <strong>@ElitePromoter</strong>. Ask them for a collaboration.
+                  </div>
+                  <div style="padding:6px 10px;border-top:1px solid var(--border-color);display:flex;gap:6px;">
+                    <button class="btn btn-done" style="font-size:10px;padding:2px 6px;">✓ Done</button>
+                    <button class="btn btn-decline" style="font-size:10px;padding:2px 6px;">✕ Decline</button>
+                    <button class="btn btn-todo" style="font-size:10px;padding:2px 6px;">□ Todo</button>
+                  </div>
+                </div>
+                <div class="action-card" style="border-radius:8px;">
+                  <div class="action-card-body" style="padding:10px;font-size:12px;">
+                    <div style="font-size:10px;color:var(--color-neutral-400);margin-bottom:6px;display:flex;align-items:center;gap:4px;">
+                      <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><rect x="1" y="9" width="3" height="4" rx="0.5" fill="currentColor"/><rect x="5.5" y="6" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="10" y="3" width="3" height="10" rx="0.5" fill="currentColor" opacity="0.3"/></svg>
+                      Medium
+                    </div>
+                    Create videos around the topic and mention your brand.
+                  </div>
+                  <div style="padding:6px 10px;border-top:1px solid var(--border-color);display:flex;gap:6px;">
+                    <button class="btn btn-done" style="font-size:10px;padding:2px 6px;">✓ Done</button>
+                    <button class="btn btn-decline" style="font-size:10px;padding:2px 6px;">✕ Decline</button>
+                    <button class="btn btn-todo" style="font-size:10px;padding:2px 6px;">□ Todo</button>
+                  </div>
+                </div>
+                <div class="action-card" style="border-radius:8px;">
+                  <div class="action-card-body" style="padding:10px;font-size:12px;">
+                    <div style="font-size:10px;color:var(--color-neutral-400);margin-bottom:6px;display:flex;align-items:center;gap:4px;">
+                      <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><rect x="1" y="9" width="3" height="4" rx="0.5" fill="currentColor"/><rect x="5.5" y="6" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="10" y="3" width="3" height="10" rx="0.5" fill="currentColor" opacity="0.3"/></svg>
+                      Medium
+                    </div>
+                    Take inspiration from similar native ads tutorials.
+                  </div>
+                  <div style="padding:6px 10px;border-top:1px solid var(--border-color);display:flex;gap:6px;">
+                    <button class="btn btn-done" style="font-size:10px;padding:2px 6px;">✓ Done</button>
+                    <button class="btn btn-decline" style="font-size:10px;padding:2px 6px;">✕ Decline</button>
+                    <button class="btn btn-todo" style="font-size:10px;padding:2px 6px;">□ Todo</button>
+                  </div>
+                </div>
+              </div>
+              <!-- Top channels mini -->
+              <div class="card" style="border-radius:8px;padding:0;overflow:hidden;">
+                <div style="padding:8px 12px;border-bottom:1px solid var(--border-color);font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="1,9 3.5,5 6,7 8.5,3.5 11,6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Top channels
+                </div>
+                <div style="padding:6px 12px;border-bottom:1px solid var(--border-color);font-size:10px;color:var(--color-neutral-400);">Top YouTubers</div>
+                <div>
+                  <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--color-neutral-50);">
+                    <div style="width:14px;height:14px;border-radius:3px;background:#ff0000;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="7" height="7" viewBox="0 0 7 7" fill="white"><polygon points="1.5,1 5.5,3.5 1.5,6"/></svg></div>
+                    <span style="font-size:11px;flex:1;">@ElitePromoter</span>
+                    <span style="font-size:11px;font-weight:600;color:var(--color-neutral-500);">7</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;border-top:1px solid var(--border-color);">
+                    <div style="width:14px;height:14px;border-radius:3px;background:#ff0000;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="7" height="7" viewBox="0 0 7 7" fill="white"><polygon points="1.5,1 5.5,3.5 1.5,6"/></svg></div>
+                    <span style="font-size:11px;flex:1;">@MarketUnlockTV</span>
+                    <span style="font-size:11px;font-weight:600;color:var(--color-neutral-500);">3</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

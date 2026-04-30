@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loan Detail — QC Observer</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="components.css">
+<style>
+/* ── SHELL ── */
+html, body { height: 100%; }
+body {
+  background: var(--color-neutral-100);
+  min-width: 1024px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--color-neutral-900);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  position: sticky; top: 0; z-index: var(--z-sticky);
+  height: var(--topbar-height); flex-shrink: 0;
+  padding: 0 var(--space-6); gap: var(--space-4);
+  background: var(--color-white);
+  border-bottom: 1px solid var(--border-color);
+  display: flex; align-items: center;
+}
+.topbar-logo { display: flex; align-items: center; gap: var(--space-2); font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); text-decoration: none; }
+.topbar-logo-icon { width: 26px; height: 26px; border-radius: var(--border-radius-md); background: var(--color-neutral-900); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.topbar-divider { width: 1px; height: 16px; background: var(--border-color); flex-shrink: 0; }
+.pipeline-status { display: flex; align-items: center; gap: var(--space-2); font-size: var(--font-size-sm); color: var(--color-neutral-500); }
+.pipeline-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-success-500); animation: blink 2.2s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: var(--space-5); }
+.topbar-stat { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+.topbar-stat-label { font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); }
+.topbar-stat-value { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+.topbar-stat-value.success { color: var(--color-success-600); }
+.topbar-stat-value.danger  { color: var(--color-danger-600); }
+.user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--color-brand-100); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: var(--font-weight-semibold); color: var(--color-brand-500); }
+
+/* ── DEMO BAR ── */
+.demo-bar {
+  background: var(--color-neutral-950);
+  padding: var(--space-2) var(--space-8);
+  display: flex; align-items: center; gap: var(--space-2);
+  flex-shrink: 0;
+}
+.demo-label { font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); color: var(--color-neutral-500); letter-spacing: var(--letter-spacing-wider); text-transform: uppercase; margin-right: var(--space-1); }
+.demo-btn { padding: 3px 12px; border-radius: var(--border-radius-pill); border: 1px solid var(--color-neutral-700); background: transparent; color: var(--color-neutral-500); font-size: var(--font-size-xs); font-family: var(--font-family-base); font-weight: var(--font-weight-medium); cursor: pointer; transition: all var(--transition-fast); }
+.demo-btn:hover { border-color: var(--color-neutral-500); color: var(--color-neutral-300); }
+.demo-btn.active { background: var(--color-neutral-700); border-color: var(--color-neutral-600); color: var(--color-white); }
+
+/* ── BREADCRUMB ── */
+.breadcrumb {
+  background: var(--color-white);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 var(--space-8);
+  height: 40px;
+  display: flex; align-items: center; gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  flex-shrink: 0;
+}
+.back-btn { display: flex; align-items: center; gap: var(--space-1); color: var(--color-neutral-500); text-decoration: none; font-weight: var(--font-weight-medium); padding: 4px 8px; border-radius: var(--border-radius-sm); transition: all var(--transition-fast); }
+.back-btn:hover { background: var(--color-neutral-100); color: var(--color-neutral-900); }
+.bc-sep { color: var(--color-neutral-300); font-size: var(--font-size-xs); }
+.bc-crumb { color: var(--color-neutral-400); }
+.bc-crumb.current { color: var(--color-neutral-700); font-weight: var(--font-weight-medium); }
+
+/* ── LOAN HERO ── */
+.loan-hero {
+  background: var(--color-white);
+  border-bottom: 1px solid var(--border-color);
+  padding: var(--space-5) var(--space-8);
+  display: flex; align-items: center; gap: var(--space-4);
+  flex-shrink: 0;
+}
+.loan-id-hero { font-size: var(--font-size-3xl); font-weight: var(--font-weight-bold); color: var(--color-neutral-950); letter-spacing: var(--letter-spacing-tight); }
+.hero-meta { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; margin-left: var(--space-2); }
+.hero-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--color-neutral-300); flex-shrink: 0; }
+.hero-sub { font-size: var(--font-size-sm); color: var(--color-neutral-400); font-family: var(--font-family-mono); }
+.hero-borrower { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-700); }
+.hero-address { font-size: var(--font-size-sm); color: var(--color-neutral-500); }
+.hero-date { font-size: var(--font-size-sm); color: var(--color-neutral-400); }
+.hero-actions { margin-left: auto; display: flex; gap: var(--space-2); }
+
+/* ── STATUS BADGES ── */
+.badge { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); padding: 3px 10px; border-radius: var(--border-radius-pill); letter-spacing: 0.01em; }
+.badge-dot { width: 5px; height: 5px; border-radius: 50%; }
+.badge.in-progress { background: var(--color-info-100); color: var(--color-info-600); }
+.badge.completed   { background: var(--color-success-100); color: var(--color-success-600); }
+.badge.failed      { background: var(--color-danger-100); color: var(--color-danger-600); }
+.badge.todo        { background: var(--color-neutral-100); color: var(--color-neutral-500); }
+.badge.blocked     { background: var(--color-warning-100); color: var(--color-warning-600); }
+.badge.in-progress .badge-dot { background: var(--color-info-500); animation: blink 1.5s ease-in-out infinite; }
+.badge.completed .badge-dot   { background: var(--color-success-500); }
+.badge.failed .badge-dot      { background: var(--color-danger-500); }
+.badge.todo .badge-dot        { background: var(--color-neutral-400); }
+.badge.blocked .badge-dot     { background: var(--color-warning-500); }
+
+/* ── PAGE WRAP ── */
+.page-wrap {
+  flex: 1; overflow-y: auto; min-height: 0;
+  padding: var(--space-6) var(--space-8);
+}
+
+/* ── ERROR BANNER ── */
+.error-banner {
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-danger-100);
+  background: var(--color-danger-50);
+  padding: var(--space-4) var(--space-5);
+  display: flex; align-items: center; gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+.error-banner-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--color-danger-100); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--color-danger-600); }
+.error-banner-body { flex: 1; }
+.error-banner-title { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-danger-700); margin-bottom: 2px; }
+.error-banner-detail { font-size: var(--font-size-sm); color: var(--color-danger-600); opacity: 0.85; }
+.error-banner-actions { display: flex; gap: var(--space-2); flex-shrink: 0; }
+
+/* ── MAIN GRID ── */
+.detail-grid {
+  display: grid;
+  grid-template-columns: 308px 1fr;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+/* ── SIDEBAR ── */
+.detail-sidebar {
+  display: flex; flex-direction: column; gap: var(--space-4);
+  position: sticky; top: 0;
+}
+
+/* ── SCORE CARD ── */
+.score-card { padding: var(--space-6); }
+.score-section-label { font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); color: var(--color-neutral-500); letter-spacing: var(--letter-spacing-wider); text-transform: uppercase; margin-bottom: var(--space-5); }
+.score-main { display: flex; align-items: center; gap: var(--space-5); margin-bottom: var(--space-5); }
+.score-ring-wrap { position: relative; width: 76px; height: 76px; flex-shrink: 0; }
+.score-ring-wrap svg { width: 76px; height: 76px; transform: rotate(-90deg); }
+.score-ring-bg { fill: none; stroke: var(--color-neutral-100); stroke-width: 7; }
+.score-ring-fill { fill: none; stroke-width: 7; stroke-linecap: round; transition: stroke-dashoffset 0.8s cubic-bezier(.4,0,.2,1); }
+.score-ring-fill.green  { stroke: var(--color-success-500); }
+.score-ring-fill.yellow { stroke: var(--color-warning-500); }
+.score-ring-fill.red    { stroke: var(--color-danger-500); }
+.score-ring-fill.gray   { stroke: var(--color-neutral-200); }
+.score-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.score-number { font-size: 22px; font-weight: var(--font-weight-bold); color: var(--color-neutral-900); line-height: 1; }
+.score-denom { font-size: var(--font-size-xs); color: var(--color-neutral-400); }
+.score-number.na { font-size: var(--font-size-lg); color: var(--color-neutral-400); }
+.score-info { flex: 1; }
+.score-verdict { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); margin-bottom: 3px; }
+.score-checks { font-size: var(--font-size-sm); color: var(--color-neutral-500); margin-bottom: var(--space-2); }
+.score-conf-badge { display: inline-flex; align-items: center; gap: 4px; font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); padding: 2px 8px; border-radius: var(--border-radius-pill); }
+.score-conf-badge.high   { background: var(--color-success-100); color: var(--color-success-600); }
+.score-conf-badge.medium { background: var(--color-warning-100); color: var(--color-warning-600); }
+.score-conf-badge.na     { background: var(--color-neutral-100); color: var(--color-neutral-500); }
+.score-breakdown { border-top: 1px solid var(--border-color); padding-top: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
+.score-row { display: flex; align-items: center; gap: var(--space-3); }
+.score-row-label { font-size: var(--font-size-sm); color: var(--color-neutral-600); width: 96px; flex-shrink: 0; }
+.score-row-bar { flex: 1; height: 4px; background: var(--color-neutral-100); border-radius: var(--border-radius-pill); overflow: hidden; }
+.score-row-fill { height: 100%; border-radius: var(--border-radius-pill); background: var(--color-success-500); }
+.score-row-fill.warn { background: var(--color-warning-500); }
+.score-row-pct { font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); width: 28px; text-align: right; flex-shrink: 0; }
+.score-empty { text-align: center; padding: var(--space-3) 0 var(--space-1); }
+.score-empty-icon { font-size: 28px; margin-bottom: var(--space-2); opacity: 0.3; }
+.score-empty-text { font-size: var(--font-size-sm); color: var(--color-neutral-400); }
+
+/* ── FILE CARDS ── */
+.files-card { padding: var(--space-5) var(--space-6); }
+.files-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-4); }
+.files-title { font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); color: var(--color-neutral-500); letter-spacing: var(--letter-spacing-wider); text-transform: uppercase; }
+.files-count { font-size: var(--font-size-xs); color: var(--color-neutral-400); }
+.file-list { display: flex; flex-direction: column; gap: var(--space-1); }
+.file-item { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3); border-radius: var(--border-radius-md); cursor: default; transition: background var(--transition-fast); }
+.file-item:hover { background: var(--color-neutral-50); }
+.file-icon-wrap { position: relative; width: 32px; height: 40px; flex-shrink: 0; }
+.file-icon-wrap svg { width: 32px; height: 40px; }
+.file-type-label { position: absolute; bottom: 7px; left: 50%; transform: translateX(-50%); font-size: 6px; font-weight: var(--font-weight-bold); font-family: var(--font-family-mono); letter-spacing: 0.04em; white-space: nowrap; }
+.file-type-label.pdf  { color: var(--color-danger-600); }
+.file-type-label.json { color: var(--color-info-600); }
+.file-type-label.xml  { color: var(--color-success-600); }
+.file-type-label.rpt  { color: var(--stage-report-gen-text); }
+.file-info { flex: 1; min-width: 0; }
+.file-name { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-800); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.file-meta { font-size: var(--font-size-xs); color: var(--color-neutral-400); margin-top: 1px; }
+.file-dl { width: 22px; height: 22px; border-radius: var(--border-radius-sm); border: 1px solid var(--border-color); background: var(--color-white); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--color-neutral-400); flex-shrink: 0; transition: all var(--transition-fast); }
+.file-dl:hover { border-color: var(--color-neutral-300); color: var(--color-neutral-700); background: var(--color-neutral-50); }
+.files-empty { text-align: center; padding: var(--space-4) 0; color: var(--color-neutral-400); font-size: var(--font-size-sm); }
+.files-empty-icon { margin-bottom: var(--space-2); opacity: 0.35; }
+
+/* ── MAIN RIGHT ── */
+.detail-main { display: flex; flex-direction: column; gap: var(--space-4); }
+
+/* ── PIPELINE CARD ── */
+.pipeline-card { padding: var(--space-4) var(--space-5); }
+.pipeline-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3); }
+.pipeline-card-title { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+.step-counter { font-size: var(--font-size-sm); color: var(--color-neutral-400); }
+.step-counter strong { font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+
+/* total duration bar */
+.duration-total-bar { height: 3px; background: var(--color-neutral-100); border-radius: var(--border-radius-pill); margin-bottom: var(--space-3); overflow: hidden; display: flex; gap: 2px; }
+.dtb-seg { height: 100%; border-radius: var(--border-radius-pill); transition: width 0.6s ease; }
+
+/* steps */
+.pipeline-steps { display: flex; flex-direction: column; }
+.pipeline-step { display: grid; grid-template-columns: 32px 1fr auto; gap: 0 var(--space-3); position: relative; }
+.step-col-icon { display: flex; flex-direction: column; align-items: center; position: relative; }
+.pipeline-step:not(:last-child) .step-col-icon::after { content: ''; position: absolute; left: 13px; top: 29px; bottom: 0; width: 2px; background: var(--border-color); z-index: 0; }
+.step-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 1; position: relative; }
+.step-icon.done    { background: var(--color-success-100); color: var(--color-success-600); }
+.step-icon.running { background: var(--color-info-100); color: var(--color-info-600); animation: step-pulse 1.5s ease-in-out infinite; }
+.step-icon.todo    { background: var(--color-white); color: var(--color-neutral-300); border: 1.5px solid var(--border-color); }
+.step-icon.error   { background: var(--color-danger-100); color: var(--color-danger-600); }
+.step-icon.skipped { background: var(--color-neutral-50); color: var(--color-neutral-300); border: 1.5px dashed var(--border-color); }
+@keyframes step-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,.25)} 50%{box-shadow:0 0 0 5px rgba(59,130,246,.08)} }
+
+.step-col-body { padding-bottom: var(--space-3); }
+.step-name { font-size: var(--font-size-base); font-weight: var(--font-weight-medium); color: var(--color-neutral-900); margin-bottom: 2px; }
+.step-name.todo    { color: var(--color-neutral-400); }
+.step-name.skipped { color: var(--color-neutral-400); }
+.step-name.error   { color: var(--color-danger-700); }
+.step-sub { font-size: var(--font-size-sm); color: var(--color-neutral-500); margin-bottom: var(--space-1); }
+.step-sub.running { color: var(--color-info-600); font-weight: var(--font-weight-medium); }
+.step-sub.error   { color: var(--color-danger-600); }
+.step-tags { display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center; }
+.step-tag { display: inline-flex; align-items: center; gap: 3px; font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); padding: 2px 8px; border-radius: var(--border-radius-pill); }
+.step-tag.conf-high   { background: var(--color-success-100); color: var(--color-success-600); }
+.step-tag.conf-med    { background: var(--color-warning-100); color: var(--color-warning-600); }
+.step-tag.conf-low    { background: var(--color-danger-100); color: var(--color-danger-600); }
+.step-tag.items       { background: var(--color-neutral-100); color: var(--color-neutral-600); }
+.step-tag.flag-count  { background: var(--color-warning-50); color: var(--color-warning-600); border: 1px solid var(--color-warning-100); }
+.step-tag.running-tag { background: var(--color-info-50); color: var(--color-info-600); border: 1px solid var(--color-info-100); }
+.step-tag svg { width: 10px; height: 10px; }
+
+/* duration mini-bar */
+.step-dur-bar { margin-top: var(--space-1); height: 3px; background: var(--color-neutral-100); border-radius: var(--border-radius-pill); overflow: hidden; max-width: 240px; }
+.step-dur-bar-fill { height: 100%; border-radius: var(--border-radius-pill); }
+
+.step-col-time { text-align: right; padding-bottom: var(--space-3); }
+.step-time  { font-size: var(--font-size-xs); color: var(--color-neutral-400); white-space: nowrap; font-family: var(--font-family-mono); }
+.step-dur-pill { display: inline-block; margin-top: 4px; font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); background: var(--color-neutral-100); padding: 1px 6px; border-radius: var(--border-radius-pill); }
+
+/* ── EVIDENCE CARD ── */
+.evidence-card { padding: var(--space-4) var(--space-5); }
+.ev-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3); }
+.ev-card-title { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+.ev-filters { display: flex; gap: var(--space-1); }
+.ev-filter-btn { font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); padding: 3px 10px; border-radius: var(--border-radius-pill); border: 1px solid var(--border-color); background: transparent; color: var(--color-neutral-500); cursor: pointer; transition: all var(--transition-fast); font-family: var(--font-family-base); }
+.ev-filter-btn:hover { border-color: var(--color-neutral-300); color: var(--color-neutral-700); }
+.ev-filter-btn.active { background: var(--color-neutral-900); border-color: var(--color-neutral-900); color: var(--color-white); }
+
+.ev-groups { display: flex; flex-direction: column; gap: var(--space-3); }
+.ev-group { }
+.ev-group-label { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-1); }
+.ev-group-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.ev-group-name { font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); letter-spacing: var(--letter-spacing-wider); text-transform: uppercase; color: var(--color-neutral-500); }
+.ev-group-dur { font-size: var(--font-size-xs); color: var(--color-neutral-400); margin-left: auto; font-family: var(--font-family-mono); }
+
+.ev-entries { border-left: 2px solid var(--border-color); margin-left: 3px; padding-left: var(--space-4); display: flex; flex-direction: column; gap: 1px; }
+.ev-entry { display: grid; grid-template-columns: 68px 1fr auto; gap: var(--space-3); padding: var(--space-1) var(--space-2); border-radius: var(--border-radius-md); align-items: start; transition: background var(--transition-fast); }
+.ev-entry:hover { background: var(--color-neutral-50); }
+.ev-time { font-size: var(--font-size-xs); color: var(--color-neutral-400); font-family: var(--font-family-mono); padding-top: 2px; white-space: nowrap; }
+.ev-body { }
+.ev-action { font-size: var(--font-size-sm); color: var(--color-neutral-800); margin-bottom: 2px; line-height: var(--line-height-snug); }
+.ev-chips { display: flex; gap: var(--space-1); flex-wrap: wrap; }
+.ev-chip { display: inline-flex; align-items: center; gap: 3px; font-size: var(--font-size-xs); padding: 1px 6px; border-radius: var(--border-radius-sm); font-family: var(--font-family-mono); border: 1px solid transparent; }
+.ev-chip.page  { background: var(--color-info-50);  color: var(--color-info-600);  border-color: var(--color-info-100); }
+.ev-chip.field { background: var(--stage-qc-check-bg); color: var(--stage-qc-check-text); border-color: rgba(88,64,160,.15); }
+.ev-chip.file  { background: var(--color-neutral-100); color: var(--color-neutral-600); border-color: var(--border-color); }
+.ev-chip.conf  { background: var(--color-success-50); color: var(--color-success-600); border-color: var(--color-success-100); }
+.ev-chip.warn  { background: var(--color-warning-50); color: var(--color-warning-600); border-color: var(--color-warning-100); }
+.ev-chip.err   { background: var(--color-danger-50);  color: var(--color-danger-600);  border-color: var(--color-danger-100); }
+.ev-badge { font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); padding: 1px 8px; border-radius: var(--border-radius-pill); flex-shrink: 0; align-self: start; margin-top: 2px; }
+.ev-badge.pass    { background: var(--color-success-100); color: var(--color-success-600); }
+.ev-badge.flag    { background: var(--color-warning-100); color: var(--color-warning-600); }
+.ev-badge.fail    { background: var(--color-danger-100); color: var(--color-danger-600); }
+.ev-badge.info    { background: var(--color-neutral-100); color: var(--color-neutral-500); }
+.ev-badge.running { background: var(--color-info-100); color: var(--color-info-600); }
+
+.ev-empty { text-align: center; padding: var(--space-8) 0; color: var(--color-neutral-400); font-size: var(--font-size-sm); }
+
+/* ── BUTTONS ── */
+.btn { display: inline-flex; align-items: center; gap: var(--space-2); padding: 6px var(--space-4); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); font-family: var(--font-family-base); cursor: pointer; border: 1px solid transparent; transition: all var(--transition-fast); white-space: nowrap; }
+.btn-ghost { background: transparent; border-color: var(--border-color); color: var(--color-neutral-600); }
+.btn-ghost:hover { background: var(--color-neutral-50); border-color: var(--color-neutral-300); color: var(--color-neutral-900); }
+.btn-danger { background: var(--color-danger-50); border-color: var(--color-danger-100); color: var(--color-danger-700); }
+.btn-danger:hover { background: var(--color-danger-100); border-color: var(--color-danger-200); }
+.btn-primary { background: var(--color-neutral-900); border-color: var(--color-neutral-900); color: var(--color-white); }
+.btn-primary:hover { background: var(--color-neutral-700); border-color: var(--color-neutral-700); }
+.btn svg { width: 14px; height: 14px; }
+
+/* ── CARD SHELL ── */
+.detail-card { background: var(--color-white); border: 1px solid var(--border-color); border-radius: var(--border-radius-xl); }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar" style="display:flex;align-items:center;">
+  <a href="dashboard.html" class="topbar-logo" style="text-decoration:none;">
+    <div class="topbar-logo-icon">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2h4v4H2V2zm6 0h4v4H8V2zm-6 6h4v4H2V8zm6 0h4v4H8V8z" fill="white"/></svg>
+    </div>
+    Appraisal QC
+  </a>
+  <div class="topbar-divider"></div>
+  <div class="pipeline-status">
+    <div class="pipeline-dot"></div>
+    Pipeline active · last scan 22s ago
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-stat">
+      <span class="topbar-stat-label">TODAY</span>
+      <span class="topbar-stat-value">8 loans</span>
+    </div>
+    <div class="topbar-stat">
+      <span class="topbar-stat-label">COMPLETED</span>
+      <span class="topbar-stat-value success">5</span>
+    </div>
+    <div class="topbar-stat">
+      <span class="topbar-stat-label">EXCEPTIONS</span>
+      <span class="topbar-stat-value danger">2</span>
+    </div>
+    <div class="user-avatar">SU</div>
+  </div>
+</header>
+
+<!-- DEMO SWITCHER -->
+<div class="demo-bar">
+  <span class="demo-label">Demo state</span>
+  <button class="demo-btn" onclick="setLoanState('todo')">To Do</button>
+  <button class="demo-btn active" onclick="setLoanState('in-progress')">In Progress</button>
+  <button class="demo-btn" onclick="setLoanState('error')">Error</button>
+  <button class="demo-btn" onclick="setLoanState('complete')">Complete</button>
+</div>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  <a href="dashboard.html" class="back-btn">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Dashboard
+  </a>
+  <span class="bc-sep">›</span>
+  <span class="bc-crumb">Pipeline</span>
+  <span class="bc-sep">›</span>
+  <span class="bc-crumb current" id="bc-loan-id">LN-000123</span>
+</div>
+
+<!-- LOAN HERO -->
+<div class="loan-hero">
+  <span class="loan-id-hero" id="hero-loan-id">LN-000123</span>
+  <div id="hero-badge"></div>
+  <div class="hero-meta">
+    <div class="hero-dot"></div>
+    <span class="hero-borrower" id="hero-borrower">James Whitfield</span>
+    <div class="hero-dot"></div>
+    <span class="hero-address" id="hero-address">1420 Oak Creek Dr, Austin TX 78701</span>
+    <div class="hero-dot"></div>
+    <span class="hero-sub" id="hero-sub">LN000123-1776867003</span>
+    <div class="hero-dot"></div>
+    <span class="hero-date" id="hero-date">Apr 30, 10:14 AM</span>
+  </div>
+  <div class="hero-actions">
+    <button class="btn btn-ghost" id="retry-btn" style="display:none;">
+      <svg viewBox="0 0 14 14" fill="none"><path d="M2 7a5 5 0 1 0 1-3M2 2v3h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Retry
+    </button>
+    <button class="btn btn-ghost" id="dl-btn" style="display:none;">
+      <svg viewBox="0 0 14 14" fill="none"><path d="M7 2v7m0 0-3-3m3 3 3-3M2 11h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Download Reports
+    </button>
+  </div>
+</div>
+
+<!-- PAGE WRAP -->
+<div class="page-wrap">
+
+  <!-- ERROR BANNER (shown when state=error) -->
+  <div class="error-banner" id="error-banner" style="display:none;">
+    <div class="error-banner-icon">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 5v4M8 11h.01M1.5 13.5l6.5-11 6.5 11H1.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="error-banner-body">
+      <div class="error-banner-title" id="error-title">Exception — Pipeline halted at Ingest</div>
+      <div class="error-banner-detail" id="error-detail">Missing file: LN000121_ssr_fnm.json was not found in the input directory.</div>
+    </div>
+    <div class="error-banner-actions">
+      <button class="btn btn-danger">
+        <svg viewBox="0 0 14 14" fill="none"><path d="M2 7a5 5 0 1 0 1-3M2 2v3h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Retry Loan
+      </button>
+      <button class="btn btn-ghost">Flag for Review</button>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="detail-grid">
+
+    <!-- LEFT SIDEBAR -->
+    <div class="detail-sidebar">
+
+      <!-- QC SCORE -->
+      <div class="detail-card score-card">
+        <div class="score-section-label">QC Score</div>
+        <div id="score-content"></div>
+      </div>
+
+      <!-- OUTPUT FILES -->
+      <div class="detail-card files-card">
+        <div class="files-header">
+          <span class="files-title">Output Files</span>
+          <span class="files-count" id="output-count">0 files</span>
+        </div>
+        <div class="file-list" id="output-file-list"></div>
+      </div>
+
+      <!-- INPUT FILES -->
+      <div class="detail-card files-card">
+        <div class="files-header">
+          <span class="files-title">Source Files</span>
+          <span class="files-count" id="input-count">4 files</span>
+        </div>
+        <div class="file-list" id="input-file-list"></div>
+      </div>
+
+    </div><!-- /sidebar -->
+
+    <!-- RIGHT MAIN -->
+    <div class="detail-main">
+
+      <!-- PIPELINE STEPS -->
+      <div class="detail-card pipeline-card">
+        <div class="pipeline-card-header">
+          <span class="pipeline-card-title">Pipeline Steps</span>
+          <span class="step-counter"><strong id="steps-done">2</strong> / 6 completed</span>
+        </div>
+        <div class="duration-total-bar" id="duration-bar"></div>
+        <div class="pipeline-steps" id="pipeline-steps"></div>
+      </div>
+
+      <!-- EVIDENCE CHAIN -->
+      <div class="detail-card evidence-card">
+        <div class="ev-card-header">
+          <span class="ev-card-title">Evidence Chain</span>
+          <div class="ev-filters">
+            <button class="ev-filter-btn active" onclick="setEvFilter('all', this)">All</button>
+            <button class="ev-filter-btn" onclick="setEvFilter('flag', this)">Flags</button>
+            <button class="ev-filter-btn" onclick="setEvFilter('fail', this)">Failures</button>
+          </div>
+        </div>
+        <div class="ev-groups" id="ev-groups"></div>
+      </div>
+
+    </div><!-- /main -->
+
+  </div><!-- /grid -->
+</div><!-- /page-wrap -->
+
+<script>
+/* ── FILE SVG ── */
+const FILE_SVG = `<svg viewBox="0 0 200 273" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#f0)">
+<path d="M8 251V19C8 14.6 11.6 11 16 11H118.5L189 84.5V251C189 255.4 185.4 259 181 259H16C11.6 259 8 255.4 8 251Z" fill="url(#g0)"/>
+</g>
+<g filter="url(#f1)">
+<path d="M118.5 76V11L188.5 84H126.5C122.1 84 118.5 80.4 118.5 76Z" fill="url(#g1)"/>
+</g>
+<defs>
+<filter id="f0" x="0" y="9" width="197" height="264" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="6"/><feGaussianBlur stdDeviation="4"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"/>
+<feBlend in2="BackgroundImageFix" result="effect1_dropShadow"/>
+<feBlend in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+</filter>
+<filter id="f1" x="99.5" y="0" width="100" height="103" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="-4" dy="4"/><feGaussianBlur stdDeviation="7.5"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"/>
+<feBlend in2="BackgroundImageFix" result="effect1_dropShadow"/>
+<feBlend in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+</filter>
+<linearGradient id="g0" x1="99" y1="11.5" x2="98.5" y2="259" gradientUnits="userSpaceOnUse">
+<stop stop-color="#EDEDED"/><stop offset="1" stop-color="#FEFEFE"/>
+</linearGradient>
+<linearGradient id="g1" x1="153.8" y1="42.4" x2="129.8" y2="83.8" gradientUnits="userSpaceOnUse">
+<stop stop-color="#E5E5E5"/><stop offset="1" stop-color="#FCFCFC"/>
+</linearGradient>
+</defs></svg>`;
+
+/* ── LOAN STATE DATA ── */
+const STATES = {
+  todo: {
+    loanId: 'LN-000125', borrower: 'Emily Thornton', address: '802 Birchwood Ct, Dallas TX 75201',
+    subId: 'LN000125-1776867005', date: 'Apr 30, 10:52 AM', status: 'todo',
+    qcScore: null, stepsComplete: 0,
+    steps: [
+      { name:'Ingest',           status:'todo',    sub:'Waiting to start',          time:null, dur:null, conf:null, durPct:0 },
+      { name:'Classify',         status:'todo',    sub:'Waiting',                   time:null, dur:null, conf:null, durPct:0 },
+      { name:'QC Checklist',     status:'todo',    sub:'Waiting',                   time:null, dur:null, conf:null, durPct:0 },
+      { name:'Code Mapping',     status:'todo',    sub:'Waiting',                   time:null, dur:null, conf:null, durPct:0 },
+      { name:'Report Generation',status:'todo',    sub:'Waiting',                   time:null, dur:null, conf:null, durPct:0 },
+      { name:'UW Report',        status:'todo',    sub:'Waiting',                   time:null, dur:null, conf:null, durPct:0 },
+    ],
+    evidenceGroups: [],
+    inputFiles: [
+      { type:'pdf',  name:'LN000125_appraisal.pdf', size:'4.0 MB', date:'Apr 30, 10:52 AM' },
+      { type:'json', name:'LN000125_ssr_fnm.json',  size:'178 KB', date:'Apr 30, 10:52 AM' },
+      { type:'json', name:'LN000125_ssr_fre.json',  size:'91 KB',  date:'Apr 30, 10:52 AM' },
+      { type:'xml',  name:'LN000125_uad.xml',       size:'88 KB',  date:'Apr 30, 10:52 AM' },
+    ],
+    outputFiles: [],
+  },
+
+  'in-progress': {
+    loanId: 'LN-000123', borrower: 'James Whitfield', address: '1420 Oak Creek Dr, Austin TX 78701',
+    subId: 'LN000123-1776867003', date: 'Apr 30, 10:14 AM', status: 'in-progress',
+    qcScore: { value:72, total:100, verdict:'Partial', confidence:'medium',
+      checks:'47 of 68 checked',
+      breakdown:[
+        { label:'Property Info', pct:91 },
+        { label:'Appraiser',     pct:88 },
+        { label:'Market Data',   pct:64, warn:true },
+        { label:'Valuation',     pct:51, warn:true },
+      ]},
+    stepsComplete: 2,
+    steps: [
+      { name:'Ingest',           status:'done',    sub:'Completed · 4/4 files',                  time:'10:14:02 AM', dur:'1.2s', conf:99, durPct:4,  stageVar:'--stage-ingest' },
+      { name:'Classify',         status:'done',    sub:'Completed · Form 1004 + SSR FNM/FRE + UAD', time:'10:14:06 AM', dur:'3.8s', conf:96, durPct:15, stageVar:'--stage-classify' },
+      { name:'QC Checklist',     status:'running', sub:'Running · Valuation checks · 47/68',     time:'10:14:10 AM', dur:null,   conf:null, durPct:null, stageVar:'--stage-qc-check' },
+      { name:'Code Mapping',     status:'todo',    sub:'Waiting',                                time:null,          dur:null,   conf:null, durPct:0 },
+      { name:'Report Generation',status:'todo',    sub:'Waiting',                                time:null,          dur:null,   conf:null, durPct:0 },
+      { name:'UW Report',        status:'todo',    sub:'Waiting',                                time:null,          dur:null,   conf:null, durPct:0 },
+    ],
+    evidenceGroups: [
+      { stage:'Ingest', color:'var(--stage-ingest)', dur:'1.2s', entries:[
+        { time:'10:14:02', action:'Session created — loan queued for processing', badge:'info', chips:[] },
+        { time:'10:14:02', action:'File presence check: 4 files detected in input directory', badge:'pass', chips:[{t:'conf',l:'99%'}] },
+        { time:'10:14:03', action:'PDF parsed and accessibility verified', badge:'pass', chips:[{t:'file',l:'LN000123_appraisal.pdf'},{t:'conf',l:'98%'}] },
+        { time:'10:14:03', action:'SSR FNM JSON structure validated', badge:'pass', chips:[{t:'file',l:'LN000123_ssr_fnm.json'}] },
+        { time:'10:14:04', action:'SSR FRE JSON structure validated', badge:'pass', chips:[{t:'file',l:'LN000123_ssr_fre.json'}] },
+        { time:'10:14:04', action:'UAD XML schema validated against UAD 2.6 spec', badge:'pass', chips:[{t:'file',l:'LN000123_uad.xml'},{t:'conf',l:'100%'}] },
+      ]},
+      { stage:'Classify', color:'var(--stage-classify)', dur:'3.8s', entries:[
+        { time:'10:14:06', action:'PDF classified as Appraisal Form 1004 (Fannie Mae)', badge:'pass', chips:[{t:'page',l:'p.1'},{t:'field',l:'FormType=1004'},{t:'conf',l:'97%'}] },
+        { time:'10:14:07', action:'SSR type confirmed: FNMA — matched against vendor codes', badge:'pass', chips:[{t:'file',l:'ssr_fnm.json'},{t:'field',l:'SSRType=FNMA'},{t:'conf',l:'99%'}] },
+        { time:'10:14:07', action:'SSR type confirmed: FHLMC — matched against vendor codes', badge:'pass', chips:[{t:'file',l:'ssr_fre.json'},{t:'field',l:'SSRType=FHLMC'},{t:'conf',l:'99%'}] },
+        { time:'10:14:08', action:'UAD XML schema version validated: UAD 2.6 compliant', badge:'pass', chips:[{t:'field',l:'UADVersion=2.6'},{t:'conf',l:'96%'}] },
+        { time:'10:14:09', action:'Loan purpose extracted: Purchase', badge:'pass', chips:[{t:'page',l:'p.1'},{t:'field',l:'LoanPurpose=Purchase'}] },
+      ]},
+      { stage:'QC Checklist', color:'var(--stage-qc-check)', dur:'ongoing', entries:[
+        { time:'10:14:10', action:'QC evaluation started — 68 items queued across 8 categories', badge:'running', chips:[] },
+        { time:'10:14:11', action:'Property address match verified — PDF matches UAD XML', badge:'pass', chips:[{t:'page',l:'p.1'},{t:'field',l:'PropertyAddress'},{t:'conf',l:'100%'}] },
+        { time:'10:14:12', action:'Appraiser license number present and format valid', badge:'pass', chips:[{t:'page',l:'p.2'},{t:'field',l:'AppraiserLicenseNo'},{t:'conf',l:'98%'}] },
+        { time:'10:14:14', action:'Market conditions adjustment: extracted value unusually high — flagged for review', badge:'flag', chips:[{t:'page',l:'p.4'},{t:'field',l:'MarketCondAdj'},{t:'warn',l:'64% confidence'}] },
+        { time:'10:14:16', action:'Comparable sale 1 date is older than 12 months — stale comp', badge:'flag', chips:[{t:'page',l:'p.5'},{t:'field',l:'CompSaleDate[0]'},{t:'warn',l:'Stale comp'}] },
+        { time:'10:14:20', action:'GLA discrepancy: PDF reports 1,842 sq ft, UAD XML reports 1,884 sq ft (±42 sq ft)', badge:'flag', chips:[{t:'page',l:'p.3'},{t:'field',l:'GLA'},{t:'warn',l:'±42 sq ft'}] },
+        { time:'10:14:22', action:'47/68 items complete — continuing valuation section', badge:'running', chips:[{t:'conf',l:'72% avg confidence'}] },
+      ]},
+    ],
+    inputFiles: [
+      { type:'pdf',  name:'LN000123_appraisal.pdf', size:'4.2 MB', date:'Apr 30, 10:14 AM' },
+      { type:'json', name:'LN000123_ssr_fnm.json',  size:'186 KB', date:'Apr 30, 10:14 AM' },
+      { type:'json', name:'LN000123_ssr_fre.json',  size:'94 KB',  date:'Apr 30, 10:14 AM' },
+      { type:'xml',  name:'LN000123_uad.xml',       size:'92 KB',  date:'Apr 30, 10:14 AM' },
+    ],
+    outputFiles: [],
+  },
+
+  error: {
+    loanId: 'LN-000121', borrower: 'Marcus Reyes', address: '335 Pinecrest Blvd, Houston TX 77002',
+    subId: 'LN000121-1776867001', date: 'Apr 30, 9:41 AM', status: 'failed',
+    qcScore: null, stepsComplete: 0,
+    errorTitle: 'Exception — Pipeline halted at Ingest',
+    errorDetail: 'LN000121_ssr_fnm.json was not found in the input directory. Expected 4 files, received 3.',
+    steps: [
+      { name:'Ingest',           status:'error',   sub:'Failed — Missing SSR FNM file',       time:'9:41:15 AM', dur:'0.8s', conf:null, durPct:3, stageVar:'--stage-ingest' },
+      { name:'Classify',         status:'skipped', sub:'Skipped — upstream failure',           time:null, dur:null, conf:null, durPct:0 },
+      { name:'QC Checklist',     status:'skipped', sub:'Skipped — upstream failure',           time:null, dur:null, conf:null, durPct:0 },
+      { name:'Code Mapping',     status:'skipped', sub:'Skipped — upstream failure',           time:null, dur:null, conf:null, durPct:0 },
+      { name:'Report Generation',status:'skipped', sub:'Skipped — upstream failure',           time:null, dur:null, conf:null, durPct:0 },
+      { name:'UW Report',        status:'skipped', sub:'Skipped — upstream failure',           time:null, dur:null, conf:null, durPct:0 },
+    ],
+    evidenceGroups: [
+      { stage:'Ingest', color:'var(--color-danger-500)', dur:'0.8s', entries:[
+        { time:'9:41:15', action:'Session created — loan queued for processing', badge:'info', chips:[] },
+        { time:'9:41:15', action:'File scan: LN000121_appraisal.pdf found (3.9 MB)', badge:'pass', chips:[{t:'file',l:'LN000121_appraisal.pdf'}] },
+        { time:'9:41:15', action:'File scan: LN000121_ssr_fre.json found (91 KB)', badge:'pass', chips:[{t:'file',l:'LN000121_ssr_fre.json'}] },
+        { time:'9:41:15', action:'File scan: LN000121_uad.xml found (87 KB)', badge:'pass', chips:[{t:'file',l:'LN000121_uad.xml'}] },
+        { time:'9:41:15', action:'File scan: LN000121_ssr_fnm.json NOT FOUND — pipeline halted', badge:'fail', chips:[{t:'err',l:'Missing SSR FNM'}] },
+      ]},
+    ],
+    inputFiles: [
+      { type:'pdf',  name:'LN000121_appraisal.pdf', size:'3.9 MB', date:'Apr 30, 9:41 AM' },
+      { type:'json', name:'LN000121_ssr_fre.json',  size:'91 KB',  date:'Apr 30, 9:41 AM' },
+      { type:'xml',  name:'LN000121_uad.xml',       size:'87 KB',  date:'Apr 30, 9:41 AM' },
+    ],
+    outputFiles: [],
+  },
+
+  complete: {
+    loanId: 'LN-000119', borrower: 'Sarah Okonkwo', address: '2218 Willow Glen Rd, San Antonio TX 78201',
+    subId: 'LN000119-1776867001', date: 'Apr 30, 8:22 AM', status: 'completed',
+    qcScore: { value:94, total:100, verdict:'Passed', confidence:'high',
+      checks:'62 pass · 6 flagged · 0 failed',
+      breakdown:[
+        { label:'Property Info', pct:98 },
+        { label:'Appraiser',     pct:97 },
+        { label:'Market Data',   pct:91 },
+        { label:'Valuation',     pct:89 },
+      ]},
+    stepsComplete: 6,
+    steps: [
+      { name:'Ingest',           status:'done', sub:'Completed · 4/4 files',                   time:'8:22:04 AM', dur:'1.1s',  conf:99, durPct:3,  stageVar:'--stage-ingest' },
+      { name:'Classify',         status:'done', sub:'Completed · Form 1004 + SSR + UAD',        time:'8:22:08 AM', dur:'3.5s',  conf:97, durPct:11, stageVar:'--stage-classify' },
+      { name:'QC Checklist',     status:'done', sub:'Completed · 62 pass · 6 flagged · 0 fail', time:'8:22:31 AM', dur:'22.8s', conf:94, flags:6, durPct:73, stageVar:'--stage-qc-check' },
+      { name:'Code Mapping',     status:'done', sub:'Completed · 62 codes assigned',            time:'8:22:37 AM', dur:'6.1s',  conf:96, durPct:20, stageVar:'--stage-code-map' },
+      { name:'Report Generation',status:'done', sub:'Completed · QC Report ready',              time:'8:22:41 AM', dur:'4.2s',  conf:99, durPct:14, stageVar:'--stage-report-gen' },
+      { name:'UW Report',        status:'done', sub:'Completed · UW Report ready',              time:'8:22:45 AM', dur:'3.8s',  conf:98, durPct:12, stageVar:'--stage-uw-report' },
+    ],
+    evidenceGroups: [
+      { stage:'Ingest', color:'var(--stage-ingest)', dur:'1.1s', entries:[
+        { time:'8:22:04', action:'All 4 required files confirmed present and accessible', badge:'pass', chips:[{t:'conf',l:'99%'}] },
+      ]},
+      { stage:'Classify', color:'var(--stage-classify)', dur:'3.5s', entries:[
+        { time:'8:22:08', action:'PDF classified as Appraisal Form 1004 (Fannie Mae)', badge:'pass', chips:[{t:'page',l:'p.1'},{t:'field',l:'FormType=1004'},{t:'conf',l:'97%'}] },
+        { time:'8:22:10', action:'All document types validated — SSR FNM, SSR FRE, UAD 2.6', badge:'pass', chips:[{t:'conf',l:'99%'}] },
+      ]},
+      { stage:'QC Checklist', color:'var(--stage-qc-check)', dur:'22.8s', entries:[
+        { time:'8:22:31', action:'68 items evaluated — 62 pass, 6 flagged, 0 failed', badge:'pass', chips:[{t:'conf',l:'94% avg'}] },
+        { time:'8:22:27', action:'Comparable sale 2 net adjustment exceeds 10% threshold (12.3%)', badge:'flag', chips:[{t:'page',l:'p.5'},{t:'field',l:'NetAdj[1]'},{t:'warn',l:'12.3% adj'}] },
+        { time:'8:22:28', action:'Prior sale within 3 years — prior sale disclosure required', badge:'flag', chips:[{t:'page',l:'p.3'},{t:'field',l:'PriorSaleDate'}] },
+        { time:'8:22:29', action:'Neighborhood boundaries description below minimum word count', badge:'flag', chips:[{t:'page',l:'p.4'},{t:'field',l:'NeighborhoodDesc'},{t:'warn',l:'18 words (min 25)'}] },
+      ]},
+      { stage:'Code Mapping', color:'var(--stage-code-map)', dur:'6.1s', entries:[
+        { time:'8:22:37', action:'62 QC codes assigned from FNMA/FHLMC codebook v2024.1', badge:'pass', chips:[{t:'conf',l:'96%'}] },
+      ]},
+      { stage:'Report Generation', color:'var(--stage-report-gen)', dur:'4.2s', entries:[
+        { time:'8:22:41', action:'QC Report assembled — 68 line items, PDF + JSON exports ready', badge:'pass', chips:[] },
+      ]},
+      { stage:'UW Report', color:'var(--stage-uw-report)', dur:'3.8s', entries:[
+        { time:'8:22:45', action:'Underwriting Report assembled — Fannie Mae Form 1008 format', badge:'pass', chips:[] },
+      ]},
+    ],
+    inputFiles: [
+      { type:'pdf',  name:'LN000119_appraisal.pdf', size:'4.1 MB', date:'Apr 30, 8:22 AM' },
+      { type:'json', name:'LN000119_ssr_fnm.json',  size:'184 KB', date:'Apr 30, 8:22 AM' },
+      { type:'json', name:'LN000119_ssr_fre.json',  size:'93 KB',  date:'Apr 30, 8:22 AM' },
+      { type:'xml',  name:'LN000119_uad.xml',       size:'90 KB',  date:'Apr 30, 8:22 AM' },
+    ],
+    outputFiles: [
+      { type:'rpt', name:'QC_Report_LN000119.pdf',   size:'218 KB', date:'Apr 30, 8:22 AM' },
+      { type:'rpt', name:'UW_Report_LN000119.pdf',   size:'156 KB', date:'Apr 30, 8:22 AM' },
+    ],
+  },
+};
+
+/* ── STAGE COLOR MAP ── */
+const STAGE_COLORS = {
+  'Ingest':            'var(--stage-ingest)',
+  'Classify':          'var(--stage-classify)',
+  'QC Checklist':      'var(--stage-qc-check)',
+  'Code Mapping':      'var(--stage-code-map)',
+  'Report Generation': 'var(--stage-report-gen)',
+  'UW Report':         'var(--stage-uw-report)',
+};
+const STAGE_BG = {
+  'Ingest':            'var(--stage-ingest-bg)',
+  'Classify':          'var(--stage-classify-bg)',
+  'QC Checklist':      'var(--stage-qc-check-bg)',
+  'Code Mapping':      'var(--stage-code-map-bg)',
+  'Report Generation': 'var(--stage-report-gen-bg)',
+  'UW Report':         'var(--stage-uw-report-bg)',
+};
+
+let currentFilter = 'all';
+let currentState = 'in-progress';
+
+/* ── ICONS ── */
+const ICON_CHECK  = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const ICON_X      = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+const ICON_CLOCK  = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M6 3v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+const ICON_SPIN   = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="2" stroke-dasharray="8 24" stroke-linecap="round"><animateTransform attributeName="transform" type="rotate" from="0 7 7" to="360 7 7" dur="0.8s" repeatCount="indefinite"/></circle></svg>`;
+const ICON_SKIP   = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4 3h4M4 9h4M6 6h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+const ICON_DL     = `<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v6m0 0L3 5m2.5 2L8 5M1 9h9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+function fileItemHTML(f) {
+  return `
+  <div class="file-item">
+    <div class="file-icon-wrap">
+      ${FILE_SVG}
+      <span class="file-type-label ${f.type}">${f.type.toUpperCase()}</span>
+    </div>
+    <div class="file-info">
+      <div class="file-name">${f.name}</div>
+      <div class="file-meta">${f.size} · ${f.date}</div>
+    </div>
+    <button class="file-dl" title="Download">${ICON_DL}</button>
+  </div>`;
+}
+
+function scoreHTML(s) {
+  if (!s) {
+    return `<div class="score-empty">
+      <div class="score-empty-icon">—</div>
+      <div class="score-empty-text">Score available after<br>QC Checklist completes</div>
+    </div>`;
+  }
+  const r = 34;
+  const circ = 2 * Math.PI * r;
+  const pct = s.value / s.total;
+  const dashOffset = circ * (1 - pct);
+  const ringClass = s.confidence === 'high' ? 'green' : s.confidence === 'medium' ? 'yellow' : 'red';
+  const rows = s.breakdown.map(b => `
+    <div class="score-row">
+      <span class="score-row-label">${b.label}</span>
+      <div class="score-row-bar"><div class="score-row-fill ${b.warn ? 'warn' : ''}" style="width:${b.pct}%"></div></div>
+      <span class="score-row-pct">${b.pct}%</span>
+    </div>`).join('');
+
+  return `
+  <div class="score-main">
+    <div class="score-ring-wrap">
+      <svg viewBox="0 0 76 76">
+        <circle class="score-ring-bg" cx="38" cy="38" r="${r}"/>
+        <circle class="score-ring-fill ${ringClass}" cx="38" cy="38" r="${r}"
+          stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${dashOffset.toFixed(1)}"/>
+      </svg>
+      <div class="score-center">
+        <span class="score-number">${s.value}</span>
+        <span class="score-denom">/ ${s.total}</span>
+      </div>
+    </div>
+    <div class="score-info">
+      <div class="score-verdict">${s.verdict}</div>
+      <div class="score-checks">${s.checks}</div>
+      <span class="score-conf-badge ${s.confidence}">
+        AI Confidence · ${s.confidence.charAt(0).toUpperCase() + s.confidence.slice(1)}
+      </span>
+    </div>
+  </div>
+  <div class="score-breakdown">${rows}</div>`;
+}
+
+function stepHTML(step, i) {
+  const icons = {
+    done: ICON_CHECK, running: ICON_SPIN,
+    todo: '', error: ICON_X, skipped: ICON_SKIP
+  };
+  const stageColor = STAGE_COLORS[step.name] || 'var(--color-neutral-300)';
+  const stageBg    = STAGE_BG[step.name] || 'var(--color-neutral-100)';
+
+  let tags = '';
+  if (step.conf !== null && step.conf !== undefined) {
+    const cls = step.conf >= 90 ? 'conf-high' : step.conf >= 75 ? 'conf-med' : 'conf-low';
+    tags += `<span class="step-tag ${cls}">${ICON_CLOCK} AI Confidence ${step.conf}%</span>`;
+  }
+  if (step.flags) {
+    tags += `<span class="step-tag flag-count">⚑ ${step.flags} flagged</span>`;
+  }
+  if (step.status === 'running') {
+    tags += `<span class="step-tag running-tag">${ICON_SPIN} Running</span>`;
+  }
+
+  const durBar = (step.durPct && step.status === 'done')
+    ? `<div class="step-dur-bar"><div class="step-dur-bar-fill" style="width:${step.durPct}%;background:${stageColor}"></div></div>`
+    : '';
+
+  const timeCol = step.time
+    ? `<div class="step-time">${step.time}</div>${step.dur ? `<div class="step-dur-pill">${step.dur}</div>` : ''}`
+    : `<div class="step-time">—</div>`;
+
+  return `
+  <div class="pipeline-step">
+    <div class="step-col-icon">
+      <div class="step-icon ${step.status}">${icons[step.status] || ''}</div>
+    </div>
+    <div class="step-col-body">
+      <div class="step-name ${step.status}">${step.name}</div>
+      <div class="step-sub ${step.status === 'running' ? 'running' : step.status === 'error' ? 'error' : ''}">${step.sub}</div>
+      ${tags ? `<div class="step-tags">${tags}</div>` : ''}
+      ${durBar}
+    </div>
+    <div class="step-col-time">${timeCol}</div>
+  </div>`;
+}
+
+function chipHTML(c) {
+  return `<span class="ev-chip ${c.t}">${c.l}</span>`;
+}
+
+function evGroupHTML(g) {
+  const visEntries = g.entries.filter(e => {
+    if (currentFilter === 'all') return true;
+    if (currentFilter === 'flag') return e.badge === 'flag';
+    if (currentFilter === 'fail') return e.badge === 'fail';
+    return true;
+  });
+  if (!visEntries.length) return '';
+  const entries = visEntries.map(e => `
+    <div class="ev-entry">
+      <div class="ev-time">${e.time}</div>
+      <div class="ev-body">
+        <div class="ev-action">${e.action}</div>
+        ${e.chips.length ? `<div class="ev-chips">${e.chips.map(chipHTML).join('')}</div>` : ''}
+      </div>
+      <div class="ev-badge ${e.badge}">${e.badge.charAt(0).toUpperCase() + e.badge.slice(1)}</div>
+    </div>`).join('');
+  return `
+  <div class="ev-group">
+    <div class="ev-group-label">
+      <div class="ev-group-dot" style="background:${g.color}"></div>
+      <span class="ev-group-name">${g.stage}</span>
+      <span class="ev-group-dur">${g.dur}</span>
+    </div>
+    <div class="ev-entries">${entries}</div>
+  </div>`;
+}
+
+function durationBarHTML(steps) {
+  const done = steps.filter(s => s.status === 'done' && s.durPct);
+  if (!done.length) return '';
+  return done.map(s => {
+    const color = STAGE_COLORS[s.name] || 'var(--color-neutral-300)';
+    return `<div class="dtb-seg" style="width:${s.durPct}%;background:${color}" title="${s.name}: ${s.dur}"></div>`;
+  }).join('');
+}
+
+function setLoanState(key) {
+  currentState = key;
+  document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  render();
+}
+
+function setEvFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.ev-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('ev-groups').innerHTML = renderEvGroups(STATES[currentState]);
+}
+
+function renderEvGroups(d) {
+  if (!d.evidenceGroups.length) {
+    return `<div class="ev-empty">No agent activity logged yet.<br>Evidence will appear as stages run.</div>`;
+  }
+  const html = d.evidenceGroups.map(evGroupHTML).join('');
+  return html || `<div class="ev-empty">No entries match this filter.</div>`;
+}
+
+function badgeHTML(status) {
+  const map = {
+    'todo':        '<div class="badge todo"><div class="badge-dot"></div>Queued</div>',
+    'in-progress': '<div class="badge in-progress"><div class="badge-dot"></div>Processing</div>',
+    'failed':      '<div class="badge failed"><div class="badge-dot"></div>Failed</div>',
+    'completed':   '<div class="badge completed"><div class="badge-dot"></div>Completed</div>',
+  };
+  return map[status] || '';
+}
+
+function render() {
+  const d = STATES[currentState];
+
+  // hero
+  document.getElementById('bc-loan-id').textContent = d.loanId;
+  document.getElementById('hero-loan-id').textContent = d.loanId;
+  document.getElementById('hero-badge').innerHTML = badgeHTML(d.status);
+  document.getElementById('hero-borrower').textContent = d.borrower;
+  document.getElementById('hero-address').textContent = d.address;
+  document.getElementById('hero-sub').textContent = d.subId;
+  document.getElementById('hero-date').textContent = d.date;
+
+  // action buttons
+  document.getElementById('retry-btn').style.display = d.status === 'failed' ? '' : 'none';
+  document.getElementById('dl-btn').style.display = d.status === 'completed' ? '' : 'none';
+
+  // error banner
+  const banner = document.getElementById('error-banner');
+  if (d.status === 'failed') {
+    banner.style.display = '';
+    document.getElementById('error-title').textContent = d.errorTitle;
+    document.getElementById('error-detail').textContent = d.errorDetail;
+  } else {
+    banner.style.display = 'none';
+  }
+
+  // score
+  document.getElementById('score-content').innerHTML = scoreHTML(d.qcScore);
+
+  // files
+  document.getElementById('output-count').textContent = d.outputFiles.length + ' file' + (d.outputFiles.length !== 1 ? 's' : '');
+  document.getElementById('output-file-list').innerHTML = d.outputFiles.length
+    ? d.outputFiles.map(fileItemHTML).join('')
+    : `<div class="files-empty"><div class="files-empty-icon" style="font-size:22px;">📄</div>No output files yet</div>`;
+  document.getElementById('input-count').textContent = d.inputFiles.length + ' files';
+  document.getElementById('input-file-list').innerHTML = d.inputFiles.map(fileItemHTML).join('');
+
+  // steps
+  document.getElementById('steps-done').textContent = d.stepsComplete;
+  document.getElementById('duration-bar').innerHTML = durationBarHTML(d.steps);
+  document.getElementById('pipeline-steps').innerHTML = d.steps.map((s, i) => stepHTML(s, i)).join('');
+
+  // evidence
+  document.getElementById('ev-groups').innerHTML = renderEvGroups(d);
+}
+
+render();
+</script>
+</body>
+</html>
