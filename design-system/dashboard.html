@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QC Observer — Dashboard</title>
+<title>QC Appraisal — Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="components.css">
@@ -33,57 +33,19 @@ body {
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 .pipeline-status strong { font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
 .topbar-right { margin-left: auto; display: flex; align-items: center; gap: var(--space-5); }
-.topbar-stat { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
-.topbar-stat-label { font-size: 10px; font-weight: var(--font-weight-medium); color: var(--color-neutral-500); }
-.topbar-stat-value { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
-.topbar-stat-value.success { color: var(--color-success-600); }
-.topbar-stat-value.danger  { color: var(--color-danger-600); }
 .user-avatar { width: 28px; height: 28px; border-radius: var(--border-radius-pill); background: var(--color-brand-100); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: var(--font-weight-semibold); color: var(--color-brand-600); border: 1px solid var(--border-color); }
 
 /* ── PAGE LAYOUT ── */
 .page-wrap {
   flex: 1; overflow-y: auto;
-  padding: var(--space-6) var(--space-8);
+  padding: var(--space-4) var(--space-6);
   display: flex; flex-direction: column; gap: var(--space-5);
   min-height: 0;
 }
+.page-header { display: flex; align-items: center; gap: var(--space-3); }
+.page-title { font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); margin: 0; }
 
-/* ── BENTO GRID ── */
-.bento-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
-
-.bento-card {
-  background: var(--color-white);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-xl);
-  padding: var(--space-5);
-  box-shadow: none;
-  display: flex; flex-direction: column; gap: var(--space-3);
-  transition: border-color var(--transition-fast);
-}
-.bento-card:hover { border-color: var(--border-color-hover); box-shadow: var(--shadow-xs); }
-
-.bento-title {
-  font-size: var(--font-size-base); font-weight: var(--font-weight-semibold);
-  color: var(--color-neutral-900);
-}
-
-.hero-rate { font-size: var(--font-size-3xl); font-weight: var(--font-weight-bold); line-height: 1; letter-spacing: -0.01em; color: var(--color-neutral-900); }
-.hero-rate .hero-denom { font-weight: var(--font-weight-medium); color: var(--color-neutral-500); }
-.hero-sub { font-size: var(--font-size-sm); color: var(--color-neutral-500); }
-.hero-metrics { display: flex; gap: var(--space-4); padding-top: var(--space-3); border-top: 1px solid var(--border-color); margin-top: auto; }
-
-.bento-pill-group { display: flex; flex-direction: column; gap: var(--space-2); margin-top: auto; }
-.bento-pill {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--border-radius-md); border: 1px solid var(--border-color);
-  background: var(--color-white);
-  font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-700);
-}
-.bento-pill .pill-val { font-weight: var(--font-weight-semibold); font-size: var(--font-size-md); color: var(--color-neutral-900); }
-.bento-pill.warning { background: var(--color-warning-50); border-color: var(--color-warning-100); color: var(--color-warning-600); }
-
-/* Date filter — segmented pill (Relevance style) */
+/* Date filter */
 .date-filter { display: flex; gap: 2px; background: var(--color-neutral-100); border-radius: var(--border-radius-md); padding: 3px; border: 1px solid var(--border-color); }
 .date-btn {
   padding: 4px var(--space-3); border-radius: var(--border-radius-sm); border: none;
@@ -94,275 +56,150 @@ body {
 .date-btn.active { background: var(--color-white); color: var(--color-neutral-900); box-shadow: var(--shadow-xs); }
 .date-btn:hover:not(.active) { color: var(--color-neutral-900); }
 
-/* ── STAT ITEMS ── */
-.stat-item { display: flex; flex-direction: column; }
-.stat-label { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); margin-bottom: 2px; }
-.stat-value { font-size: var(--font-size-xl); font-weight: var(--font-weight-semibold); letter-spacing: -0.01em; color: var(--color-neutral-900); line-height: 1; }
-.stat-value.success { color: var(--color-success-600); }
-.stat-value.info    { color: var(--color-info-600); }
-.stat-value.danger  { color: var(--color-danger-600); }
-.stat-meta { font-size: var(--font-size-xs); color: var(--color-neutral-500); margin-top: 4px; }
-
-/* Confidence gauge */
-.confidence-gauge { display: flex; align-items: center; gap: var(--space-2); margin-top: 6px; }
-.confidence-bar-track { flex: 1; height: 6px; background: var(--color-neutral-200); border-radius: var(--border-radius-pill); overflow: hidden; }
-.confidence-bar-fill { height: 100%; border-radius: var(--border-radius-pill); transition: width var(--transition-base); }
-
-/* Sentiment bar */
-.sentiment-bar { display: flex; height: 6px; border-radius: var(--border-radius-pill); overflow: hidden; margin-top: 6px; }
-.sentiment-up   { background: var(--color-success-500); }
-.sentiment-down { background: var(--color-danger-500); }
-
-/* Token pill */
-.token-pill { display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; border-radius: var(--border-radius-sm); font-size: 11px; font-weight: var(--font-weight-medium); border: 1px solid var(--border-color); }
-.token-pill.token-in  { background: var(--color-white); color: var(--color-neutral-700); }
-.token-pill.token-out { background: var(--color-white); color: var(--color-neutral-700); }
-
-/* Model tag */
-.tp-model { font-size: 11px; font-weight: var(--font-weight-medium); color: var(--color-neutral-600); background: var(--color-white); border: 1px solid var(--border-color); padding: 1px 6px; border-radius: var(--border-radius-sm); margin-left: 2px; white-space: nowrap; }
-
-/* Stage bar */
-.stage-bar { height: 16px; border-radius: var(--border-radius-pill); overflow: hidden; display: flex; margin-bottom: var(--space-3); border: 1px solid var(--border-color); }
-.stage-seg { display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: var(--font-weight-medium); color: var(--color-white); cursor: pointer; transition: opacity var(--transition-fast); }
-.stage-seg:hover { opacity: .9; }
-.stage-legend { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); }
-.stage-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-neutral-600); }
-.stage-ldot { width: 8px; height: 8px; border-radius: var(--border-radius-pill); flex-shrink: 0; }
-
-/* Throughput */
-.tp-list { display: flex; flex-direction: column; gap: 8px; }
-.tp-row  { display: flex; align-items: center; gap: var(--space-2); }
-.tp-label { font-size: var(--font-size-xs); color: var(--color-neutral-600); width: 72px; flex-shrink: 0; }
-.tp-bar-wrap { flex: 1; height: 6px; background: var(--color-neutral-200); border-radius: var(--border-radius-pill); overflow: hidden; }
-.tp-bar { height: 100%; border-radius: var(--border-radius-pill); }
-.tp-time { font-size: var(--font-size-xs); color: var(--color-neutral-500); width: 28px; text-align: right; flex-shrink: 0; }
-.tp-delta { font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); width: 24px; text-align: right; flex-shrink: 0; }
-.tp-delta.up   { color: var(--color-danger-600); }
-.tp-delta.down { color: var(--color-success-600); }
-.tp-delta.flat { color: var(--color-neutral-400); }
-
-/* ── KANBAN SECTION ── */
-.kanban-section { display: flex; flex-direction: column; gap: var(--space-3); flex: 1; min-height: 0; }
-.kanban-toolbar { display: flex; align-items: center; gap: var(--space-2); flex-shrink: 0; }
-.search-wrap { position: relative; flex: 0 0 240px; }
-.search-wrap svg { position: absolute; left: var(--space-3); top: 50%; transform: translateY(-50%); color: var(--color-neutral-400); pointer-events: none; }
-.search-wrap .input { padding-left: var(--space-8); font-size: var(--font-size-sm); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); background: var(--color-white); }
-.search-shortcut { position: absolute; right: var(--space-2); top: 50%; transform: translateY(-50%); font-size: 11px; color: var(--color-neutral-500); background: var(--color-neutral-100); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 1px 4px; font-family: var(--font-family-mono); }
-
-.filter-select {
-  padding: var(--space-1) var(--space-7) var(--space-1) var(--space-3);
-  border: 1px solid var(--border-color); border-radius: var(--border-radius-md);
-  font-family: var(--font-family-base); font-size: var(--font-size-sm);
-  background: var(--color-white); color: var(--color-neutral-700); outline: none; appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right var(--space-2) center;
-  cursor: pointer; transition: border-color var(--transition-fast);
+/* ── BENTO GRID ── */
+.bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
+.bento-card {
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-xl);
+  padding: var(--space-5);
+  display: flex; flex-direction: column; gap: var(--space-3);
+  transition: border-color var(--transition-fast);
 }
-.filter-select:hover { border-color: var(--border-color-hover); }
-.filter-select:focus { border-color: var(--color-brand-500); box-shadow: 0 0 0 1px var(--color-brand-500); }
-.toolbar-spacer { flex: 1; }
+.bento-card:hover { border-color: var(--border-color-hover); }
+.bento-title { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
 
-.kanban-summary { display: flex; align-items: center; gap: var(--space-5); }
-.ks-item { display: flex; align-items: center; gap: 6px; font-size: var(--font-size-sm); color: var(--color-neutral-600); }
-.ks-num { font-weight: var(--font-weight-semibold); }
-.ks-num.success { color: var(--color-success-600); }
-.ks-num.info    { color: var(--color-info-600); }
-.ks-num.danger  { color: var(--color-danger-600); }
+/* ── PIPELINE STATS card ── */
+.ps-hero { display: flex; align-items: baseline; gap: 6px; }
+.ps-num { font-size: var(--font-size-3xl); font-weight: var(--font-weight-bold); line-height: 1; letter-spacing: -0.01em; color: var(--color-neutral-900); font-variant-numeric: tabular-nums; }
+.ps-num-sub { font-size: var(--font-size-sm); color: var(--color-neutral-500); }
+.ps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border-color); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); overflow: hidden; }
+.ps-cell { background: var(--color-white); padding: var(--space-2) var(--space-3); display: flex; flex-direction: column; gap: 2px; }
+.ps-cell-num { font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-neutral-900); line-height: 1; font-variant-numeric: tabular-nums; }
+.ps-cell-label { font-size: 11px; color: var(--color-neutral-500); }
+.ps-cell-num.success { color: var(--color-success-600); }
+.ps-cell-num.danger  { color: var(--color-danger-600); }
+.ps-cell-num.info    { color: var(--color-info-600); }
 
-/* View toggle */
-.view-toggle { display: flex; gap: 2px; background: var(--color-neutral-100); border-radius: var(--border-radius-md); padding: 3px; flex-shrink: 0; border: 1px solid var(--border-color); }
-.view-btn { padding: 4px var(--space-3); border-radius: var(--border-radius-sm); border: none; font-family: var(--font-family-base); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-600); background: transparent; cursor: pointer; transition: all var(--transition-fast); white-space: nowrap; }
-.view-btn.active { background: var(--color-brand-100); color: var(--color-brand-600); font-weight: var(--font-weight-medium); }
+/* ── AVERAGE TIME card ── */
+.at-list { display: flex; flex-direction: column; gap: 8px; flex: 1; justify-content: space-between; }
+.at-row { display: flex; align-items: center; gap: var(--space-2); }
+.at-label { font-size: var(--font-size-xs); width: 76px; flex-shrink: 0; }
+.at-bar-wrap { flex: 1; height: 6px; background: var(--color-neutral-100); border-radius: var(--border-radius-pill); overflow: hidden; }
+.at-bar { height: 100%; border-radius: var(--border-radius-pill); transition: width var(--transition-base); }
+.at-time { font-size: var(--font-size-xs); color: var(--color-neutral-700); width: 36px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.at-delta { font-size: 10px; font-weight: var(--font-weight-medium); width: 28px; text-align: right; flex-shrink: 0; }
+.at-delta.up   { color: var(--color-danger-600); }
+.at-delta.down { color: var(--color-success-600); }
+.at-delta.flat { color: var(--color-neutral-400); }
 
-/* Error strip */
-.error-strip { background: var(--color-danger-50); border: 1px solid var(--color-danger-100); border-radius: var(--border-radius-xl); overflow: hidden; flex-shrink: 0; }
-.error-strip-header { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-4); cursor: pointer; user-select: none; }
-.error-strip-header:hover { background: rgba(239,68,68,.05); }
-.error-strip-title { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-danger-600); }
-.error-strip-chevron { margin-left: auto; color: var(--color-danger-600); transition: transform var(--transition-base); opacity: .7; }
-.error-strip.collapsed .error-strip-chevron { transform: rotate(-90deg); }
-.error-strip.collapsed .error-strip-body { display: none; }
-.error-strip-body { display: flex; gap: var(--space-3); padding: var(--space-3) var(--space-4); overflow-x: auto; border-top: 1px solid var(--color-danger-100); }
-.error-card { background: var(--color-white); border: 1px solid var(--color-danger-200); border-radius: var(--border-radius-md); padding: var(--space-3); min-width: 200px; flex-shrink: 0; cursor: pointer; transition: border-color var(--transition-fast); }
-.error-card:hover { border-color: var(--color-danger-300); }
-.error-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
-.error-card-id { font-family: var(--font-family-mono); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-danger-600); }
-.error-card-stage { font-size: 11px; font-weight: var(--font-weight-medium); padding: 2px 6px; border-radius: var(--border-radius-sm); color: var(--color-white); }
-.error-card-reason { font-size: var(--font-size-xs); color: var(--color-neutral-600); margin-bottom: var(--space-2); }
-.error-card-footer { display: flex; align-items: center; justify-content: space-between; }
-.error-card-date { font-size: 11px; color: var(--color-neutral-400); }
-
-/* ── KANBAN BOARD ── */
-.kanban-board { display: flex; gap: var(--space-4); overflow-x: auto; padding-bottom: var(--space-2); flex: 1; min-height: 0; align-items: flex-start; }
-
-.kanban-col {
-  flex: 1; min-width: 260px; display: flex; flex-direction: column;
-  background: var(--color-neutral-50); border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-xl); overflow: hidden;
-  max-height: 560px;
+/* ── ALERTS & METRICS card ── */
+.am-list { display: flex; flex-direction: column; gap: var(--space-2); flex: 1; }
+.am-row {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--border-color);
+  background: var(--color-white);
 }
-.kanban-col-error { background: var(--color-danger-50); border-color: var(--color-danger-200); }
-.kanban-board.detailed .kanban-col { flex: 0 0 240px; min-width: 240px; max-width: 240px; }
-.kanban-col-header { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-4) var(--space-2); flex-shrink: 0; }
-.col-icon { width: 16px; height: 16px; flex-shrink: 0; }
-.col-title { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); flex: 1; }
-.col-count { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); background: var(--color-white); border: 1px solid var(--border-color); padding: 2px 8px; border-radius: var(--border-radius-pill); }
-.kanban-col-body { padding: 0 var(--space-3) var(--space-3); display: flex; flex-direction: column; gap: var(--space-3); overflow-y: auto; flex: 1; }
-.kanban-col-empty { padding: var(--space-8) var(--space-3); text-align: center; font-size: var(--font-size-sm); color: var(--color-neutral-400); }
+.am-row.am-danger { border-color: var(--color-danger-200); background: var(--color-danger-50); }
+.am-row.am-warning { border-color: var(--color-warning-100); background: var(--color-warning-50); }
+.am-row.am-info { border-color: var(--color-info-100); background: var(--color-info-50); }
+.am-dot { width: 6px; height: 6px; border-radius: var(--border-radius-pill); flex-shrink: 0; }
+.am-dot.dot-danger  { background: var(--color-danger-500); }
+.am-dot.dot-warning { background: var(--color-warning-500); }
+.am-dot.dot-info    { background: var(--color-info-500); }
+.am-dot.dot-success { background: var(--color-success-500); }
+.am-text { flex: 1; color: var(--color-neutral-700); }
+.am-count { font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); font-variant-numeric: tabular-nums; }
 
-/* ── LOAN CARD ── */
-.loan-card {
-  background: var(--color-white); border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md); padding: var(--space-3);
-  cursor: pointer; transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+/* ── REALTIME LOAN STATUS ── */
+.rt-section {
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-xl);
+  padding: var(--space-4) var(--space-5);
+  display: flex; flex-direction: column; gap: var(--space-3);
+  flex-shrink: 0;
 }
-.loan-card.loan-card-error { border-color: var(--color-danger-300); background: var(--color-danger-50); }
-.loan-card:hover { border-color: var(--color-brand-400); box-shadow: var(--shadow-sm); }
-.loan-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 4px; gap: var(--space-2); }
-.loan-card-id { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
-.loan-card-sub { font-family: var(--font-family-mono); font-size: 11px; color: var(--color-neutral-500); margin-bottom: var(--space-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rt-header { display: flex; align-items: center; gap: var(--space-2); }
+.rt-pulse {
+  width: 8px; height: 8px; border-radius: var(--border-radius-pill);
+  background: var(--color-success-500);
+  position: relative;
+}
+.rt-pulse::before {
+  content: ''; position: absolute; inset: -4px;
+  border-radius: var(--border-radius-pill);
+  border: 2px solid var(--color-success-500);
+  animation: rt-ping 1.6s ease-out infinite;
+}
+@keyframes rt-ping {
+  0%   { opacity: 0.7; transform: scale(0.6); }
+  100% { opacity: 0;   transform: scale(1.4); }
+}
+.rt-title { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); }
+.rt-meta  { margin-left: auto; font-size: 11px; color: var(--color-neutral-500); }
+.rt-feed { display: flex; flex-direction: column; gap: 6px; max-height: 230px; overflow-y: auto; padding-right: 4px; }
+.rt-row {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: 6px var(--space-3);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--color-white);
+  font-size: var(--font-size-sm);
+  animation: rt-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes rt-enter {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.rt-id { font-family: var(--font-family-mono); font-size: 11px; font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); flex-shrink: 0; }
+.rt-action { color: var(--color-neutral-600); }
+.rt-stage-chip { font-size: 10px; font-weight: var(--font-weight-medium); padding: 1px 6px; border-radius: var(--border-radius-sm); color: var(--color-white); white-space: nowrap; flex-shrink: 0; }
+.rt-time { margin-left: auto; font-size: 11px; color: var(--color-neutral-400); flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.rt-row.rt-complete { background: var(--color-success-50); border-color: var(--color-success-200); }
+.rt-row.rt-spawn    { background: var(--color-info-50);    border-color: var(--color-info-100); }
 
-/* Status icons */
-.icon-todo { width: 16px; height: 16px; border-radius: var(--border-radius-pill); border: 1.5px solid var(--color-neutral-300); flex-shrink: 0; margin-top: 2px; }
-.icon-progress { width: 16px; height: 16px; border-radius: var(--border-radius-pill); background: linear-gradient(to right, var(--color-brand-500) 50%, transparent 50%); border: 1.5px solid var(--color-brand-500); flex-shrink: 0; margin-top: 2px; }
-.icon-blocked { width: 16px; height: 16px; border-radius: var(--border-radius-pill); background: linear-gradient(to right, var(--color-warning-500) 50%, transparent 50%); border: 1.5px solid var(--color-warning-500); flex-shrink: 0; margin-top: 2px; }
-.icon-complete { width: 16px; height: 16px; border-radius: var(--border-radius-pill); background: var(--color-success-500); border: 1.5px solid var(--color-success-500); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
-
-/* File chips */
-.loan-card-files { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: var(--space-2); }
-.file-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: var(--border-radius-sm); font-size: 11px; font-weight: var(--font-weight-medium); border: 1px solid var(--border-color); background: var(--color-white); color: var(--color-neutral-700); }
-/* Relevance AI doesn't heavily color code tags with backgrounds, mostly outlines */
-.file-chip.pdf { border-color: var(--tag-red-border); color: var(--tag-red-text); }
-.file-chip.ssr { border-color: var(--tag-blue-border); color: var(--tag-blue-text); }
-.file-chip.xml { border-color: var(--tag-green-border); color: var(--tag-green-text); }
-
-/* Progress */
-.loan-progress-bar-wrap { margin-bottom: var(--space-2); }
-.loan-progress-bar-track { height: 4px; background: var(--color-neutral-200); border-radius: var(--border-radius-pill); overflow: hidden; margin-bottom: 4px; }
-.loan-progress-bar-fill  { height: 100%; background: var(--color-brand-500); border-radius: var(--border-radius-pill); }
-.loan-progress-steps { font-size: 11px; color: var(--color-neutral-500); }
-.loan-card-footer { display: flex; align-items: center; justify-content: flex-end; }
-.loan-card-date { font-size: 11px; color: var(--color-neutral-400); }
-
-/* Detailed view */
-.kanban-board.detailed .loan-card { padding: var(--space-2) var(--space-3); }
-.kanban-board.detailed .loan-card-id { font-size: var(--font-size-sm); }
-.kanban-board.detailed .loan-card-sub { font-size: 10px; margin-bottom: var(--space-1); }
-
-/* ── GROUP CARD ── */
-.group-card { background: var(--color-white); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: var(--space-4); position: relative; cursor: pointer; transition: transform var(--transition-fast), border-color var(--transition-fast); z-index: 1; margin-bottom: var(--space-4); margin-right: 4px; }
-.group-card::before, .group-card::after { content: ''; position: absolute; background: var(--color-white); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); z-index: -1; transition: transform var(--transition-fast); }
-.group-card::before { top: 4px; left: 4px; right: -4px; bottom: -4px; background: var(--color-neutral-50); }
-.group-card::after { top: 8px; left: 8px; right: -8px; bottom: -8px; background: var(--color-neutral-100); }
-.group-card:hover { transform: translate(-2px, -2px); border-color: var(--color-brand-400); }
-.group-card:hover::before { transform: translate(2px, 2px); border-color: var(--border-color-hover); }
-.group-card:hover::after  { transform: translate(4px, 4px); border-color: var(--border-color-hover); }
-.group-card-title { font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); margin-bottom: 2px; }
-.group-card-meta { font-size: var(--font-size-sm); color: var(--color-neutral-500); margin-bottom: var(--space-3); }
-.group-card-vendors { display: flex; gap: var(--space-2); flex-wrap: wrap; }
-.group-card-vendors .badge { font-size: 11px; padding: 2px 8px; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); }
-.col-stage-dot { width: 8px; height: 8px; border-radius: var(--border-radius-pill); flex-shrink: 0; }
-
-/* Toast */
-.toast-wrap { position: fixed; bottom: var(--space-6); left: 50%; transform: translateX(-50%) translateY(80px); z-index: var(--z-toast); transition: transform var(--transition-slow); pointer-events: none; }
-.toast-wrap.show { transform: translateX(-50%) translateY(0); }
-
-
-/* ── OPS GRID (2x2 inside card 1) ── */
-.ops-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border-color); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); overflow: hidden; }
-.ops-cell { background: var(--color-white); padding: var(--space-3) var(--space-4); display: flex; flex-direction: column; gap: 2px; }
-.ops-cell.danger { background: var(--color-danger-50); }
-.ops-num { font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--color-neutral-900); line-height: 1; }
-.ops-num.danger { color: var(--color-danger-600); }
-.ops-label { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-900); }
-.ops-sub { font-size: 11px; color: var(--color-neutral-500); line-height: 1.3; }
-.ops-sub .accent { color: var(--color-success-600); font-weight: var(--font-weight-medium); }
-.ops-sub .warn { color: var(--color-warning-600); font-weight: var(--font-weight-medium); }
-.ops-sub .err { color: var(--color-danger-600); font-weight: var(--font-weight-medium); }
-
-/* ── ALERTS CARD ── */
-.alert-list { display: flex; flex-direction: column; gap: var(--space-2); }
-.alert-row { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); border: 1px solid var(--border-color); background: var(--color-white); }
-.alert-row.alert-danger { border-color: var(--color-danger-200); background: var(--color-danger-50); }
-.alert-row.alert-warning { border-color: var(--color-warning-100); background: var(--color-warning-50); }
-.alert-dot { width: 6px; height: 6px; border-radius: var(--border-radius-pill); flex-shrink: 0; }
-.alert-dot.dot-danger { background: var(--color-danger-500); }
-.alert-dot.dot-warning { background: var(--color-warning-500); }
-.alert-dot.dot-info { background: var(--color-info-500); }
-.alert-text { flex: 1; color: var(--color-neutral-700); }
-.alert-count { font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
-
-/* ── SECTION SEPARATOR ── */
-.section-sep { display: flex; align-items: center; gap: var(--space-4); margin: var(--space-2) 0; }
-.section-sep::before, .section-sep::after { content: ''; flex: 1; height: 1px; background: var(--border-color); }
-.section-sep-label { font-size: 11px; font-weight: var(--font-weight-medium); color: var(--color-neutral-400); text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
-
-/* ── STAGE BAR INLINE ── */
-.stage-bar-inline { display: flex; height: 28px; border-radius: var(--border-radius-md); overflow: hidden; border: 1px solid var(--border-color); }
-.stage-bar-seg { display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: var(--font-weight-medium); color: rgba(255,255,255,0.95); cursor: default; transition: opacity var(--transition-fast); padding: 0 6px; white-space: nowrap; overflow: hidden; }
-.stage-bar-seg:hover { opacity: 0.85; }
-.stage-bar-seg .seg-label { overflow: hidden; text-overflow: ellipsis; }
-
-/* ── ENHANCED GROUP CARD ── */
-.group-card { border-left: 3px solid var(--border-color); }
-.group-card.gc-errors { border-left-color: var(--color-danger-500); background: var(--color-danger-50); }
-.group-card.gc-errors::before { background: #fef5f5; }
-.group-card.gc-errors::after { background: #fef0f0; }
-.group-card.gc-progress { border-left-color: var(--color-brand-500); }
-.group-card.gc-done { border-left-color: var(--color-success-500); background: var(--color-success-50); }
-.group-card.gc-done::before { background: #f0fdf8; }
-.group-card.gc-done::after { background: #ecfdf5; }
-.group-card-detail { font-size: 11px; color: var(--color-neutral-500); margin-top: var(--space-1); }
-.group-card-detail .gc-accent { color: var(--color-brand-600); font-weight: var(--font-weight-medium); }
-.group-card-detail .gc-warn { color: var(--color-warning-600); font-weight: var(--font-weight-medium); }
-.group-card:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-md); }
-
-/* ── COMPACT OPS ── */
-.ops-num-sm { font-size: var(--font-size-xl) !important; font-weight: var(--font-weight-bold); color: var(--color-neutral-900); line-height: 1.2; }
-
-/* ── STAGE FAILURE BREAKDOWN ── */
-.failure-section-label { font-size: 11px; font-weight: var(--font-weight-medium); color: var(--color-neutral-400); text-transform: uppercase; letter-spacing: 0.05em; margin: var(--space-3) 0 var(--space-2); }
-.stage-failure-list { display: flex; flex-direction: column; gap: 6px; }
-.stage-failure-row { display: flex; align-items: center; gap: var(--space-2); }
-.stage-failure-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-.stage-failure-name { font-size: var(--font-size-xs); color: var(--color-neutral-600); width: 60px; flex-shrink: 0; }
-.stage-failure-bar-wrap { flex: 1; height: 4px; background: var(--color-neutral-100); border-radius: var(--border-radius-pill); overflow: hidden; }
-.stage-failure-bar-fill { height: 100%; border-radius: var(--border-radius-pill); }
-.stage-failure-count { font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); color: var(--color-neutral-600); width: 12px; text-align: right; flex-shrink: 0; }
-
-/* ── PIPELINE HEADING ── */
-.pipeline-heading { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); margin-bottom: var(--space-1); }
-.pipeline-heading-wrap { display: flex; align-items: baseline; gap: var(--space-3); margin-bottom: var(--space-3); }
-.pipeline-sub { font-size: var(--font-size-xs); color: var(--color-neutral-400); }
-
-/* ── SORT BUTTON ── */
-.sort-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px var(--space-3); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); background: var(--color-white); font-family: var(--font-family-base); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-600); cursor: pointer; transition: all var(--transition-fast); white-space: nowrap; height: 30px; }
-.sort-btn:hover { border-color: var(--border-color-hover); color: var(--color-neutral-900); }
-.sort-btn svg { width: 11px; height: 11px; flex-shrink: 0; }
-
-/* ── GROUPED TOGGLE ── */
-.grouped-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 4px var(--space-3); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); background: var(--color-white); font-family: var(--font-family-base); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-600); cursor: pointer; transition: all var(--transition-fast); height: 30px; }
-.grouped-toggle.active { background: var(--color-brand-50); border-color: var(--color-brand-400); color: var(--color-brand-600); }
-
-/* ── ERROR RETRY BUTTON ── */
-.error-retry-btn { margin-top: var(--space-2); display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border: 1px solid var(--color-danger-200); border-radius: var(--border-radius-sm); background: var(--color-white); font-size: 11px; font-weight: var(--font-weight-medium); color: var(--color-danger-600); cursor: pointer; font-family: var(--font-family-base); transition: all var(--transition-fast); }
-.error-retry-btn:hover { background: var(--color-danger-50); border-color: var(--color-danger-300); }
-.error-retry-btn:disabled { opacity: 0.55; cursor: default; }
-
-/* ── COMPACT LOAN CARD ── */
-.loan-card-id-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-2); gap: var(--space-2); }
-.loan-id-main { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
-.loan-sub-inline { font-family: var(--font-family-mono); font-size: 10px; color: var(--color-neutral-400); margin-left: 6px; }
-.loan-card-progress-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
-.loan-progress-steps-sm { font-size: 11px; color: var(--color-neutral-500); }
-.loan-progress-date-sm { font-size: 11px; color: var(--color-neutral-400); }
-.loan-progress-bar-gradient { height: 4px; border-radius: var(--border-radius-pill); overflow: hidden; }
+/* ── PLATFORM UPSELL ── */
+.platform-section { display: flex; flex-direction: column; gap: var(--space-3); }
+.platform-section-header { display: flex; align-items: baseline; gap: var(--space-3); }
+.platform-section-sub { font-size: var(--font-size-sm); color: var(--color-neutral-500); }
+.platform-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
+.platform-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-xl);
+  padding: var(--space-5);
+  background: var(--color-white);
+  display: flex; flex-direction: column; gap: var(--space-2);
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+  cursor: pointer;
+}
+.platform-card:hover { border-color: var(--color-brand-400); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.platform-card.is-active {
+  border-color: var(--color-brand-300);
+  background: linear-gradient(135deg, var(--color-brand-50) 0%, var(--color-white) 70%);
+}
+.platform-icon { width: 32px; height: 32px; border-radius: var(--border-radius-md); display: flex; align-items: center; justify-content: center; color: var(--color-white); margin-bottom: var(--space-1); flex-shrink: 0; }
+.platform-icon.is-current   { background: var(--color-neutral-900); }
+.platform-icon.is-crm       { background: var(--color-info-500); }
+.platform-icon.is-consensus { background: var(--color-warning-500); }
+.platform-name-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.platform-name { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+.platform-status { font-size: 10px; font-weight: var(--font-weight-medium); text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 6px; border-radius: var(--border-radius-sm); }
+.platform-status.is-active { color: var(--color-brand-700); background: var(--color-brand-100); }
+.platform-status.is-soon   { color: var(--color-neutral-500); background: var(--color-neutral-100); border: 1px dashed var(--color-neutral-300); }
+.platform-desc { font-size: var(--font-size-sm); color: var(--color-neutral-600); line-height: 1.5; }
+.platform-tag { font-size: 11px; color: var(--color-neutral-400); margin-top: auto; padding-top: var(--space-3); border-top: 1px dashed var(--border-color); display: flex; align-items: center; gap: 6px; }
+.platform-tag-spark { color: var(--color-brand-500); }
 
 </style>
 </head>
 <body>
 
-<!-- ── TOPBAR ── -->
 <header class="topbar">
   <div class="topbar-logo">
     <div class="topbar-logo-icon">
@@ -371,586 +208,347 @@ body {
         <path d="M5.5 8L7 9.5L10.5 6" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
-    QC Observer
+    QC Appraisal
   </div>
   <div class="topbar-divider"></div>
   <div class="pipeline-status">
     <div class="pipeline-dot"></div>
     Pipeline <strong>Running</strong>
-    &nbsp;·&nbsp; Last batch 9:41 AM
+    &nbsp;·&nbsp; Last batch <span id="topbar-time">9:41 AM</span>
   </div>
   <div class="topbar-right">
     <div class="user-avatar">SU</div>
   </div>
 </header>
 
-<!-- ── PAGE ── -->
 <div class="page-wrap">
 
   <!-- HEADER -->
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-    <h1 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900);">Observability Hub</h1>
+  <div class="page-header">
+    <h1 class="page-title">Observability Hub</h1>
     <div class="date-filter">
-      <button class="date-btn active" onclick="setDate(this,'all')">All</button>
-      <button class="date-btn" onclick="setDate(this,'daily')">Daily</button>
-      <button class="date-btn" onclick="setDate(this,'weekly')">Weekly</button>
-      <button class="date-btn" onclick="setDate(this,'monthly')">Monthly</button>
+      <button class="date-btn active" onclick="setDate(this)">All</button>
+      <button class="date-btn" onclick="setDate(this)">Daily</button>
+      <button class="date-btn" onclick="setDate(this)">Weekly</button>
+      <button class="date-btn" onclick="setDate(this)">Monthly</button>
     </div>
   </div>
 
-  <div class="bento-grid" style="grid-template-columns: repeat(3, 1fr);">
-    <!-- Card 1: Operations Summary -->
-    <div class="bento-card" style="padding: var(--space-4);">
-      <div class="bento-title">Operations</div>
-      <div class="ops-grid">
-        <div class="ops-cell">
-          <div class="ops-num" id="ops-total">—</div>
-          <div class="ops-label">Loans Today</div>
-          <div class="ops-sub" id="ops-sub-total">Loading…</div>
+  <!-- BENTO: Pipeline Stats / Average Time / Alerts & Metrics -->
+  <div class="bento-grid">
+    <!-- Pipeline Stats -->
+    <div class="bento-card">
+      <div class="bento-title">Pipeline Stats</div>
+      <div class="ps-hero">
+        <span class="ps-num" id="ps-total">—</span>
+        <span class="ps-num-sub">loans today</span>
+      </div>
+      <div class="ps-grid">
+        <div class="ps-cell">
+          <span class="ps-cell-num info" id="ps-active">—</span>
+          <span class="ps-cell-label">In flight</span>
         </div>
-        <div class="ops-cell">
-          <div class="ops-num ops-num-sm" id="ops-avgtime">—</div>
-          <div class="ops-label">Avg Processing Time</div>
-          <div class="ops-sub" id="ops-sub-avgtime">Loading…</div>
+        <div class="ps-cell">
+          <span class="ps-cell-num success" id="ps-completed">—</span>
+          <span class="ps-cell-label">Completed</span>
         </div>
-        <div class="ops-cell">
-          <div class="ops-num" id="ops-completed">—</div>
-          <div class="ops-label">Completed</div>
-          <div class="ops-sub" id="ops-sub-completed">Loading…</div>
+        <div class="ps-cell">
+          <span class="ps-cell-num" id="ps-throughput">—</span>
+          <span class="ps-cell-label">Throughput / min</span>
         </div>
-        <div class="ops-cell danger">
-          <div class="ops-num danger" id="ops-exceptions">—</div>
-          <div class="ops-label">Exceptions</div>
-          <div class="ops-sub" id="ops-sub-exceptions">Loading…</div>
+        <div class="ps-cell">
+          <span class="ps-cell-num danger" id="ps-exceptions">—</span>
+          <span class="ps-cell-label">Exceptions</span>
         </div>
       </div>
     </div>
 
-    <!-- Card 2: Stage Throughput -->
-    <div class="bento-card" style="padding: var(--space-4);">
-      <div class="bento-title">Stage Throughput <span style="font-size:11px;font-weight:400;color:var(--color-neutral-400);margin-left:4px;">vs. prev batch</span></div>
-      <div class="tp-list">
-        <div class="tp-row"><div class="tp-label" style="color:var(--stage-ingest)">Ingest</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-ingest);width:18%"></div></div><div class="tp-time">0:28</div><div class="tp-delta down">↓7s</div></div>
-        <div class="tp-row"><div class="tp-label" style="color:var(--stage-classify)">Classify</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-classify);width:38%"></div></div><div class="tp-time">1:02</div><div class="tp-delta flat">—</div></div>
-        <div class="tp-row"><div class="tp-label" style="color:var(--stage-qc-check)">QC Check</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-qc-check);width:100%"></div></div><div class="tp-time">2:44</div><div class="tp-delta up">↑18s</div></div>
-        <div class="tp-row"><div class="tp-label" style="color:var(--stage-code-map)">Code Map</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-code-map);width:55%"></div></div><div class="tp-time">1:31</div><div class="tp-delta down">↓4s</div></div>
-        <div class="tp-row"><div class="tp-label" style="color:var(--stage-report-gen)">Report Gen</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-report-gen);width:42%"></div></div><div class="tp-time">1:08</div><div class="tp-delta flat">—</div></div>
-        <div class="tp-row"><div class="tp-label" style="color:var(--stage-uw-report)">UW Report</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-uw-report);width:68%"></div></div><div class="tp-time">1:50</div><div class="tp-delta up">↑22s</div></div>
+    <!-- Average Time Taken -->
+    <div class="bento-card">
+      <div class="bento-title">Average Time Taken <span style="font-size:11px;font-weight:400;color:var(--color-neutral-400);margin-left:4px;">vs. prev batch</span></div>
+      <div class="at-list">
+        <div class="at-row"><div class="at-label" style="color:var(--stage-ingest)">Ingest</div><div class="at-bar-wrap"><div class="at-bar" style="background:var(--stage-ingest);width:18%"></div></div><div class="at-time">0:28</div><div class="at-delta down">↓7s</div></div>
+        <div class="at-row"><div class="at-label" style="color:var(--stage-classify)">Classify</div><div class="at-bar-wrap"><div class="at-bar" style="background:var(--stage-classify);width:38%"></div></div><div class="at-time">1:02</div><div class="at-delta flat">—</div></div>
+        <div class="at-row"><div class="at-label" style="color:var(--stage-qc-check)">QC Check</div><div class="at-bar-wrap"><div class="at-bar" style="background:var(--stage-qc-check);width:100%"></div></div><div class="at-time">2:44</div><div class="at-delta up">↑18s</div></div>
+        <div class="at-row"><div class="at-label" style="color:var(--stage-code-map)">Code Map</div><div class="at-bar-wrap"><div class="at-bar" style="background:var(--stage-code-map);width:55%"></div></div><div class="at-time">1:31</div><div class="at-delta down">↓4s</div></div>
+        <div class="at-row"><div class="at-label" style="color:var(--stage-report-gen)">Report Gen</div><div class="at-bar-wrap"><div class="at-bar" style="background:var(--stage-report-gen);width:42%"></div></div><div class="at-time">1:08</div><div class="at-delta flat">—</div></div>
+        <div class="at-row"><div class="at-label" style="color:var(--stage-uw-report)">UW Report</div><div class="at-bar-wrap"><div class="at-bar" style="background:var(--stage-uw-report);width:68%"></div></div><div class="at-time">1:50</div><div class="at-delta up">↑22s</div></div>
       </div>
     </div>
 
-    <!-- Card 3: Exceptions -->
-    <div class="bento-card" style="padding: var(--space-4);">
-      <div class="bento-title">Exceptions</div>
-      <div id="alerts-container"></div>
+    <!-- Alerts & Metrics -->
+    <div class="bento-card">
+      <div class="bento-title">Alerts &amp; Metrics</div>
+      <div class="am-list" id="amList"></div>
     </div>
-  </div><!-- /bento-grid -->
-
-  <!-- Pipeline Heading -->
-  <div class="pipeline-heading-wrap">
-    <span class="pipeline-heading">Active Pipeline</span>
-    <span class="pipeline-sub" id="pipeline-sub-count"></span>
   </div>
 
-  <!-- ── KANBAN SECTION ── -->
-  <div class="kanban-section">
-
-    <!-- Toolbar -->
-    <div class="kanban-toolbar">
-      <div class="search-wrap">
-        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        <input class="input" id="searchInput" type="text" placeholder="Search loans…" oninput="renderBoard()">
-        <span class="search-shortcut">/</span>
-      </div>
-
-      <select class="filter-select" id="dateFilter" onchange="renderBoard()" style="height:30px;">
-        <option value="">All time</option>
-        <option value="today">Today</option>
-        <option value="week">This week</option>
-      </select>
-
-      <button class="sort-btn" id="sort-btn" onclick="toggleSort()">
-        Newest
-        <svg viewBox="0 0 11 11" fill="none"><path d="M5.5 2v7M5.5 9 3 6.5m2.5 2.5L8 6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-
-      <div class="toolbar-spacer"></div>
-
-      <button class="grouped-toggle active" id="btn-grouped" onclick="toggleGrouped()">
-        <svg viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="8" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="1" y="8" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="8" y="8" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
-        Grouped
-      </button>
-
-      <div class="view-toggle" id="view-switcher">
-        <button class="view-btn active" id="btn-detailed" onclick="setView('detailed')">Stage</button>
-        <button class="view-btn" id="btn-simplified" onclick="setView('simplified')">Status</button>
-      </div>
+  <!-- REALTIME LOAN STATUS -->
+  <div class="rt-section">
+    <div class="rt-header">
+      <div class="rt-pulse"></div>
+      <span class="rt-title">Realtime Loan Status</span>
+      <span class="rt-meta" id="rtMeta">Live · last 30 events</span>
     </div>
+    <div class="rt-feed" id="rtFeed"></div>
+  </div>
 
-    <!-- Error Strip (rendered dynamically) -->
-    <div id="error-strip-container"></div>
+  <!-- PLATFORM CAPABILITIES (upsell) -->
+  <div class="platform-section">
+    <div class="platform-section-header">
+      <h2 class="page-title">Platform Capabilities</h2>
+      <span class="platform-section-sub">One intelligence layer · three product surfaces</span>
+    </div>
+    <div class="platform-grid">
 
-    <!-- Stage Breakdown (rendered dynamically) -->
-    <div class="stage-bar-inline" id="stage-bar-container" style="margin-bottom: var(--space-3);"></div>
+      <div class="platform-card is-active">
+        <div class="platform-icon is-current">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M8 1.5L2.5 3.5V8c0 3.04 2.4 5.87 5.5 6.5 3.1-.63 5.5-3.46 5.5-6.5V3.5L8 1.5Z" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/>
+            <path d="M5.5 8L7 9.5L10.5 6" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="platform-name-row">
+          <span class="platform-name">QC Appraisal</span>
+          <span class="platform-status is-active">Active</span>
+        </div>
+        <p class="platform-desc">Automated quality control for appraisal reports — ingestion, classification, QC checks, and underwriter report generation.</p>
+        <div class="platform-tag"><span class="platform-tag-spark">✦</span>Powered by the QC intelligence layer</div>
+      </div>
 
-    <!-- Kanban board -->
-    <div class="kanban-board" id="kanbanBoard"></div>
+      <div class="platform-card">
+        <div class="platform-icon is-crm">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="6" r="3" stroke="#fff" stroke-width="1.4"/>
+            <path d="M2 14c0-3 2.7-5 6-5s6 2 6 5" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="platform-name-row">
+          <span class="platform-name">CRM</span>
+          <span class="platform-status is-soon">Coming soon</span>
+        </div>
+        <p class="platform-desc">Borrower &amp; broker relationships. The same intelligence layer working across leads, conversations, and conversion.</p>
+        <div class="platform-tag"><span class="platform-tag-spark">✦</span>Built on the same intelligence layer</div>
+      </div>
 
-  </div><!-- /kanban-section -->
+      <div class="platform-card">
+        <div class="platform-icon is-consensus">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 4h10M3 8h10M3 12h6" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>
+            <circle cx="13" cy="12" r="2" fill="#fff"/>
+          </svg>
+        </div>
+        <div class="platform-name-row">
+          <span class="platform-name">Consensus</span>
+          <span class="platform-status is-soon">Coming soon</span>
+        </div>
+        <p class="platform-desc">Multi-party agreement workflows for underwriters, appraisers, and reviewers — synchronous decisioning on complex files.</p>
+        <div class="platform-tag"><span class="platform-tag-spark">✦</span>Built on the same intelligence layer</div>
+      </div>
+
+    </div>
+  </div>
+
 </div><!-- /page-wrap -->
 
-<!-- Toast -->
-<div class="toast-wrap" id="toastWrap"><div class="toast"><span id="toastMsg"></span></div></div>
-
-<script>
-/* ── DATA ── */
-const LOANS = [
-  { id:'LN-000121', sub:'LN000121-1776867001', status:'failed',      stageIndex:0, stepsComplete:0, stage:'ingest',     vendor:'fannie',  files:['PDF','XML'],        reason:'Missing SSR FNM file',           date:'Apr 30, 9:41 AM' },
-  { id:'LN-000122', sub:'LN000122-1776867002', status:'failed',      stageIndex:1, stepsComplete:1, stage:'classify',   vendor:'freddie', files:['PDF','SSR','XML'],   reason:'LLM parse error',                date:'Apr 30, 9:39 AM' },
-  { id:'LN-000123', sub:'LN000123-1776867003', status:'blocked',     stageIndex:2, stepsComplete:2, stage:'qc-check',   vendor:'fannie',  files:['PDF','SSR','XML'],   reason:'Appraiser license unverifiable', date:'Apr 30, 9:38 AM' },
-  { id:'LN-000124', sub:'LN000124-1776867004', status:'in-progress', stageIndex:3, stepsComplete:3, stage:'code-map',   vendor:'fannie',  files:['PDF','SSR','XML'],   reason:'Flag — Sales comp date',         date:'Apr 30, 9:37 AM' },
-  { id:'LN-000125', sub:'LN000125-1776866005', status:'completed',   stageIndex:5, stepsComplete:6, stage:'',           vendor:'fannie',  files:['PDF','SSR','XML'],   reason:'1 flag — GLA discrepancy',       date:'Apr 30, 8:22 AM' },
-  { id:'LN-000126', sub:'LN000126-1776866006', status:'completed',   stageIndex:5, stepsComplete:6, stage:'',           vendor:'freddie', files:['PDF','SSR','XML'],   reason:'All clear',                      date:'Apr 30, 8:20 AM' },
-  { id:'LN-000127', sub:'LN000127-1776866007', status:'completed',   stageIndex:5, stepsComplete:6, stage:'',           vendor:'freddie', files:['PDF','SSR','XML'],   reason:'All clear',                      date:'Apr 30, 8:18 AM' },
-  { id:'LN-000128', sub:'LN000128-1776866008', status:'in-progress', stageIndex:1, stepsComplete:1, stage:'classify',   vendor:'fannie',  files:['PDF','SSR','XML'],   reason:'Low confidence on doc type',     date:'Apr 30, 8:15 AM' },
-];
-
-const STAGE_NAMES = ['Ingest','Classify','QC Checklist','Code Mapping','Report Gen','UW Report'];
-const STAGE_KEYS  = ['ingest','classify','qc-check','code-map','report-gen','uw-report'];
-const STAGE_VARS  = ['--stage-ingest','--stage-classify','--stage-qc-check','--stage-code-map','--stage-report-gen','--stage-uw-report'];
-
-let currentView = 'detailed';   // Stage by default
-let isGrouped   = true;         // Grouped on by default
-let sortOrder   = 'newest';     // 'newest' | 'oldest'
-
-/* ── ICONS ── */
-function statusIcon(status) {
-  if (status === 'completed')   return `<div class="icon-complete"><svg width="8" height="8" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
-  if (status === 'in-progress') return `<div class="icon-progress"></div>`;
-  if (status === 'blocked')     return `<div class="icon-blocked"></div>`;
-  if (status === 'failed')      return `<div class="icon-todo" style="border-color:var(--color-danger-500); background:var(--color-danger-50); display:flex; align-items:center; justify-content:center;"><svg width="8" height="8" viewBox="0 0 10 10" fill="none"><path d="M2 2L8 8M8 2L2 8" stroke="var(--color-danger-500)" stroke-width="1.5" stroke-linecap="round"/></svg></div>`;
-  return `<div class="icon-todo"></div>`;
-}
-
-/* ── FILE CHIPS ── */
-function fileChips(files) {
-  return files.map(f => `<span class="file-chip ${f.toLowerCase()}">${f}</span>`).join('');
-}
-
-/* ── STAGE GRADIENT (progress bar) ── */
-const STAGE_COLORS_HEX = ['#3D7A38','#3B87D1','#5840A0','#8E54C8','#C24F82','#C8521A'];
-function progressGradient(stepsComplete) {
-  if (stepsComplete === 0) return 'var(--color-neutral-200)';
-  const stops = STAGE_COLORS_HEX.slice(0, stepsComplete);
-  return stops.length === 1 ? stops[0] : `linear-gradient(to right, ${stops.join(', ')})`;
-}
-
-/* ── LOAN CARD HTML (compact) ── */
-function loanCardHTML(l) {
-  const errorClass = (l.status === 'failed') ? ' loan-card-error' : '';
-
-  if (l.status === 'failed') {
-    return `
-    <div class="loan-card${errorClass}" onclick="goLoan('${l.id}')">
-      <div class="loan-card-id-row">
-        <span><span class="loan-id-main">${l.id}</span><span class="loan-sub-inline">${l.sub}</span></span>
-        ${statusIcon(l.status)}
-      </div>
-      <div style="font-size:var(--font-size-xs);color:var(--color-danger-600);">${l.reason}</div>
-    </div>`;
-  }
-
-  const pct = Math.round((l.stepsComplete / 6) * 100);
-  const gradient = progressGradient(l.stepsComplete);
-  const hasProgress = l.status === 'in-progress' || l.status === 'blocked' || l.status === 'completed';
-
-  const progressBlock = hasProgress ? `
-    <div class="loan-card-progress-header">
-      <span class="loan-progress-steps-sm">${l.stepsComplete} of 6 stages</span>
-      <span class="loan-progress-date-sm">${l.date}</span>
-    </div>
-    <div class="loan-progress-bar-gradient" style="background:var(--color-neutral-100);">
-      <div style="width:${pct}%;height:4px;border-radius:9999px;background:${gradient};"></div>
-    </div>` : `<div class="loan-progress-date-sm" style="text-align:right;">${l.date}</div>`;
-
-  return `
-    <div class="loan-card" onclick="goLoan('${l.id}')">
-      <div class="loan-card-id-row">
-        <span><span class="loan-id-main">${l.id}</span><span class="loan-sub-inline">${l.sub}</span></span>
-        ${statusIcon(l.status)}
-      </div>
-      ${progressBlock}
-    </div>`;
-}
-
-/* ── GROUP CARD HTML ── */
-function groupCardHTML(loans, col) {
-  if (!loans.length) return '';
-  const vendors = {};
-  let errorCount = 0;
-  let blockedCount = 0;
-  let progressCount = 0;
-  loans.forEach(l => {
-    const v = l.vendor.charAt(0).toUpperCase() + l.vendor.slice(1);
-    vendors[v] = (vendors[v] || 0) + 1;
-    if (l.status === 'failed') errorCount++;
-    if (l.status === 'blocked') blockedCount++;
-    if (l.status === 'in-progress') progressCount++;
-  });
-
-  const vendorTags = Object.entries(vendors).map(([v, c]) => `<span class="badge badge-gray">${c} ${v}</span>`).join('');
-
-  // Status line
-  let statusLine = 'All clear';
-  if (col.id === 'errors') statusLine = `${errorCount} failed`;
-  else if (col.id === 'progress') {
-    const parts = [];
-    if (progressCount) parts.push(`${progressCount} processing`);
-    if (blockedCount) parts.push(`${blockedCount} blocked`);
-    statusLine = parts.join(' \u00b7 ') || 'Processing';
-  }
-  else if (col.id === 'done') statusLine = 'Ready for review';
-  else if (col.id === 'todo') statusLine = 'Awaiting processing';
-
-  // Card color class
-  let gcClass = '';
-  if (col.id === 'errors') gcClass = ' gc-errors';
-  else if (col.id === 'progress') gcClass = ' gc-progress';
-  else if (col.id === 'done') gcClass = ' gc-done';
-
-  // Bottleneck / attention hint
-  let detail = '';
-  if (col.id === 'errors') detail = `<div class="group-card-detail"><span class="gc-warn">${errorCount} need attention</span></div>`;
-  else if (col.id === 'progress') detail = blockedCount > 0 ? `<div class="group-card-detail">Bottleneck: <span class="gc-warn">QC rules</span></div>` : `<div class="group-card-detail"><span class="gc-accent">\u2195 89% avg confidence</span></div>`;
-  else if (col.id === 'done') detail = `<div class="group-card-detail"><span class="gc-accent">\u2195 91% avg confidence</span></div>`;
-
-  return `
-    <div class="group-card${gcClass}" onclick="alert('Viewing grouped details for ${loans.length} loans...')">
-      <div class="group-card-title">${loans.length} Loans</div>
-      <div class="group-card-meta">${statusLine}</div>
-      <div class="group-card-vendors">${vendorTags}</div>
-      ${detail}
-    </div>
-  `;
-}
-
-/* ── SIMPLIFIED COLUMNS ── */
-const SIMPLIFIED_COLS = [
-  {
-    id: 'todo', label: 'To Do', colorClass: '',
-    icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#d4d4d4" stroke-width="1.5"/></svg>`,
-    filter: l => l.status === 'todo'
-  },
-  {
-    id: 'progress', label: 'In Progress', colorClass: 'info',
-    icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1A7 7 0 0 0 8 15 Z" fill="#3b82f6"/><circle cx="8" cy="8" r="7" stroke="#3b82f6" stroke-width="1.5"/></svg>`,
-    filter: l => ['in-progress','blocked'].includes(l.status)
-  },
-  {
-    id: 'done', label: 'Completed', colorClass: 'success',
-    icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="#22c55e"/><path d="M5 8l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-    filter: l => l.status === 'completed'
-  },
-];
-
-/* ── DETAILED COLUMNS ── */
-const DETAILED_COLS = [
-  { id:'ingest',     label:'Ingest',       stageVar:'--stage-ingest',     filter: l => l.stage === 'ingest' },
-  { id:'classify',   label:'Classify',     stageVar:'--stage-classify',   filter: l => l.stage === 'classify' },
-  { id:'qc-check',   label:'QC Checklist', stageVar:'--stage-qc-check',   filter: l => l.stage === 'qc-check' },
-  { id:'code-map',   label:'Code Mapping', stageVar:'--stage-code-map',   filter: l => l.stage === 'code-map' },
-  { id:'report-gen', label:'Report Gen',   stageVar:'--stage-report-gen', filter: l => l.stage === 'report-gen' },
-  { id:'uw-report',  label:'UW Report',    stageVar:'--stage-uw-report',  filter: l => l.stage === 'uw-report' },
-  { id:'done',       label:'Done',         stageVar: null,                filter: l => l.status === 'completed' },
-];
-
-/* ── FILTER LOANS ── */
-function getFiltered() {
-  const search = document.getElementById('searchInput').value.toLowerCase().trim();
-  let loans = LOANS.filter(l => {
-    if (search && !l.id.toLowerCase().includes(search)) return false;
-    return true;
-  });
-  if (sortOrder === 'oldest') loans = [...loans].reverse();
-  return loans;
-}
-
-
-
-/* ── RENDER KANBAN COLUMN ── */
-function colHTML(col, loans, isDetailed) {
-  // Sort loans so that failed ones appear at the top of the column
-  loans.sort((a, b) => {
-    if (a.status === 'failed' && b.status !== 'failed') return -1;
-    if (b.status === 'failed' && a.status !== 'failed') return 1;
-    return 0;
-  });
-
-  const count = loans.length;
-  const stageColor = col.stageVar ? `var(${col.stageVar})` : 'var(--color-success-500)';
-
-  let header = '';
-  if (isDetailed) {
-    header = `
-      <div class="kanban-col-header">
-        <div class="col-stage-dot" style="background:${stageColor}"></div>
-        <span class="col-title">${col.label}</span>
-        <span class="col-count">${count}</span>
-      </div>`;
-  } else {
-    const countColor = col.colorClass === 'success' ? 'var(--color-success-600)' : col.colorClass === 'info' ? 'var(--color-info-500)' : 'var(--color-neutral-400)';
-    header = `
-      <div class="kanban-col-header">
-        ${col.icon}
-        <span class="col-title">${col.label}</span>
-        <span class="col-count" style="color:${countColor}">${count}</span>
-      </div>`;
-  }
-
-  let body = '';
-  if (loans.length === 0) {
-    body = `<div class="kanban-col-empty">No loans</div>`;
-  } else if (isGrouped) {
-    body = groupCardHTML(loans, col);
-  } else {
-    body = loans.map(l => loanCardHTML(l)).join('');
-  }
-
-  const colClass = col.id === 'errors' ? 'kanban-col kanban-col-error' : 'kanban-col';
-
-  return `
-    <div class="${colClass}">
-      ${header}
-      <div class="kanban-col-body">${body}</div>
-    </div>`;
-}
-
-/* ── RENDER BOARD ── */
-function renderBoard() {
-  const filtered = getFiltered();
-  const board    = document.getElementById('kanbanBoard');
-  const cols     = currentView === 'simplified' ? SIMPLIFIED_COLS : DETAILED_COLS;
-  const isDetail = currentView === 'detailed';
-
-  board.className = `kanban-board${isDetail ? ' detailed' : ''}`;
-  board.innerHTML = cols.map(col => {
-    const colLoans = filtered.filter(col.filter);
-    return colHTML(col, colLoans, isDetail);
-  }).join('');
-
-  // Stage bar: only when not grouped
-  const stageBarEl = document.getElementById('stage-bar-container');
-  stageBarEl.style.display = isGrouped ? 'none' : '';
-
-  // Pipeline sub-count
-  const total = filtered.length;
-  const inprog = filtered.filter(l => ['in-progress','blocked'].includes(l.status)).length;
-  const sub = document.getElementById('pipeline-sub-count');
-  if (sub) sub.textContent = `${total} loans · ${inprog} processing`;
-}
-
-/* ── RENDER METRICS (Operations card) ── */
-function renderMetrics() {
-  const total      = LOANS.length;
-  const completed  = LOANS.filter(l => l.status === 'completed').length;
-  const exceptions = LOANS.filter(l => l.status === 'failed').length;
-
-  document.getElementById('ops-total').textContent      = total;
-  document.getElementById('ops-avgtime').textContent    = '8m 43s';
-  document.getElementById('ops-completed').textContent  = completed;
-  document.getElementById('ops-exceptions').textContent = exceptions;
-
-  document.getElementById('ops-sub-total').innerHTML    = `Batch #47 · Started 9:15 AM`;
-  document.getElementById('ops-sub-avgtime').innerHTML  = `<span class="err">↑ 40s vs. yesterday</span>`;
-  document.getElementById('ops-sub-completed').innerHTML = `Avg processing 4m 02s`;
-  const shared = exceptions >= 2 ? `<span class="err">${exceptions - 1} share a root cause</span><br>` : '';
-  document.getElementById('ops-sub-exceptions').innerHTML = `${shared}Needs attention`;
-}
-
-/* ── RENDER ALERTS (Exceptions card) ── */
-function renderAlerts() {
-  const failed = LOANS.filter(l => l.status === 'failed');
-  const total  = failed.length;
-  const byStage = {};
-  failed.forEach(l => { if (l.stage) byStage[l.stage] = (byStage[l.stage] || 0) + 1; });
-
-  const stageItems = Object.entries(byStage)
-    .sort((a, b) => b[1] - a[1])
-    .map(([stage, count]) => {
-      const color = `var(--stage-${stage})`;
-      const label = stage.charAt(0).toUpperCase() + stage.slice(1);
-      const pct = Math.round(count / total * 100);
-      return `
-        <div class="stage-failure-row">
-          <span class="stage-failure-dot" style="background:${color}"></span>
-          <span class="stage-failure-name">${label}</span>
-          <div class="stage-failure-bar-wrap"><div class="stage-failure-bar-fill" style="width:${pct}%;background:${color}"></div></div>
-          <span class="stage-failure-count">${count}</span>
-        </div>`;
-    }).join('');
-
-  document.getElementById('alerts-container').innerHTML = `
-    <div class="alert-row alert-danger">
-      <div class="alert-dot dot-danger"></div>
-      <span class="alert-text">AI workflow exceptions</span>
-      <span class="alert-count" style="color:var(--color-danger-600);margin-left:auto;">${total}</span>
-    </div>
-    ${stageItems ? `
-    <div class="failure-section-label">Failing at stage</div>
-    <div class="stage-failure-list">${stageItems}</div>` : ''}`;
-}
-
-/* ── RETRY ERROR LOAN ── */
-function retryErrorLoan(e, id) {
-  e.stopPropagation();
-  const btn = e.currentTarget;
-  btn.innerHTML = '↺ Queued';
-  btn.disabled = true;
-  showToast(id + ' re-queued for processing');
-}
-
-/* ── RENDER STAGE BAR ── */
-function renderStageBar() {
-  const total = LOANS.length;
-  if (!total) return;
-
-  const STAGE_DEFS = [
-    { key:'ingest',     label:'Ingest',   cssVar:'--stage-ingest'     },
-    { key:'classify',   label:'Classify', cssVar:'--stage-classify'   },
-    { key:'qc-check',   label:'QC',       cssVar:'--stage-qc-check'   },
-    { key:'code-map',   label:'CodeMap',  cssVar:'--stage-code-map'   },
-    { key:'report-gen', label:'Report',   cssVar:'--stage-report-gen' },
-    { key:'uw-report',  label:'UW',       cssVar:'--stage-uw-report'  },
-  ];
-
-  const stageCounts = {};
-  let completedCount = 0, failedCount = 0;
-
-  LOANS.forEach(l => {
-    if (l.status === 'completed')  completedCount++;
-    else if (l.status === 'failed') failedCount++;
-    else if (l.stage) stageCounts[l.stage] = (stageCounts[l.stage] || 0) + 1;
-  });
-
-  const segs = [];
-  STAGE_DEFS.forEach(s => {
-    const count = stageCounts[s.key] || 0;
-    if (count > 0) {
-      const pct = (count / total * 100).toFixed(1);
-      segs.push(`<div class="stage-bar-seg" style="background:var(${s.cssVar});width:${pct}%;" title="${s.label} · ${count}"><span class="seg-label">${s.label}</span> ${count}</div>`);
-    }
-  });
-  if (completedCount > 0) {
-    const pct = (completedCount / total * 100).toFixed(1);
-    segs.push(`<div class="stage-bar-seg" style="background:var(--color-success-500);width:${pct}%;" title="Completed · ${completedCount}"><span class="seg-label">Done</span> ${completedCount}</div>`);
-  }
-  if (failedCount > 0) {
-    const pct = (failedCount / total * 100).toFixed(1);
-    segs.push(`<div class="stage-bar-seg" style="background:var(--color-danger-500);width:${pct}%;" title="Failed · ${failedCount}"><span class="seg-label">Failed</span> ${failedCount}</div>`);
-  }
-
-  document.getElementById('stage-bar-container').innerHTML = segs.join('');
-}
-
-/* ── RENDER ERROR STRIP ── */
-function renderErrorStrip() {
-  const failed = LOANS.filter(l => l.status === 'failed');
-  const container = document.getElementById('error-strip-container');
-  if (!failed.length) { container.innerHTML = ''; return; }
-
-  const cards = failed.map(l => {
-    const stageColor = l.stage ? `var(--stage-${l.stage})` : 'var(--color-danger-500)';
-    const stageLabel = l.stage ? l.stage.charAt(0).toUpperCase() + l.stage.slice(1) : 'Unknown';
-    return `
-      <div class="error-card" onclick="goLoan('${l.id}')">
-        <div class="error-card-top">
-          <span class="error-card-id">${l.id}</span>
-          <span class="error-card-stage" style="background:${stageColor}">${stageLabel}</span>
-        </div>
-        <div class="error-card-reason">${l.reason}</div>
-        <div class="error-card-footer">
-          <span class="error-card-date">${l.date}</span>
-        </div>
-        <button class="error-retry-btn" onclick="retryErrorLoan(event,'${l.id}')">
-          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5a3.5 3.5 0 1 0 .7-2.1M1.5 1.5v2h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Re-queue
-        </button>
-      </div>`;
-  }).join('');
-
-  container.innerHTML = `
-    <div class="error-strip" id="error-strip">
-      <div class="error-strip-header" onclick="document.getElementById('error-strip').classList.toggle('collapsed')">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2.5v4M7 9h.01M2 12.5l5-9 5 9H2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span class="error-strip-title">${failed.length} loan${failed.length > 1 ? 's' : ''} failed — requires attention</span>
-        <svg class="error-strip-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <div class="error-strip-body">${cards}</div>
-    </div>`;
-}
-
-/* ── VIEW & GROUPING TOGGLES ── */
-function setView(mode) {
-  currentView = mode;
-  document.getElementById('btn-simplified').classList.toggle('active', mode === 'simplified');
-  document.getElementById('btn-detailed').classList.toggle('active', mode === 'detailed');
-  renderBoard();
-}
-
-function toggleGrouped() {
-  isGrouped = !isGrouped;
-  document.getElementById('btn-grouped').classList.toggle('active', isGrouped);
-  renderBoard();
-}
-
-/* ── SORT TOGGLE ── */
-function toggleSort() {
-  sortOrder = sortOrder === 'newest' ? 'oldest' : 'newest';
-  const btn = document.getElementById('sort-btn');
-  const arrow = sortOrder === 'newest'
-    ? `<svg viewBox="0 0 11 11" fill="none"><path d="M5.5 2v7M5.5 9 3 6.5m2.5 2.5L8 6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`
-    : `<svg viewBox="0 0 11 11" fill="none"><path d="M5.5 9V2M5.5 2 3 4.5m2.5-2.5L8 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-  btn.innerHTML = (sortOrder === 'newest' ? 'Newest' : 'Oldest') + arrow;
-  renderBoard();
-}
-
-/* ── DATE FILTER (obs card) ── */
-function setDate(btn, period) {
-  document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-}
-
-/* ── NAVIGATION ── */
-function goLoan(id) { window.location.href = 'loan-detail.html?id=' + id; }
-
-/* ── RETRY ── */
-function retryLoan(e, id) {
-  e.stopPropagation();
-  const btn = e.currentTarget;
-  btn.textContent = '…'; btn.disabled = true;
-  setTimeout(() => { btn.textContent = 'Queued'; showToast(id + ' re-queued'); }, 800);
-}
-
-/* ── TOAST ── */
-function showToast(msg) {
-  document.getElementById('toastMsg').textContent = msg;
-  const w = document.getElementById('toastWrap');
-  w.classList.add('show');
-  setTimeout(() => w.classList.remove('show'), 2800);
-}
-
-/* ── INIT ── */
-renderMetrics();
-renderStageBar();
-renderErrorStrip();
-renderBoard();
-</script>
-
-<!-- V1 / V2 Switcher -->
+<!-- V1 / V2 switcher -->
 <div style="position:fixed;bottom:20px;right:20px;background:var(--color-white);border:1px solid var(--border-color);border-radius:20px;padding:4px;display:flex;gap:4px;box-shadow:var(--shadow-md);z-index:9999;">
   <a href="dashboard.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-white);background:var(--color-neutral-900);">V1</a>
   <a href="dashboard-v2.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-neutral-500);">V2</a>
 </div>
+
+<script>
+const STAGE_AVG_SEC = { ingest: 28, classify: 62, 'qc-check': 164, 'code-map': 91, 'report-gen': 68, 'uw-report': 110 };
+const STAGE_LABELS  = { ingest:'Ingest', classify:'Classify', 'qc-check':'QC Check', 'code-map':'Code Map', 'report-gen':'Report Gen', 'uw-report':'UW Report' };
+const STAGE_ORDER   = ['ingest','classify','qc-check','code-map','report-gen','uw-report'];
+
+/* ── DATA — same generator pattern as V2 ── */
+const LOANS = (() => {
+  const inFlight = { ingest:8, classify:14, 'qc-check':12, 'code-map':10, 'report-gen':9, 'uw-report':7 };
+  const completedCount = 38;
+  const out = [];
+  out.push({ id:'LN-000121', status:'failed' });
+  out.push({ id:'LN-000122', status:'failed' });
+  let id = 200;
+  STAGE_ORDER.forEach(stage => {
+    const n = inFlight[stage];
+    const avg = STAGE_AVG_SEC[stage];
+    for (let i = 0; i < n; i++) {
+      const isBlocked = i % 9 === 0;
+      const takenPct = isBlocked ? 1.05 : 0.2 + (i / Math.max(1, n - 1)) * 0.75;
+      out.push({
+        id: `LN-${String(id++).padStart(6,'0')}`,
+        status: isBlocked ? 'blocked' : 'in-progress',
+        stage, avgSec: avg, timeTakenSec: Math.round(avg * takenPct)
+      });
+    }
+  });
+  for (let i = 0; i < completedCount; i++) {
+    out.push({ id: `LN-${String(id++).padStart(6,'0')}`, status: 'completed' });
+  }
+  return out;
+})();
+let nextLoanId = LOANS.reduce((m, l) => {
+  const n = parseInt(l.id.replace('LN-', ''), 10);
+  return Number.isFinite(n) && n > m ? n : m;
+}, 0) + 1;
+
+let advancesInLastMinute = 0;
+let advanceTimestamps = [];
+
+function nowFmt() {
+  const d = new Date();
+  let h = d.getHours();
+  const m = d.getMinutes();
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12; if (h === 0) h = 12;
+  return `${h}:${String(m).padStart(2,'0')} ${ampm}`;
+}
+function nowSecFmt() {
+  const d = new Date();
+  let h = d.getHours();
+  const m = d.getMinutes();
+  const s = d.getSeconds();
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12; if (h === 0) h = 12;
+  return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')} ${ampm}`;
+}
+
+/* ── RENDER: STATS ── */
+function renderStats() {
+  const total = LOANS.length;
+  const inFlight = LOANS.filter(l => l.status === 'in-progress' || l.status === 'blocked').length;
+  const completed = LOANS.filter(l => l.status === 'completed').length;
+  const exceptions = LOANS.filter(l => l.status === 'failed').length;
+
+  // Throughput: advances in the last 60s, scaled to per-min.
+  const cutoff = Date.now() - 60_000;
+  advanceTimestamps = advanceTimestamps.filter(t => t >= cutoff);
+  const throughput = advanceTimestamps.length;
+
+  document.getElementById('ps-total').textContent      = total;
+  document.getElementById('ps-active').textContent     = inFlight;
+  document.getElementById('ps-completed').textContent  = completed;
+  document.getElementById('ps-throughput').textContent = throughput || '—';
+  document.getElementById('ps-exceptions').textContent = exceptions;
+}
+
+/* ── RENDER: ALERTS ── */
+function renderAlerts() {
+  document.getElementById('amList').innerHTML = `
+    <div class="am-row am-danger">
+      <div class="am-dot dot-danger"></div>
+      <span class="am-text">2 exceptions need attention</span>
+      <span class="am-count">2</span>
+    </div>
+    <div class="am-row am-warning">
+      <div class="am-dot dot-warning"></div>
+      <span class="am-text">QC Check is the current bottleneck</span>
+      <span class="am-count">+18s</span>
+    </div>
+    <div class="am-row am-info">
+      <div class="am-dot dot-info"></div>
+      <span class="am-text">All ingestion sources active</span>
+      <span class="am-count" style="color:var(--color-success-600);">●</span>
+    </div>
+    <div class="am-row">
+      <div class="am-dot" style="background:var(--color-neutral-400)"></div>
+      <span class="am-text">Avg confidence on UW reports</span>
+      <span class="am-count">91%</span>
+    </div>
+  `;
+}
+
+/* ── REALTIME FEED ── */
+const FEED_MAX = 30;
+const feed = [];
+
+function pushFeed(entry) {
+  feed.unshift(entry);
+  if (feed.length > FEED_MAX) feed.length = FEED_MAX;
+  renderFeed();
+}
+function renderFeed() {
+  const feedEl = document.getElementById('rtFeed');
+  feedEl.innerHTML = feed.map(e => {
+    const stage = e.stage ? `<span class="rt-stage-chip" style="background:var(--stage-${e.stage})">${STAGE_LABELS[e.stage] || e.stage}</span>` : '';
+    let cls = '';
+    if (e.action === 'completed') cls = ' rt-complete';
+    else if (e.action === 'ingested') cls = ' rt-spawn';
+    return `
+      <div class="rt-row${cls}">
+        <span class="rt-id">${e.id}</span>
+        <span class="rt-action">${e.action}</span>
+        ${stage}
+        <span class="rt-time">${e.time}</span>
+      </div>`;
+  }).join('');
+}
+
+/* ── LIVE SIMULATION ── */
+const TICK_MS = 500;
+const SIM_SEC_PER_TICK = 3;
+
+function advanceLoan(l) {
+  const idx = STAGE_ORDER.indexOf(l.stage);
+  if (idx === -1 || idx === STAGE_ORDER.length - 1) {
+    l.status = 'completed';
+    l.stage = '';
+    l.timeTakenSec = 0;
+    l.avgSec = 0;
+    pushFeed({ id: l.id, action: 'completed', stage: '', time: nowSecFmt() });
+  } else {
+    const newStage = STAGE_ORDER[idx + 1];
+    l.stage = newStage;
+    l.avgSec = STAGE_AVG_SEC[newStage];
+    l.timeTakenSec = 0;
+    pushFeed({ id: l.id, action: 'advanced to', stage: newStage, time: nowSecFmt() });
+  }
+  advanceTimestamps.push(Date.now());
+}
+
+function spawnLoan() {
+  const id = `LN-${String(nextLoanId++).padStart(6,'0')}`;
+  LOANS.push({ id, status: 'in-progress', stage: 'ingest', avgSec: STAGE_AVG_SEC['ingest'], timeTakenSec: 0 });
+  pushFeed({ id, action: 'ingested', stage: 'ingest', time: nowSecFmt() });
+}
+
+function tick() {
+  const toAdvance = [];
+  LOANS.forEach(l => {
+    if (l.status !== 'in-progress') return;
+    l.timeTakenSec += SIM_SEC_PER_TICK;
+    if (l.avgSec && l.timeTakenSec >= l.avgSec) toAdvance.push(l);
+  });
+  if (toAdvance.length === 0) return;
+  toAdvance.forEach((l, i) => {
+    setTimeout(() => {
+      advanceLoan(l);
+      if (l.status === 'completed') spawnLoan();
+      renderStats();
+    }, i * 110);
+  });
+}
+setInterval(tick, TICK_MS);
+
+/* ── DATE FILTER ── */
+function setDate(btn) {
+  btn.parentElement.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ── INIT ── */
+renderStats();
+renderAlerts();
+// Seed the feed so it isn't empty on first paint
+[
+  { id:'LN-000257', action:'completed',   stage:'',           time: nowSecFmt() },
+  { id:'LN-000262', action:'advanced to', stage:'qc-check',   time: nowSecFmt() },
+  { id:'LN-000259', action:'advanced to', stage:'classify',   time: nowSecFmt() },
+  { id:'LN-000264', action:'ingested',    stage:'ingest',     time: nowSecFmt() },
+].forEach(e => feed.push(e));
+renderFeed();
+</script>
 
 </body>
 </html>

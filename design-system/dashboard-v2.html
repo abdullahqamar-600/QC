@@ -43,10 +43,12 @@ body {
 /* ── PAGE LAYOUT ── */
 .page-wrap {
   flex: 1; overflow-y: auto;
-  padding: var(--space-6) var(--space-8);
+  padding: var(--space-4) var(--space-6);
   display: flex; flex-direction: column; gap: var(--space-5);
   min-height: 0;
 }
+.page-header { display: flex; align-items: center; gap: var(--space-3); }
+.page-title { font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); margin: 0; }
 
 /* ── BENTO GRID ── */
 .bento-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
@@ -193,16 +195,18 @@ body {
 .error-card-date { font-size: 11px; color: var(--color-neutral-400); }
 
 /* ── KANBAN BOARD ── */
-.kanban-board { display: flex; gap: var(--space-4); overflow-x: auto; padding-bottom: var(--space-2); flex: 1; min-height: 0; align-items: flex-start; }
+.kanban-board { display: flex; gap: var(--space-3); overflow-x: hidden; padding-bottom: var(--space-2); flex: 1; min-height: 0; align-items: flex-start; }
 
 .kanban-col {
-  flex: 1; min-width: 260px; display: flex; flex-direction: column;
+  flex: 1 1 0; min-width: 0; display: flex; flex-direction: column;
   background: var(--color-neutral-50); border: 1px solid var(--border-color);
   border-radius: var(--border-radius-xl); overflow: hidden;
   max-height: 560px;
 }
 .kanban-col-error { background: var(--color-danger-50); border-color: var(--color-danger-200); }
-.kanban-board.detailed .kanban-col { flex: 0 0 240px; min-width: 240px; max-width: 240px; }
+.kanban-board.detailed .kanban-col { flex: 1 1 0; min-width: 0; max-width: none; }
+.kanban-board.detailed .kanban-col-header { padding: var(--space-2) var(--space-3) var(--space-1); gap: 6px; }
+.kanban-board.detailed .kanban-col-body { padding: 0 var(--space-2) var(--space-2); gap: var(--space-2); }
 .kanban-col-header { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-4) var(--space-2); flex-shrink: 0; }
 .col-icon { width: 16px; height: 16px; flex-shrink: 0; }
 .col-title { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); flex: 1; }
@@ -244,24 +248,204 @@ body {
 .loan-card-footer { display: flex; align-items: center; justify-content: flex-end; }
 .loan-card-date { font-size: 11px; color: var(--color-neutral-400); }
 
-/* Detailed view */
-.kanban-board.detailed .loan-card { padding: var(--space-2) var(--space-3); }
-.kanban-board.detailed .loan-card-id { font-size: var(--font-size-sm); }
-.kanban-board.detailed .loan-card-sub { font-size: 10px; margin-bottom: var(--space-1); }
+/* Detailed view — compact loan card with stage progress bar */
+.kanban-board.detailed .loan-card { padding: 6px var(--space-2); }
+.loan-card-compact {
+  display: flex; flex-direction: column; gap: 5px;
+  padding: 7px var(--space-2);
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.loan-card-compact:hover { border-color: var(--color-brand-400); box-shadow: var(--shadow-sm); }
+.loan-card-compact .lcc-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-width: 0; }
+.loan-card-compact .loan-card-id { font-size: 11px; font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.loan-card-compact .lcc-time { font-size: 10px; color: var(--color-neutral-500); font-variant-numeric: tabular-nums; flex-shrink: 0; white-space: nowrap; }
+.loan-card-compact .lcc-taken { color: var(--color-neutral-700); font-weight: var(--font-weight-medium); }
+.loan-card-compact .lcc-time-sep { color: var(--color-neutral-300); margin: 0 3px; }
+.loan-card-compact.is-overdue .lcc-taken { color: var(--color-danger-600); }
+.loan-card-compact.is-blocked .lcc-taken { color: var(--color-warning-600); }
+.loan-card-compact .lcc-bar { height: 3px; background: var(--color-neutral-200); border-radius: var(--border-radius-pill); overflow: hidden; }
+/* Linear 500ms matches the tick cadence — bar appears to fill continuously */
+.loan-card-compact .lcc-bar-fill { height: 100%; border-radius: var(--border-radius-pill); transition: width 500ms linear, background-color 0.3s ease; }
+.loan-card-compact .lcc-time .lcc-taken { transition: color 0.3s ease; }
 
-/* ── GROUP CARD ── */
-.group-card { background: var(--color-white); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: var(--space-4); position: relative; cursor: pointer; transition: transform var(--transition-fast), border-color var(--transition-fast); z-index: 1; margin-bottom: var(--space-4); margin-right: 4px; }
-.group-card::before, .group-card::after { content: ''; position: absolute; background: var(--color-white); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); z-index: -1; transition: transform var(--transition-fast); }
-.group-card::before { top: 4px; left: 4px; right: -4px; bottom: -4px; background: var(--color-neutral-50); }
-.group-card::after { top: 8px; left: 8px; right: -8px; bottom: -8px; background: var(--color-neutral-100); }
-.group-card:hover { transform: translate(-2px, -2px); border-color: var(--color-brand-400); }
-.group-card:hover::before { transform: translate(2px, 2px); border-color: var(--border-color-hover); }
-.group-card:hover::after  { transform: translate(4px, 4px); border-color: var(--border-color-hover); }
-.group-card-title { font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); margin-bottom: 2px; }
-.group-card-meta { font-size: var(--font-size-sm); color: var(--color-neutral-500); margin-bottom: var(--space-3); }
-.group-card-vendors { display: flex; gap: var(--space-2); flex-wrap: wrap; }
-.group-card-vendors .badge { font-size: 11px; padding: 2px 8px; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); }
+/* Sort button — icon + label */
+.sort-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 30px; padding: 0 var(--space-3);
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  color: var(--color-neutral-700);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+.sort-btn:hover { border-color: var(--border-color-hover); color: var(--color-neutral-900); }
+.sort-btn:focus-visible { outline: none; border-color: var(--color-brand-500); box-shadow: 0 0 0 2px var(--color-brand-100); }
+.sort-btn svg { display: block; flex-shrink: 0; }
+.sort-btn .sort-label { white-space: nowrap; }
+.sort-btn .sort-up,
+.sort-btn .sort-down { transition: stroke var(--transition-fast); }
+.sort-btn[data-direction="desc"] .sort-up   { stroke: var(--color-brand-600); }
+.sort-btn[data-direction="desc"] .sort-down { stroke: var(--color-neutral-300); }
+.sort-btn[data-direction="asc"]  .sort-up   { stroke: var(--color-neutral-300); }
+.sort-btn[data-direction="asc"]  .sort-down { stroke: var(--color-brand-600); }
+
+/* ── GROUP CARD — vertical paper-stack with AI processing animation ── */
+.group-card {
+  position: relative; z-index: 1;
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--space-3);
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.group-card::before, .group-card::after {
+  content: ''; position: absolute; left: 0; right: 0;
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  z-index: -1;
+  transition: transform var(--transition-fast);
+}
+.group-card::before { top: 4px; bottom: -4px; background: var(--color-neutral-50); }
+.group-card::after  { top: 8px; bottom: -8px; background: var(--color-neutral-100); }
+.group-card:hover { transform: translateY(-2px); border-color: var(--color-brand-400); }
+.group-card:hover::before { transform: translateY(2px); }
+.group-card:hover::after  { transform: translateY(4px); }
+.group-card-title {
+  font-size: var(--font-size-base); font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-900);
+  display: flex; align-items: center; gap: 6px;
+}
+
+/* AI sparkle in the title */
+.gc-ai-spark {
+  color: var(--color-brand-500);
+  flex-shrink: 0;
+  animation: gc-ai-sparkle 2.4s ease-in-out infinite;
+  transform-origin: center;
+}
+@keyframes gc-ai-sparkle {
+  0%, 100% { opacity: 0.55; transform: rotate(0deg) scale(0.9); }
+  50%      { opacity: 1;    transform: rotate(180deg) scale(1.15); }
+}
+
+/* AI shimmer line — indicates active processing */
+.gc-ai-shimmer {
+  position: relative;
+  height: 2px;
+  margin-top: var(--space-3);
+  background: var(--color-neutral-100);
+  border-radius: var(--border-radius-pill);
+  overflow: hidden;
+}
+.gc-ai-shimmer-bar {
+  position: absolute; top: 0; bottom: 0;
+  width: 35%;
+  background: linear-gradient(90deg, transparent, var(--color-brand-500) 50%, transparent);
+  animation: gc-shimmer-slide 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes gc-shimmer-slide {
+  0%   { left: -35%; }
+  100% { left: 100%; }
+}
+.group-card.is-done { /* no shimmer/spark — work complete */ }
+
+/* Status-view grouped cards — richer, glanceable distribution + insight */
+.group-card.gc-progress, .group-card.gc-done.is-done { padding: var(--space-4); }
+
+.gc-hero { display: flex; align-items: flex-end; gap: 10px; }
+.gc-count {
+  font-size: 32px; font-weight: var(--font-weight-bold); line-height: 1;
+  letter-spacing: -0.02em; color: var(--color-neutral-900);
+  font-variant-numeric: tabular-nums;
+}
+.gc-meta { display: flex; flex-direction: column; gap: 1px; padding-bottom: 2px; }
+.gc-meta-title {
+  font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-700); line-height: 1.2;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.gc-meta-sub { font-size: 11px; color: var(--color-neutral-500); line-height: 1.2; }
+
+/* Proportional stacked bar — eyes see the distribution at a glance */
+.gc-stack {
+  display: flex; height: 6px; border-radius: var(--border-radius-pill);
+  overflow: hidden; gap: 1px; background: var(--color-neutral-100);
+  margin-top: var(--space-3);
+}
+.gc-stack > span { display: block; height: 100%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+.gc-stack-done > span { width: 100%; }
+
+/* Legend — 2-col grid, items left-aligned with tight gap to count */
+.gc-legend {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 6px var(--space-3);
+  margin-top: var(--space-3);
+}
+.gc-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-neutral-700); }
+.gc-legend-dot { width: 6px; height: 6px; border-radius: var(--border-radius-pill); flex-shrink: 0; }
+.gc-legend-count { font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); font-variant-numeric: tabular-nums; }
+
+/* Operations card — throughput unit suffix */
+.ops-num-unit { font-size: 14px; font-weight: var(--font-weight-medium); color: var(--color-neutral-500); margin-left: 4px; }
+
+/* Exceptions widget — hero block (number + shared subtext + needs-attention) */
+.ex-hero {
+  display: flex; align-items: baseline; gap: 12px;
+  padding: var(--space-2) 0 var(--space-3);
+  border-bottom: 1px dashed var(--border-color);
+  margin-bottom: var(--space-2);
+}
+.ex-hero-num {
+  font-size: 28px; font-weight: var(--font-weight-bold); line-height: 1;
+  color: var(--color-danger-600); font-variant-numeric: tabular-nums;
+}
+.ex-hero-meta { display: flex; flex-direction: column; gap: 2px; }
+.ex-hero-shared { font-size: 11px; color: var(--color-danger-600); font-weight: var(--font-weight-medium); }
+.ex-hero-sub { font-size: 11px; color: var(--color-neutral-500); }
+
 .col-stage-dot { width: 8px; height: 8px; border-radius: var(--border-radius-pill); flex-shrink: 0; }
+
+/* Toggle switch */
+.group-toggle { display: flex; align-items: center; gap: 8px; font-size: var(--font-size-sm); color: var(--color-neutral-700); cursor: pointer; user-select: none; }
+.toggle-switch { position: relative; display: inline-block; width: 30px; height: 18px; flex-shrink: 0; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.toggle-slider {
+  position: absolute; cursor: pointer; inset: 0;
+  background: var(--color-neutral-300);
+  border-radius: 18px;
+  transition: background-color var(--transition-fast);
+}
+.toggle-slider::before {
+  content: ''; position: absolute;
+  height: 14px; width: 14px;
+  left: 2px; top: 2px;
+  background: var(--color-white);
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  transition: transform var(--transition-fast);
+}
+.toggle-switch input:checked + .toggle-slider { background: var(--color-brand-600); }
+.toggle-switch input:checked + .toggle-slider::before { transform: translateX(12px); }
+.toggle-switch input:focus-visible + .toggle-slider { box-shadow: 0 0 0 2px var(--color-brand-100); }
+
+/* Card enter — opacity-only so FLIP transform on top isn't fought */
+.kanban-col-body > * { animation: card-enter 0.24s ease-out both; }
+@keyframes card-enter {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.kanban-col.is-expanded { box-shadow: inset 0 0 0 1px var(--color-brand-300); transition: box-shadow var(--transition-fast); }
 
 /* Toast */
 .toast-wrap { position: fixed; bottom: var(--space-6); left: 50%; transform: translateX(-50%) translateY(80px); z-index: var(--z-toast); transition: transform var(--transition-slow); pointer-events: none; }
@@ -280,17 +464,67 @@ body {
 .ops-sub .warn { color: var(--color-warning-600); font-weight: var(--font-weight-medium); }
 .ops-sub .err { color: var(--color-danger-600); font-weight: var(--font-weight-medium); }
 
-/* ── ALERTS CARD ── */
-.alert-list { display: flex; flex-direction: column; gap: var(--space-2); }
-.alert-row { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); border: 1px solid var(--border-color); background: var(--color-white); }
-.alert-row.alert-danger { border-color: var(--color-danger-200); background: var(--color-danger-50); }
-.alert-row.alert-warning { border-color: var(--color-warning-100); background: var(--color-warning-50); }
-.alert-dot { width: 6px; height: 6px; border-radius: var(--border-radius-pill); flex-shrink: 0; }
-.alert-dot.dot-danger { background: var(--color-danger-500); }
-.alert-dot.dot-warning { background: var(--color-warning-500); }
-.alert-dot.dot-info { background: var(--color-info-500); }
-.alert-text { flex: 1; color: var(--color-neutral-700); }
-.alert-count { font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+/* ── EXCEPTIONS CARD ── */
+.exceptions-card { display: flex; flex-direction: column; gap: var(--space-2); }
+.exceptions-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+/* Primary CTA — re-queueing is the only human-in-the-loop action; button is brand-purple to pull the eye out of the red noise */
+.exceptions-requeue-all {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-white);
+  background: var(--color-brand-600);
+  border: 1px solid var(--color-brand-600);
+  border-radius: var(--border-radius-md);
+  padding: 6px var(--space-3);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+.exceptions-requeue-all:hover {
+  background: var(--color-brand-700);
+  border-color: var(--color-brand-700);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+  transform: translateY(-1px);
+}
+.exceptions-requeue-all:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+.exceptions-requeue-all:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--color-brand-100); }
+.exceptions-requeue-all:disabled { opacity: 0.5; cursor: default; transform: none; box-shadow: none; }
+.exceptions-empty { font-size: var(--font-size-xs); color: var(--color-neutral-500); padding: var(--space-3) 0; text-align: center; }
+.exceptions-list { display: flex; flex-direction: column; gap: 4px; flex: 1; overflow-y: auto; max-height: 140px; }
+.exception-row {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: 5px var(--space-2);
+  background: var(--color-white);
+  border: 1px solid var(--color-danger-200);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+.exception-row:hover { border-color: var(--color-danger-400); background: var(--color-danger-50); }
+.ex-id { font-family: var(--font-family-mono); font-size: 11px; font-weight: var(--font-weight-semibold); color: var(--color-danger-600); flex-shrink: 0; }
+.ex-stage { font-size: 10px; font-weight: var(--font-weight-medium); padding: 1px 6px; border-radius: var(--border-radius-sm); color: var(--color-white); white-space: nowrap; flex-shrink: 0; }
+.ex-reason { color: var(--color-neutral-700); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ex-date { font-size: 11px; color: var(--color-neutral-400); flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.ex-retry {
+  font-family: var(--font-family-base);
+  font-size: 11px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-danger-600);
+  background: var(--color-white);
+  border: 1px solid var(--color-danger-200);
+  border-radius: var(--border-radius-sm);
+  padding: 1px 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.ex-retry:hover { background: var(--color-danger-100); border-color: var(--color-danger-300); }
+
+/* Stage Throughput vertical balance */
+.tp-list-balanced { flex: 1; justify-content: space-between; }
 
 /* ── SECTION SEPARATOR ── */
 .section-sep { display: flex; align-items: center; gap: var(--space-4); margin: var(--space-2) 0; }
@@ -302,20 +536,6 @@ body {
 .stage-bar-seg { display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: var(--font-weight-medium); color: rgba(255,255,255,0.95); cursor: default; transition: opacity var(--transition-fast); padding: 0 6px; white-space: nowrap; overflow: hidden; }
 .stage-bar-seg:hover { opacity: 0.85; }
 .stage-bar-seg .seg-label { overflow: hidden; text-overflow: ellipsis; }
-
-/* ── ENHANCED GROUP CARD ── */
-.group-card { border-left: 3px solid var(--border-color); }
-.group-card.gc-errors { border-left-color: var(--color-danger-500); background: var(--color-danger-50); }
-.group-card.gc-errors::before { background: #fef5f5; }
-.group-card.gc-errors::after { background: #fef0f0; }
-.group-card.gc-progress { border-left-color: var(--color-brand-500); }
-.group-card.gc-done { border-left-color: var(--color-success-500); background: var(--color-success-50); }
-.group-card.gc-done::before { background: #f0fdf8; }
-.group-card.gc-done::after { background: #ecfdf5; }
-.group-card-detail { font-size: 11px; color: var(--color-neutral-500); margin-top: var(--space-1); }
-.group-card-detail .gc-accent { color: var(--color-brand-600); font-weight: var(--font-weight-medium); }
-.group-card-detail .gc-warn { color: var(--color-warning-600); font-weight: var(--font-weight-medium); }
-.group-card:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-md); }
 
 </style>
 </head>
@@ -330,7 +550,7 @@ body {
         <path d="M5.5 8L7 9.5L10.5 6" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
-    QC Observer
+    QC Appraisal
   </div>
   <div class="topbar-divider"></div>
   <div class="pipeline-status">
@@ -347,8 +567,8 @@ body {
 <div class="page-wrap">
 
   <!-- HEADER -->
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-    <h1 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900);">Observability Hub</h1>
+  <div class="page-header">
+    <h1 class="page-title">Observability Hub</h1>
     <div class="date-filter">
       <button class="date-btn active" onclick="setDate(this,'all')">All</button>
       <button class="date-btn" onclick="setDate(this,'daily')">Daily</button>
@@ -357,62 +577,62 @@ body {
     </div>
   </div>
 
-  <div class="bento-grid" style="grid-template-columns: repeat(3, 1fr);">
+  <div class="bento-grid" style="grid-template-columns: 1fr 1fr 1.6fr;">
     <!-- Card 1: Operations Summary -->
-    <div class="bento-card" style="padding: var(--space-3);">
+    <div class="bento-card" style="padding: var(--space-5);">
       <div class="bento-title">Operations</div>
       <div class="ops-grid">
         <div class="ops-cell">
           <div class="ops-num" id="ops-total">—</div>
           <div class="ops-label">Loans Today</div>
-          <div class="ops-sub" id="ops-sub-total">Loading…</div>
         </div>
         <div class="ops-cell">
           <div class="ops-num" id="ops-avg-time">—</div>
           <div class="ops-label">Avg Time</div>
-          <div class="ops-sub" id="ops-sub-avg-time">Loading…</div>
         </div>
         <div class="ops-cell">
           <div class="ops-num" id="ops-completed">—</div>
           <div class="ops-label">Completed</div>
-          <div class="ops-sub" id="ops-sub-completed">Loading…</div>
         </div>
-        <div class="ops-cell danger">
-          <div class="ops-num danger" id="ops-exceptions">—</div>
-          <div class="ops-label">Exceptions</div>
-          <div class="ops-sub" id="ops-sub-exceptions">Loading…</div>
+        <div class="ops-cell">
+          <div class="ops-num"><span id="ops-throughput">6.8</span><span class="ops-num-unit">/min</span></div>
+          <div class="ops-label">Throughput</div>
         </div>
       </div>
     </div>
 
     <!-- Card 2: Stage Throughput -->
-    <div class="bento-card" style="padding: var(--space-3);">
-      <div class="bento-title">Stage Throughput <span style="font-size:11px;font-weight:400;color:var(--color-neutral-400);margin-left:4px;">vs. prev batch</span></div>
-      <div class="tp-list" style="gap: 6px;">
-        <div class="tp-row"><div class="tp-label" style="color:var(--stage-ingest)">Ingest</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-ingest);width:18%"></div></div><div class="tp-time">0:28</div><div class="tp-delta down">↓7s</div></div>
-        <div class="tp-row"><div class="tp-label" style="color:var(--stage-classify)">Classify</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-classify);width:38%"></div></div><div class="tp-time">1:02</div><div class="tp-delta flat">—</div></div>
-        <div class="tp-row"><div class="tp-label" style="color:var(--stage-qc-check)">QC Check</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-qc-check);width:100%"></div></div><div class="tp-time">2:44</div><div class="tp-delta up">↑18s</div></div>
-        <div class="tp-row"><div class="tp-label" style="color:var(--stage-code-map)">Code Map</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-code-map);width:55%"></div></div><div class="tp-time">1:31</div><div class="tp-delta down">↓4s</div></div>
-        <div class="tp-row"><div class="tp-label" style="color:var(--stage-report-gen)">Report Gen</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-report-gen);width:42%"></div></div><div class="tp-time">1:08</div><div class="tp-delta flat">—</div></div>
-        <div class="tp-row"><div class="tp-label" style="color:var(--stage-uw-report)">UW Report</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-uw-report);width:68%"></div></div><div class="tp-time">1:50</div><div class="tp-delta up">↑22s</div></div>
+    <div class="bento-card" style="padding: var(--space-5);">
+      <div class="bento-title">Stage Throughput</div>
+      <div class="tp-list tp-list-balanced">
+        <div class="tp-row"><div class="tp-label" style="color:var(--stage-ingest)">Ingest</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-ingest);width:18%"></div></div><div class="tp-time">0:28</div></div>
+        <div class="tp-row"><div class="tp-label" style="color:var(--stage-classify)">Classify</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-classify);width:38%"></div></div><div class="tp-time">1:02</div></div>
+        <div class="tp-row"><div class="tp-label" style="color:var(--stage-qc-check)">QC Check</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-qc-check);width:100%"></div></div><div class="tp-time">2:44</div></div>
+        <div class="tp-row"><div class="tp-label" style="color:var(--stage-code-map)">Code Map</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-code-map);width:55%"></div></div><div class="tp-time">1:31</div></div>
+        <div class="tp-row"><div class="tp-label" style="color:var(--stage-report-gen)">Report Gen</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-report-gen);width:42%"></div></div><div class="tp-time">1:08</div></div>
+        <div class="tp-row"><div class="tp-label" style="color:var(--stage-uw-report)">UW Report</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-uw-report);width:68%"></div></div><div class="tp-time">1:50</div></div>
       </div>
     </div>
 
-    <!-- Card 3: Alerts & Errors -->
-    <div class="bento-card" style="padding: var(--space-3);">
-      <div class="bento-title">Alerts & Errors</div>
-      <div class="alert-list">
-        <div class="alert-row alert-danger">
-          <div class="alert-dot dot-danger"></div>
-          <span class="alert-text">Exceptions (Mostly Classify)</span>
-          <span class="alert-count" style="color:var(--color-danger-600)">2</span>
+    <!-- Card 3: Exceptions -->
+    <div class="bento-card exceptions-card" style="padding: var(--space-5);">
+      <div class="exceptions-header">
+        <div class="bento-title">Exceptions</div>
+        <button class="exceptions-requeue-all" id="requeueAllBtn" onclick="requeueAll()">↻ Re-queue all</button>
+      </div>
+      <div class="ex-hero">
+        <div class="ex-hero-num" id="ex-hero-num">—</div>
+        <div class="ex-hero-meta">
+          <div class="ex-hero-shared" id="ex-hero-shared"></div>
+          <div class="ex-hero-sub">Needs attention</div>
         </div>
       </div>
+      <div class="exceptions-list" id="exceptions-list"></div>
     </div>
   </div><!-- /bento-grid -->
 
   <!-- Pipeline Header -->
-  <h2 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); margin: 4px 0 0 0;">Pipeline</h2>
+  <h2 class="page-title">Pipeline</h2>
 
   <!-- ── KANBAN SECTION ── -->
   <div class="kanban-section">
@@ -425,28 +645,31 @@ body {
         <span class="search-shortcut">/</span>
       </div>
 
-      <button class="view-btn" id="sortBtn" onclick="toggleSort()" style="border:1px solid var(--border-color);border-radius:var(--border-radius-md);background:var(--color-white);margin-left:4px;">Sort: Newest</button>
-
-      <div class="toolbar-spacer"></div>
-
-      <label style="display:flex; align-items:center; gap:6px; font-size:var(--font-size-sm); color:var(--color-neutral-700); cursor:pointer;">
-        <input type="checkbox" id="groupedToggle" checked onchange="toggleGrouping()" style="accent-color:var(--color-brand-600); width:14px; height:14px;">
-        Grouped
-      </label>
+      <div class="view-toggle" style="margin-left:4px;">
+        <button class="view-btn active" id="btn-simplified" onclick="setView('simplified')">Status</button>
+        <button class="view-btn" id="btn-detailed" onclick="setView('detailed')">Stage</button>
+      </div>
 
       <div style="width: 1px; height: 16px; background: var(--border-color); margin: 0 var(--space-2);"></div>
 
-      <div class="view-toggle">
-        <button class="view-btn" id="btn-simplified" onclick="setView('simplified')">Status</button>
-        <button class="view-btn active" id="btn-detailed" onclick="setView('detailed')">Stage</button>
-      </div>
+      <label class="group-toggle">
+        Grouped
+        <span class="toggle-switch">
+          <input type="checkbox" id="groupedToggle" checked onchange="toggleGrouping()">
+          <span class="toggle-slider"></span>
+        </span>
+      </label>
+
+      <div class="toolbar-spacer"></div>
+
+      <button class="sort-btn" id="sortBtn" data-direction="desc" onclick="toggleSort()" aria-label="Sort: Newest first">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path class="sort-up"   d="M5 6l3-3 3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path class="sort-down" d="M5 10l3 3 3-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="sort-label" id="sortLabel">Newest first</span>
+      </button>
     </div>
-
-    <!-- Error Strip (rendered dynamically) -->
-    <div id="error-strip-container"></div>
-
-    <!-- Stage Breakdown (rendered dynamically) -->
-    <div class="stage-bar-inline" id="stage-bar-container" style="margin-bottom: var(--space-3);"></div>
 
     <!-- Kanban board -->
     <div class="kanban-board" id="kanbanBoard"></div>
@@ -458,24 +681,92 @@ body {
 <div class="toast-wrap" id="toastWrap"><div class="toast"><span id="toastMsg"></span></div></div>
 
 <script>
-/* ── DATA ── */
-const LOANS = [
-  { id:'LN-000121', sub:'LN000121-1776867001', status:'failed',      stageIndex:0, stepsComplete:0, stage:'ingest',     vendor:'fannie',  files:['PDF','XML'],        reason:'Missing SSR FNM file',           date:'Apr 30, 9:41 AM' },
-  { id:'LN-000122', sub:'LN000122-1776867002', status:'failed',      stageIndex:1, stepsComplete:1, stage:'classify',   vendor:'freddie', files:['PDF','SSR','XML'],   reason:'LLM parse error',                date:'Apr 30, 9:39 AM' },
-  { id:'LN-000123', sub:'LN000123-1776867003', status:'blocked',     stageIndex:2, stepsComplete:2, stage:'qc-check',   vendor:'fannie',  files:['PDF','SSR','XML'],   reason:'Appraiser license unverifiable', date:'Apr 30, 9:38 AM' },
-  { id:'LN-000124', sub:'LN000124-1776867004', status:'in-progress', stageIndex:3, stepsComplete:3, stage:'code-map',   vendor:'fannie',  files:['PDF','SSR','XML'],   reason:'Flag — Sales comp date',         date:'Apr 30, 9:37 AM' },
-  { id:'LN-000125', sub:'LN000125-1776866005', status:'completed',   stageIndex:5, stepsComplete:6, stage:'',           vendor:'fannie',  files:['PDF','SSR','XML'],   reason:'1 flag — GLA discrepancy',       date:'Apr 30, 8:22 AM' },
-  { id:'LN-000126', sub:'LN000126-1776866006', status:'completed',   stageIndex:5, stepsComplete:6, stage:'',           vendor:'freddie', files:['PDF','SSR','XML'],   reason:'All clear',                      date:'Apr 30, 8:20 AM' },
-  { id:'LN-000127', sub:'LN000127-1776866007', status:'completed',   stageIndex:5, stepsComplete:6, stage:'',           vendor:'freddie', files:['PDF','SSR','XML'],   reason:'All clear',                      date:'Apr 30, 8:18 AM' },
-  { id:'LN-000128', sub:'LN000128-1776866008', status:'in-progress', stageIndex:1, stepsComplete:1, stage:'classify',   vendor:'fannie',  files:['PDF','SSR','XML'],   reason:'Low confidence on doc type',     date:'Apr 30, 8:15 AM' },
-];
+/* ── STAGE TIMING ── (matches the Stage Throughput card values) */
+const STAGE_AVG_SEC = {
+  'ingest':      28,   // 0:28
+  'classify':    62,   // 1:02
+  'qc-check':   164,   // 2:44
+  'code-map':    91,   // 1:31
+  'report-gen':  68,   // 1:08
+  'uw-report':  110,   // 1:50
+};
+function fmtMMSS(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${String(s).padStart(2,'0')}`;
+}
+
+/* ── DATA ── (sized for a realistic ~100-loan running pipeline) */
+const LOANS = (() => {
+  const stages = ['ingest','classify','qc-check','code-map','report-gen','uw-report'];
+  // distribution roughly mirrors a real pipeline: classify/qc are bottlenecks
+  const inFlight = { ingest:8, classify:14, 'qc-check':12, 'code-map':10, 'report-gen':9, 'uw-report':7 };
+  const completedCount = 38;
+
+  const fmtTime = (h, m) => `${h}:${String(m).padStart(2,'0')} ${h < 12 ? 'AM' : 'PM'}`;
+  const fmtDate = (h, m) => `Apr 30, ${fmtTime(h, m)}`;
+  const out = [];
+
+  // 2 failed loans for the Exceptions card
+  out.push({ id:'LN-000121', sub:'', status:'failed', stageIndex:0, stepsComplete:0, stage:'ingest',   vendor:'fannie',  files:['PDF','XML'],       reason:'Missing SSR FNM file', date:'Apr 30, 9:41 AM' });
+  out.push({ id:'LN-000122', sub:'', status:'failed', stageIndex:1, stepsComplete:1, stage:'classify', vendor:'freddie', files:['PDF','SSR','XML'], reason:'LLM parse error',      date:'Apr 30, 9:39 AM' });
+
+  let id = 200;
+  let secondsAgo = 0;
+  // In-flight loans, distributed across stages
+  stages.forEach((stage, sIdx) => {
+    const avgSec = STAGE_AVG_SEC[stage];
+    const n = inFlight[stage];
+    for (let i = 0; i < n; i++) {
+      const minutes = secondsAgo;
+      const hour = 9 - Math.floor(minutes / 60);
+      const minute = 41 - (minutes % 60);
+      const adjHour = minute < 0 ? hour - 1 : hour;
+      const adjMinute = minute < 0 ? 60 + minute : minute;
+      const isBlocked = i % 9 === 0;
+      // time taken spans 20% → 95% of avg, with blocked loans pushed past 100% (overdue)
+      const takenPct = isBlocked ? 1.05 + (i % 3) * 0.1 : 0.2 + (i / Math.max(1, n - 1)) * 0.75;
+      out.push({
+        id: `LN-${String(id).padStart(6,'0')}`, sub: '',
+        status: isBlocked ? 'blocked' : 'in-progress',
+        stageIndex: sIdx, stepsComplete: sIdx + 1, stage,
+        vendor: id % 2 ? 'fannie' : 'freddie',
+        files: ['PDF','SSR','XML'],
+        reason: '',
+        date: fmtDate(adjHour, adjMinute),
+        avgSec,
+        timeTakenSec: Math.round(avgSec * takenPct)
+      });
+      id++; secondsAgo += 2;
+    }
+  });
+  // Completed loans
+  for (let i = 0; i < completedCount; i++) {
+    const minutes = secondsAgo;
+    const hour = 9 - Math.floor(minutes / 60);
+    const minute = 41 - (minutes % 60);
+    const adjHour = minute < 0 ? hour - 1 : hour;
+    const adjMinute = minute < 0 ? 60 + minute : minute;
+    out.push({
+      id: `LN-${String(id).padStart(6,'0')}`, sub: '',
+      status: 'completed',
+      stageIndex: 5, stepsComplete: 6, stage: '',
+      vendor: id % 2 ? 'fannie' : 'freddie',
+      files: ['PDF','SSR','XML'],
+      reason: 'All clear',
+      date: fmtDate(adjHour, adjMinute)
+    });
+    id++; secondsAgo += 3;
+  }
+  return out;
+})();
 
 const STAGE_NAMES = ['Ingest','Classify','QC Checklist','Code Mapping','Report Gen','UW Report'];
 const STAGE_KEYS  = ['ingest','classify','qc-check','code-map','report-gen','uw-report'];
 const STAGE_VARS  = ['--stage-ingest','--stage-classify','--stage-qc-check','--stage-code-map','--stage-report-gen','--stage-uw-report'];
 
 let currentView = 'simplified';
-let isGrouped   = false;
+let isGrouped   = true;
 
 /* ── ICONS ── */
 function statusIcon(status) {
@@ -492,98 +783,156 @@ function fileChips(files) {
 }
 
 /* ── LOAN CARD HTML ── */
-function loanCardHTML(l) {
-  const progressBar = (l.status === 'in-progress' || l.status === 'blocked')
-    ? `<div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--color-neutral-500); margin-bottom: 4px;">
-         <span>${l.stepsComplete} of 6 stages complete</span>
-         <span>${l.date}</span>
-       </div>
-       <div class="loan-progress-bar-wrap" style="position:relative; height:4px; border-radius:var(--border-radius-pill); background:var(--color-neutral-200); overflow:hidden;">
+function loanCardHTML(l, isDetailed) {
+  const isCompleted = l.status === 'completed';
+  const isInFlight  = l.status === 'in-progress' || l.status === 'blocked';
+
+  // Stage view: compact — id + per-stage progress bar (time taken / avg).
+  if (isDetailed) {
+    if (isCompleted) {
+      // Done column: full green bar + completion time
+      return `
+        <div class="loan-card-compact is-complete" data-loan-id="${l.id}" onclick="goLoan('${l.id}')">
+          <div class="lcc-row">
+            <span class="loan-card-id">${l.id}</span>
+            <span class="lcc-time lcc-done-time">${shortTime(l.date)}</span>
+          </div>
+          <div class="lcc-bar"><div class="lcc-bar-fill" style="width:100%; background:var(--color-success-500);"></div></div>
+        </div>`;
+    }
+    const avg   = l.avgSec || STAGE_AVG_SEC[l.stage] || 60;
+    const taken = l.timeTakenSec ?? 0;
+    const isBlocked = l.status === 'blocked';
+    const pct = Math.min(100, (taken / avg) * 100);
+    const overdue = taken > avg;
+    const barColor = isBlocked ? 'var(--color-warning-500)'
+                   : overdue   ? 'var(--color-danger-500)'
+                   : `var(--stage-${l.stage})`;
+    return `
+      <div class="loan-card-compact${isBlocked ? ' is-blocked' : ''}${overdue ? ' is-overdue' : ''}" data-loan-id="${l.id}" onclick="goLoan('${l.id}')">
+        <div class="lcc-row">
+          <span class="loan-card-id">${l.id}</span>
+          <span class="lcc-time"><span class="lcc-taken">${fmtMMSS(taken)}</span><span class="lcc-time-sep">/</span>${fmtMMSS(avg)}</span>
+        </div>
+        <div class="lcc-bar"><div class="lcc-bar-fill" style="width:${pct}%; background:${barColor};"></div></div>
+      </div>`;
+  }
+
+  // Status view (in-flight): show progress bar with date inline.
+  const progressBar = isInFlight
+    ? `<div class="loan-progress-bar-wrap" style="position:relative; height:4px; border-radius:var(--border-radius-pill); background:var(--color-neutral-200); overflow:hidden; margin-top:4px;">
          <div style="position:absolute; top:0; left:0; bottom:0; width:100%; background: linear-gradient(to right, var(--stage-ingest), var(--stage-classify), var(--stage-qc-check), var(--stage-code-map), var(--stage-report-gen), var(--stage-uw-report)); clip-path: inset(0 calc(100% - ${Math.round((l.stepsComplete/6)*100)}%) 0 0);"></div>
        </div>`
     : '';
-  const reasonText = (l.status === 'failed')
-    ? `<div style="font-size: var(--font-size-xs); color: var(--color-danger-600); margin-bottom: var(--space-2); display:flex; justify-content:space-between; align-items:center;">
-         ${l.reason}
-         <button onclick="retryLoan(event, '${l.id}')" style="background:var(--color-white); border:1px solid var(--color-danger-300); color:var(--color-danger-600); padding:2px 8px; border-radius:var(--border-radius-sm); font-size:10px; cursor:pointer;">Retry</button>
+
+  // Status view: id + date next to status icon
+  const headerRight = isCompleted
+    ? `<div style="margin-left:auto; display:flex; align-items:center; gap:6px;">
+         <span class="loan-card-date" style="font-size:11px; color:var(--color-neutral-500);">${l.date}</span>
+         ${statusIcon(l.status)}
        </div>`
-    : '';
-  const errorClass = (l.status === 'failed') ? ' loan-card-error' : '';
-  const footerDate = (l.status !== 'in-progress' && l.status !== 'blocked') 
-    ? `<div class="loan-card-footer"><div class="loan-card-date">${l.date}</div></div>` 
-    : '';
+    : `<div style="margin-left:auto; display:flex; align-items:center; gap:6px;">
+         <span class="loan-card-date" style="font-size:11px; color:var(--color-neutral-500);">${l.date}</span>
+         ${statusIcon(l.status)}
+       </div>`;
 
   return `
-    <div class="loan-card${errorClass}" onclick="goLoan('${l.id}')" style="padding:var(--space-2) var(--space-3);">
-      <div class="loan-card-header" style="flex-direction:row; align-items:baseline; justify-content:flex-start; margin-bottom:2px;">
+    <div class="loan-card" data-loan-id="${l.id}" onclick="goLoan('${l.id}')" style="padding:var(--space-2) var(--space-3);">
+      <div class="loan-card-header" style="flex-direction:row; align-items:center; justify-content:flex-start; margin-bottom:0;">
         <span class="loan-card-id" style="font-size:var(--font-size-sm);">${l.id}</span>
-        <span class="loan-card-sub" style="font-size:10px; margin-left:6px; margin-bottom:0;">${l.sub}</span>
-        <div style="margin-left:auto;">${statusIcon(l.status)}</div>
+        ${headerRight}
       </div>
-      ${reasonText}
       ${progressBar}
-      ${footerDate}
     </div>`;
 }
 
+function shortTime(date) {
+  // "Apr 30, 9:41 AM" → "9:41 AM"
+  const parts = date.split(', ');
+  return parts[1] || date;
+}
+
 /* ── GROUP CARD HTML ── */
-function groupCardHTML(loans, col) {
+const STAGE_BREAKDOWN_LABELS = {
+  ingest:'Ingest', classify:'Classify', 'qc-check':'QC Check',
+  'code-map':'Code Map', 'report-gen':'Report Gen', 'uw-report':'UW Report'
+};
+
+function groupCardHTML(loans, col, isDetailed) {
   if (!loans.length) return '';
-  const vendors = {};
-  let errorCount = 0;
-  let blockedCount = 0;
-  let progressCount = 0;
-  loans.forEach(l => {
-    const v = l.vendor.charAt(0).toUpperCase() + l.vendor.slice(1);
-    vendors[v] = (vendors[v] || 0) + 1;
-    if (l.status === 'failed') errorCount++;
-    if (l.status === 'blocked') blockedCount++;
-    if (l.status === 'in-progress') progressCount++;
-  });
 
-  const vendorTags = Object.entries(vendors).map(([v, c]) => `<span class="badge badge-gray">${c} ${v}</span>`).join('');
-
-  // Status line
-  let statusLine = 'All clear';
-  if (col.id === 'errors') statusLine = `${errorCount} failed`;
-  else if (col.id === 'progress') {
-    const parts = [];
-    if (progressCount) parts.push(`${progressCount} processing`);
-    if (blockedCount) parts.push(`${blockedCount} blocked`);
-    statusLine = parts.join(' \u00b7 ') || 'Processing';
+  // Stage view: minimal — each col is a single stage, just show the count.
+  if (isDetailed) {
+    return `
+      <div class="group-card" onclick="onGroupCardClick('${col.id}')">
+        <div class="group-card-title">${loans.length} Loans</div>
+      </div>
+    `;
   }
-  else if (col.id === 'done') statusLine = 'Ready for review';
-  else if (col.id === 'todo') statusLine = 'Awaiting processing';
 
-  // Card color class
-  let gcClass = '';
-  if (col.id === 'errors') gcClass = ' gc-errors';
-  else if (col.id === 'progress') gcClass = ' gc-progress';
-  else if (col.id === 'done') gcClass = ' gc-done';
+  // Status view + In Progress: hero count, proportional stacked bar,
+  // 2-col legend, and a bottleneck insight callout.
+  if (col.id === 'progress') {
+    const stageCounts = {};
+    loans.forEach(l => { if (l.stage) stageCounts[l.stage] = (stageCounts[l.stage] || 0) + 1; });
+    const order = ['ingest','classify','qc-check','code-map','report-gen','uw-report'];
+    const total = loans.length;
 
-  // Bottleneck / attention hint
-  let detail = '';
-  if (col.id === 'errors') detail = `<div class="group-card-detail"><span class="gc-warn">${errorCount} need attention</span></div>`;
-  else if (col.id === 'progress') detail = blockedCount > 0 ? `<div class="group-card-detail">Bottleneck: <span class="gc-warn">QC rules</span></div>` : `<div class="group-card-detail"><span class="gc-accent">\u2195 89% avg confidence</span></div>`;
-  else if (col.id === 'done') detail = `<div class="group-card-detail"><span class="gc-accent">\u2195 91% avg confidence</span></div>`;
+    const segments = order.filter(s => stageCounts[s]).map(s => {
+      const pct = (stageCounts[s] / total * 100).toFixed(2);
+      return `<span style="width:${pct}%;background:var(--stage-${s})" title="${STAGE_BREAKDOWN_LABELS[s]} · ${stageCounts[s]}"></span>`;
+    }).join('');
 
+    const legend = order.filter(s => stageCounts[s]).map(s => `
+      <div class="gc-legend-item">
+        <span class="gc-legend-dot" style="background:var(--stage-${s})"></span>
+        <span class="gc-legend-name">${STAGE_BREAKDOWN_LABELS[s]}</span>
+        <span class="gc-legend-count">${stageCounts[s]}</span>
+      </div>`).join('');
+
+    const aiSpark = `<svg class="gc-ai-spark" width="11" height="11" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M6 0L6.9 4.2L11 5.2L6.9 6.2L6 12L5.1 6.2L1 5.2L5.1 4.2Z"/></svg>`;
+
+    return `
+      <div class="group-card gc-progress" onclick="onGroupCardClick('${col.id}')">
+        <div class="gc-hero">
+          <span class="gc-count">${total}</span>
+          <div class="gc-meta">
+            <span class="gc-meta-title">Loans${aiSpark}</span>
+            <span class="gc-meta-sub">in flight</span>
+          </div>
+        </div>
+        <div class="gc-stack">${segments}</div>
+        <div class="gc-legend">${legend}</div>
+      </div>
+    `;
+  }
+
+  // Status view + Completed: hero count + full green bar.
+  if (col.id === 'done') {
+    return `
+      <div class="group-card gc-done is-done" onclick="onGroupCardClick('${col.id}')">
+        <div class="gc-hero">
+          <span class="gc-count">${loans.length}</span>
+          <div class="gc-meta">
+            <span class="gc-meta-title">Loans</span>
+            <span class="gc-meta-sub">ready for review</span>
+          </div>
+        </div>
+        <div class="gc-stack gc-stack-done"><span style="background:var(--color-success-500)"></span></div>
+      </div>
+    `;
+  }
+
+  // Fallback (other Status-view cols, if any added later)
   return `
-    <div class="group-card${gcClass}" onclick="alert('Viewing grouped details for ${loans.length} loans...')">
+    <div class="group-card" onclick="onGroupCardClick('${col.id}')">
       <div class="group-card-title">${loans.length} Loans</div>
-      <div class="group-card-meta">${statusLine}</div>
-      <div class="group-card-vendors">${vendorTags}</div>
-      ${detail}
     </div>
   `;
 }
 
-/* ── SIMPLIFIED COLUMNS ── */
+/* ── SIMPLIFIED COLUMNS ── (To Do is a backend folder fed by another pipeline; not shown here) */
 const SIMPLIFIED_COLS = [
-  {
-    id: 'todo', label: 'To Do', colorClass: '',
-    icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#d4d4d4" stroke-width="1.5"/></svg>`,
-    filter: l => l.status === 'todo'
-  },
   {
     id: 'progress', label: 'In Progress', colorClass: 'info',
     icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1A7 7 0 0 0 8 15 Z" fill="#3b82f6"/><circle cx="8" cy="8" r="7" stroke="#3b82f6" stroke-width="1.5"/></svg>`,
@@ -596,22 +945,291 @@ const SIMPLIFIED_COLS = [
   },
 ];
 
-/* ── DETAILED COLUMNS ── */
+/* ── DETAILED COLUMNS ── (failed loans live in Exceptions card, not in pipeline) */
+const isPipelineLoan = l => l.status !== 'failed';
 const DETAILED_COLS = [
-  { id:'ingest',     label:'Ingest',       stageVar:'--stage-ingest',     filter: l => l.stage === 'ingest' },
-  { id:'classify',   label:'Classify',     stageVar:'--stage-classify',   filter: l => l.stage === 'classify' },
-  { id:'qc-check',   label:'QC Checklist', stageVar:'--stage-qc-check',   filter: l => l.stage === 'qc-check' },
-  { id:'code-map',   label:'Code Mapping', stageVar:'--stage-code-map',   filter: l => l.stage === 'code-map' },
-  { id:'report-gen', label:'Report Gen',   stageVar:'--stage-report-gen', filter: l => l.stage === 'report-gen' },
-  { id:'uw-report',  label:'UW Report',    stageVar:'--stage-uw-report',  filter: l => l.stage === 'uw-report' },
+  { id:'ingest',     label:'Ingest',       stageVar:'--stage-ingest',     filter: l => isPipelineLoan(l) && l.stage === 'ingest' },
+  { id:'classify',   label:'Classify',     stageVar:'--stage-classify',   filter: l => isPipelineLoan(l) && l.stage === 'classify' },
+  { id:'qc-check',   label:'QC Checklist', stageVar:'--stage-qc-check',   filter: l => isPipelineLoan(l) && l.stage === 'qc-check' },
+  { id:'code-map',   label:'Code Mapping', stageVar:'--stage-code-map',   filter: l => isPipelineLoan(l) && l.stage === 'code-map' },
+  { id:'report-gen', label:'Report Gen',   stageVar:'--stage-report-gen', filter: l => isPipelineLoan(l) && l.stage === 'report-gen' },
+  { id:'uw-report',  label:'UW Report',    stageVar:'--stage-uw-report',  filter: l => isPipelineLoan(l) && l.stage === 'uw-report' },
   { id:'done',       label:'Done',         stageVar: null,                filter: l => l.status === 'completed' },
 ];
+
+/* ── EXPAND / COLLAPSE GROUPED COLUMN ── */
+const expandedCols = new Set();
+const expandTimers = {};
+const REGROUP_DELAY_MS = 3000;
+
+function onGroupCardClick(colId) {
+  if (expandTimers[colId]) { clearTimeout(expandTimers[colId]); delete expandTimers[colId]; }
+  expandedCols.add(colId);
+  renderBoard();
+}
+function onColMouseEnter(colId) {
+  if (expandTimers[colId]) { clearTimeout(expandTimers[colId]); delete expandTimers[colId]; }
+}
+function onColMouseLeave(colId) {
+  if (!expandedCols.has(colId)) return;
+  if (expandTimers[colId]) clearTimeout(expandTimers[colId]);
+  expandTimers[colId] = setTimeout(() => {
+    expandedCols.delete(colId);
+    delete expandTimers[colId];
+    renderBoard();
+  }, REGROUP_DELAY_MS);
+}
+
+/* ── LIVE PIPELINE SIMULATION ──
+   The data is otherwise static. This loop ticks each in-flight loan's
+   timeTakenSec forward, advances stages when a loan finishes its average
+   time, and spawns replacement loans into Ingest so the dashboard always
+   feels alive. Tick is paused while any column is expanded so users can
+   inspect a column without cards shifting underneath them. */
+const STAGE_ORDER = ['ingest','classify','qc-check','code-map','report-gen','uw-report'];
+const TICK_MS = 500;
+const SIM_SEC_PER_TICK = 3;   // 6 sim-sec/real-sec → ~85-90s real per pipeline run (calmer cadence)
+const ADVANCE_STAGGER_MS = 110;
+let nextLoanId = LOANS.reduce((m, l) => {
+  const n = parseInt(l.id.replace('LN-', ''), 10);
+  return Number.isFinite(n) && n > m ? n : m;
+}, 0) + 1;
+
+function nowFmt() {
+  const d = new Date();
+  let h = d.getHours();
+  const m = d.getMinutes();
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12; if (h === 0) h = 12;
+  return `Apr 30, ${h}:${String(m).padStart(2,'0')} ${ampm}`;
+}
+
+function advanceLoan(l) {
+  const idx = STAGE_ORDER.indexOf(l.stage);
+  if (idx === -1 || idx === STAGE_ORDER.length - 1) {
+    l.status = 'completed';
+    l.stage = '';
+    l.stepsComplete = 6;
+    l.timeTakenSec = 0;
+    l.avgSec = 0;
+    l.date = nowFmt();
+  } else {
+    l.stage = STAGE_ORDER[idx + 1];
+    l.stepsComplete = idx + 2;
+    l.avgSec = STAGE_AVG_SEC[l.stage];
+    l.timeTakenSec = 0;
+  }
+}
+
+function spawnLoan() {
+  const id = `LN-${String(nextLoanId++).padStart(6,'0')}`;
+  LOANS.push({
+    id, sub: '',
+    status: 'in-progress',
+    stageIndex: 0, stepsComplete: 1, stage: 'ingest',
+    vendor: nextLoanId % 2 ? 'fannie' : 'freddie',
+    files: ['PDF','SSR','XML'],
+    reason: '',
+    date: nowFmt(),
+    avgSec: STAGE_AVG_SEC['ingest'],
+    timeTakenSec: 0,
+  });
+}
+
+function updateBarsInPlace() {
+  document.querySelectorAll('.loan-card-compact[data-loan-id]').forEach(el => {
+    const l = LOANS.find(x => x.id === el.dataset.loanId);
+    if (!l || l.status !== 'in-progress' || !l.avgSec) return;
+    const fill  = el.querySelector('.lcc-bar-fill');
+    const taken = el.querySelector('.lcc-taken');
+    const pct = Math.min(100, (l.timeTakenSec / l.avgSec) * 100);
+    if (fill)  fill.style.width = pct + '%';
+    if (taken) taken.textContent = fmtMMSS(l.timeTakenSec);
+  });
+  // Status-view in-flight cards: update the gradient progress bar
+  document.querySelectorAll('.loan-card[data-loan-id] .loan-progress-bar-wrap > div').forEach(fill => {
+    const card = fill.closest('[data-loan-id]');
+    const l = LOANS.find(x => x.id === card?.dataset.loanId);
+    if (!l || l.status !== 'in-progress' || !l.avgSec) return;
+    const stagePct = Math.min(100, ((l.stepsComplete - 1 + l.timeTakenSec / l.avgSec) / 6) * 100);
+    fill.style.clipPath = `inset(0 calc(100% - ${stagePct.toFixed(1)}%) 0 0)`;
+  });
+}
+
+/* Surgical helpers — patch the DOM in place instead of full re-render.
+   Why: full innerHTML rebuilds re-trigger card-enter on every card and reset
+   the bar-fill transitions, producing the visible jerk. Surgical updates only
+   touch what changed, so static cards stay perfectly still. */
+
+function refreshGroupedCardsSurgical() {
+  const filtered = getFiltered();
+  const isDetailed = currentView === 'detailed';
+  const cols = isDetailed ? DETAILED_COLS : SIMPLIFIED_COLS;
+  cols.forEach(col => {
+    if (expandedCols.has(col.id)) return;
+    const colEl = document.querySelector(`[data-col-id="${col.id}"]`);
+    if (!colEl) return;
+    const cardEl = colEl.querySelector('.group-card');
+    if (!cardEl) return;
+    const loans = filtered.filter(col.filter);
+
+    // Rebuild inner content from groupCardHTML — handles all card variants
+    // (Stage view minimal, Status In Progress rich, Status Completed stats).
+    const wrap = document.createElement('div');
+    wrap.innerHTML = groupCardHTML(loans, col, isDetailed);
+    const fresh = wrap.firstElementChild;
+    if (fresh) {
+      cardEl.className = fresh.className;
+      cardEl.innerHTML = fresh.innerHTML;
+    }
+  });
+}
+
+function moveCardSurgical(loan) {
+  const oldEl = document.querySelector(`[data-loan-id="${loan.id}"]`);
+  if (!oldEl) return;
+
+  const isDetail = currentView === 'detailed';
+  const newColId = loan.status === 'completed' ? 'done' : (isDetail ? loan.stage : 'progress');
+  const newColBody = document.querySelector(`[data-col-id="${newColId}"] .kanban-col-body`);
+  if (!newColBody) {
+    // No destination — just dissolve out
+    oldEl.style.transition = 'opacity 0.3s ease';
+    oldEl.style.opacity = '0';
+    setTimeout(() => oldEl.remove(), 320);
+    return;
+  }
+
+  // Same-column stage advance (Status view, In Progress staying In Progress):
+  // soft cross-fade in place — content swap with a brief opacity dip.
+  if (newColBody === oldEl.parentElement && loan.status !== 'completed') {
+    oldEl.style.transition = 'opacity 0.18s ease';
+    oldEl.style.opacity = '0.35';
+    setTimeout(() => {
+      const wrap = document.createElement('div');
+      wrap.innerHTML = loanCardHTML(loan, isDetail);
+      const fresh = wrap.firstElementChild;
+      oldEl.className = fresh.className;
+      oldEl.innerHTML = fresh.innerHTML;
+      oldEl.style.opacity = '1';
+      setTimeout(() => { oldEl.style.transition = ''; }, 220);
+    }, 180);
+    return;
+  }
+
+  // Cross-column → DISSOLVE: old card fades out where it stands, while a new
+  // card materializes at the top of the destination column. No physical
+  // motion across the screen — just two soft fades that overlap.
+  oldEl.removeAttribute('data-loan-id'); // detach so any next render doesn't grab the dying element
+  oldEl.style.transition = 'opacity 0.32s ease';
+  oldEl.style.opacity = '0';
+  setTimeout(() => oldEl.remove(), 340);
+
+  const wrap = document.createElement('div');
+  wrap.innerHTML = loanCardHTML(loan, isDetail);
+  const newEl = wrap.firstElementChild;
+  newEl.style.opacity = '0';
+  newEl.style.animation = 'none';   // we control the fade, suppress card-enter
+  newColBody.insertBefore(newEl, newColBody.firstChild);
+
+  requestAnimationFrame(() => {
+    newEl.style.transition = 'opacity 0.36s ease';
+    newEl.style.opacity = '1';
+    setTimeout(() => {
+      newEl.style.transition = '';
+      newEl.style.animation = '';
+    }, 380);
+  });
+}
+
+function insertNewCardSurgical(loan) {
+  const isDetail = currentView === 'detailed';
+  const colId = isDetail ? 'ingest' : 'progress';
+  const colBody = document.querySelector(`[data-col-id="${colId}"] .kanban-col-body`);
+  if (!colBody) return;
+
+  const wrap = document.createElement('div');
+  wrap.innerHTML = loanCardHTML(loan, isDetail);
+  const newEl = wrap.firstElementChild;
+  newEl.style.opacity = '0';
+  newEl.style.transform = 'translateY(-6px)';
+  newEl.style.animation = 'none';
+  colBody.insertBefore(newEl, colBody.firstChild);
+
+  requestAnimationFrame(() => {
+    newEl.style.transition = 'opacity 0.3s ease, transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)';
+    newEl.style.opacity = '1';
+    newEl.style.transform = '';
+    setTimeout(() => {
+      newEl.style.transition = '';
+      newEl.style.transform = '';
+      newEl.style.animation = '';
+    }, 420);
+  });
+}
+
+function refreshMetricsLite() {
+  const total = LOANS.length;
+  const completed = LOANS.filter(l => l.status === 'completed').length;
+  const elTotal = document.getElementById('ops-total');
+  const elDone  = document.getElementById('ops-completed');
+  if (elTotal) elTotal.textContent = total;
+  if (elDone)  elDone.textContent  = completed;
+}
+
+function animateLoanAdvance(loan) {
+  advanceLoan(loan);
+  const justCompleted = loan.status === 'completed';
+
+  if (isGrouped) {
+    if (justCompleted) spawnLoan();
+    refreshGroupedCardsSurgical();
+  } else {
+    moveCardSurgical(loan);
+    if (justCompleted) {
+      spawnLoan();
+      const newLoan = LOANS[LOANS.length - 1];
+      // Slight delay so the moving card doesn't overlap with the spawn appearing
+      setTimeout(() => insertNewCardSurgical(newLoan), 140);
+    }
+  }
+  refreshMetricsLite();
+}
+
+function tick() {
+  if (expandedCols.size > 0) return;            // pause while user is inspecting
+
+  const toAdvance = [];
+  LOANS.forEach(l => {
+    if (l.status !== 'in-progress') return;
+    l.timeTakenSec += SIM_SEC_PER_TICK;
+    if (l.avgSec && l.timeTakenSec >= l.avgSec) toAdvance.push(l);
+  });
+
+  // Bars fill smoothly via CSS — just push the numbers each tick
+  updateBarsInPlace();
+
+  if (toAdvance.length === 0) return;
+
+  // Stagger concurrent transitions so multiple loans advance gracefully one
+  // after another rather than slamming all at once.
+  toAdvance.forEach((l, i) => {
+    setTimeout(() => animateLoanAdvance(l), i * ADVANCE_STAGGER_MS);
+  });
+}
+
+let liveInterval = null;
+function startLiveSimulation() { if (!liveInterval) liveInterval = setInterval(tick, TICK_MS); }
 
 /* ── FILTER & SORT LOANS ── */
 let sortDesc = true;
 function toggleSort() {
   sortDesc = !sortDesc;
-  document.getElementById('sortBtn').textContent = sortDesc ? 'Sort: Newest' : 'Sort: Oldest';
+  const btn = document.getElementById('sortBtn');
+  btn.dataset.direction = sortDesc ? 'desc' : 'asc';
+  const label = sortDesc ? 'Newest first' : 'Oldest first';
+  document.getElementById('sortLabel').textContent = label;
+  btn.setAttribute('aria-label', `Sort: ${label}`);
   renderBoard();
 }
 
@@ -622,7 +1240,7 @@ function getFiltered() {
     if (search && !l.id.toLowerCase().includes(search)) return false;
     return true;
   });
-  
+
   if (!sortDesc) {
     res.reverse();
   }
@@ -643,13 +1261,17 @@ function colHTML(col, loans, isDetailed) {
   const count = loans.length;
   const stageColor = col.stageVar ? `var(${col.stageVar})` : 'var(--color-success-500)';
 
+  // Hide the column-header count when grouped — the group card already shows the count.
+  const countHTML = isGrouped ? '' : `<span class="col-count">${count}</span>`;
+  const countHTMLColored = (color) => isGrouped ? '' : `<span class="col-count" style="color:${color}">${count}</span>`;
+
   let header = '';
   if (isDetailed) {
     header = `
       <div class="kanban-col-header">
         <div class="col-stage-dot" style="background:${stageColor}"></div>
         <span class="col-title">${col.label}</span>
-        <span class="col-count">${count}</span>
+        ${countHTML}
       </div>`;
   } else {
     const countColor = col.colorClass === 'success' ? 'var(--color-success-600)' : col.colorClass === 'info' ? 'var(--color-info-500)' : 'var(--color-neutral-400)';
@@ -657,23 +1279,28 @@ function colHTML(col, loans, isDetailed) {
       <div class="kanban-col-header">
         ${col.icon}
         <span class="col-title">${col.label}</span>
-        <span class="col-count" style="color:${countColor}">${count}</span>
+        ${countHTMLColored(countColor)}
       </div>`;
   }
 
+  // Click on group card temporarily expands the column to show individual loans.
+  const isExpanded = expandedCols.has(col.id);
   let body = '';
   if (loans.length === 0) {
     body = `<div class="kanban-col-empty">No loans</div>`;
-  } else if (isGrouped) {
-    body = groupCardHTML(loans, col);
+  } else if (isGrouped && !isExpanded) {
+    body = groupCardHTML(loans, col, isDetailed);
   } else {
-    body = loans.map(l => loanCardHTML(l)).join('');
+    body = loans.map(l => loanCardHTML(l, isDetailed)).join('');
   }
 
-  const colClass = col.id === 'errors' ? 'kanban-col kanban-col-error' : 'kanban-col';
+  const baseColClass = col.id === 'errors' ? 'kanban-col kanban-col-error' : 'kanban-col';
+  const expandedClass = isExpanded ? ' is-expanded' : '';
 
   return `
-    <div class="${colClass}">
+    <div class="${baseColClass}${expandedClass}" data-col-id="${col.id}"
+         onmouseenter="onColMouseEnter('${col.id}')"
+         onmouseleave="onColMouseLeave('${col.id}')">
       ${header}
       <div class="kanban-col-body">${body}</div>
     </div>`;
@@ -683,9 +1310,8 @@ function colHTML(col, loans, isDetailed) {
 function renderBoard() {
   const filtered = getFiltered();
   const board    = document.getElementById('kanbanBoard');
-  const useSimplified = currentView === 'simplified' || isGrouped;
-  const cols     = useSimplified ? SIMPLIFIED_COLS : DETAILED_COLS;
-  const isDetail = !useSimplified;
+  const isDetail = currentView === 'detailed';
+  const cols     = isDetail ? DETAILED_COLS : SIMPLIFIED_COLS;
 
   board.className = `kanban-board${isDetail ? ' detailed' : ''}`;
   board.innerHTML = cols.map(col => {
@@ -696,26 +1322,19 @@ function renderBoard() {
 
 /* ── RENDER METRICS (Operations card) ── */
 function renderMetrics() {
-  const total      = LOANS.length;
-  const completed  = LOANS.filter(l => l.status === 'completed').length;
-  const inPipeline = LOANS.filter(l => ['in-progress','blocked'].includes(l.status)).length;
-  const exceptions = LOANS.filter(l => l.status === 'failed').length;
+  const total     = LOANS.length;
+  const completed = LOANS.filter(l => l.status === 'completed').length;
 
-  document.getElementById('ops-total').textContent      = total;
-  document.getElementById('ops-avg-time').textContent   = '8m 43s';
-  document.getElementById('ops-completed').textContent  = completed;
-  document.getElementById('ops-exceptions').textContent = exceptions;
-
-  document.getElementById('ops-sub-total').innerHTML      = `+12% vs previous batch<br><span class="accent">All sources active</span>`;
-  document.getElementById('ops-sub-avg-time').innerHTML   = `<span class="err">↑ 40s</span> vs yesterday<br><span>Bottleneck: QC</span>`;
-  document.getElementById('ops-sub-completed').innerHTML  = `Loans ready for review<br><span class="accent">All clear</span>`;
-  const shared = exceptions >= 2 ? `<span class="err">${exceptions - 1} share same root cause</span><br>` : '';
-  document.getElementById('ops-sub-exceptions').innerHTML = `${shared}Needs attention`;
+  document.getElementById('ops-total').textContent     = total;
+  document.getElementById('ops-avg-time').textContent  = '8m 43s';
+  document.getElementById('ops-completed').textContent = completed;
+  // Throughput is a static demo value here; the live tick renders movement.
 }
 
-/* ── RENDER STAGE BAR ── */
+/* ── RENDER STAGE BAR (excludes failed loans — those live in Exceptions card) ── */
 function renderStageBar() {
-  const total = LOANS.length;
+  const pipelineLoans = LOANS.filter(l => l.status !== 'failed');
+  const total = pipelineLoans.length;
   if (!total) return;
 
   const STAGE_DEFS = [
@@ -728,11 +1347,10 @@ function renderStageBar() {
   ];
 
   const stageCounts = {};
-  let completedCount = 0, failedCount = 0;
+  let completedCount = 0;
 
-  LOANS.forEach(l => {
+  pipelineLoans.forEach(l => {
     if (l.status === 'completed')  completedCount++;
-    else if (l.status === 'failed') failedCount++;
     else if (l.stage) stageCounts[l.stage] = (stageCounts[l.stage] || 0) + 1;
   });
 
@@ -748,51 +1366,60 @@ function renderStageBar() {
     const pct = (completedCount / total * 100).toFixed(1);
     segs.push(`<div class="stage-bar-seg" style="background:var(--color-success-500);width:${pct}%;" title="Completed · ${completedCount}"><span class="seg-label">Done</span> ${completedCount}</div>`);
   }
-  if (failedCount > 0) {
-    const pct = (failedCount / total * 100).toFixed(1);
-    segs.push(`<div class="stage-bar-seg" style="background:var(--color-danger-500);width:${pct}%;" title="Failed · ${failedCount}"><span class="seg-label">Failed</span> ${failedCount}</div>`);
-  }
 
   document.getElementById('stage-bar-container').innerHTML = segs.join('');
 }
 
-/* ── RENDER ERROR STRIP ── */
-function renderErrorStrip() {
+/* ── RENDER EXCEPTIONS CARD ── */
+function renderExceptions() {
   const failed = LOANS.filter(l => l.status === 'failed');
-  const container = document.getElementById('error-strip-container');
-  if (!failed.length) { container.innerHTML = ''; return; }
+  const list = document.getElementById('exceptions-list');
+  const heroNum = document.getElementById('ex-hero-num');
+  const heroShared = document.getElementById('ex-hero-shared');
+  const requeueBtn = document.getElementById('requeueAllBtn');
 
-  const cards = failed.map(l => {
+  heroNum.textContent = failed.length;
+
+  if (!failed.length) {
+    list.innerHTML = `<div class="exceptions-empty">No exceptions — all loans on track</div>`;
+    heroShared.textContent = '';
+    requeueBtn.disabled = true;
+    return;
+  }
+  requeueBtn.disabled = false;
+  requeueBtn.innerHTML = `↻ Re-queue all (${failed.length})`;
+  heroShared.textContent = failed.length >= 2 ? `${failed.length - 1} share same root cause` : '';
+
+  const stageLabels = { ingest:'Ingest', classify:'Classify', 'qc-check':'QC', 'code-map':'Code Map', 'report-gen':'Report', 'uw-report':'UW' };
+
+  list.innerHTML = failed.map(l => {
     const stageColor = l.stage ? `var(--stage-${l.stage})` : 'var(--color-danger-500)';
-    const stageLabel = l.stage ? l.stage.charAt(0).toUpperCase() + l.stage.slice(1) : 'Unknown';
+    const stageLabel = stageLabels[l.stage] || (l.stage ? l.stage.charAt(0).toUpperCase() + l.stage.slice(1) : 'Unknown');
+    const time = l.date.split(', ')[1] || l.date;
     return `
-      <div class="error-card" onclick="goLoan('${l.id}')">
-        <div class="error-card-top">
-          <span class="error-card-id">${l.id}</span>
-          <span class="error-card-stage" style="background:${stageColor}">${stageLabel}</span>
-        </div>
-        <div class="error-card-reason">${l.reason}</div>
-        <div class="error-card-footer">
-          <span class="error-card-date">${l.date}</span>
-        </div>
+      <div class="exception-row" onclick="goLoan('${l.id}')">
+        <span class="ex-id">${l.id}</span>
+        <span class="ex-stage" style="background:${stageColor}">${stageLabel}</span>
+        <span class="ex-reason" title="${l.reason}">${l.reason}</span>
+        <span class="ex-date">${time}</span>
+        <button class="ex-retry" onclick="retryLoan(event, '${l.id}')">Retry</button>
       </div>`;
   }).join('');
+}
 
-  container.innerHTML = `
-    <div class="error-strip" id="error-strip">
-      <div class="error-strip-header" onclick="document.getElementById('error-strip').classList.toggle('collapsed')">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2.5v4M7 9h.01M2 12.5l5-9 5 9H2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span class="error-strip-title">${failed.length} loan${failed.length > 1 ? 's' : ''} failed — requires attention</span>
-        <svg class="error-strip-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <div class="error-strip-body">${cards}</div>
-    </div>`;
+function requeueAll() {
+  const failed = LOANS.filter(l => l.status === 'failed');
+  if (!failed.length) return;
+  const btn = document.getElementById('requeueAllBtn');
+  btn.disabled = true;
+  btn.textContent = 'Re-queuing…';
+  setTimeout(() => {
+    btn.textContent = `Queued (${failed.length})`;
+    showToast(`${failed.length} loans re-queued`);
+  }, 700);
 }
 
 /* ── VIEW & GROUPING TOGGLES ── */
-// Initialize defaults: Detailed View (Stage) and Grouped = true
-let currentView = 'detailed';
-let isGrouped = true;
 
 function setView(mode) {
   currentView = mode;
@@ -806,9 +1433,9 @@ function toggleGrouping() {
   renderBoard();
 }
 
-/* ── DATE FILTER (obs card) ── */
+/* ── DATE FILTER (scoped to its own .date-filter container) ── */
 function setDate(btn, period) {
-  document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
+  btn.parentElement.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 }
 
@@ -833,9 +1460,9 @@ function showToast(msg) {
 
 /* ── INIT ── */
 renderMetrics();
-renderStageBar();
-renderErrorStrip();
+renderExceptions();
 renderBoard();
+startLiveSimulation();
 </script>
 
 <!-- V1 / V2 Switcher -->
