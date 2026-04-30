@@ -24,26 +24,267 @@ body {
   flex-shrink: 0; padding: 0 var(--space-6); gap: var(--space-4);
   background: var(--color-white);
   border-bottom: 1px solid var(--border-color);
+  display: flex; align-items: stretch;
 }
-.topbar-logo { display: flex; align-items: center; gap: var(--space-2); font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+.topbar-logo { display: flex; align-items: center; gap: var(--space-2); font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); text-decoration: none; }
 .topbar-logo-icon { width: 26px; height: 26px; border-radius: var(--border-radius-md); background: var(--color-neutral-900); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.topbar-divider { width: 1px; height: 16px; background: var(--border-color); flex-shrink: 0; }
+.topbar-divider { width: 1px; height: 16px; background: var(--border-color); flex-shrink: 0; align-self: center; }
 .pipeline-status { display: flex; align-items: center; gap: var(--space-2); font-size: var(--font-size-sm); color: var(--color-neutral-500); }
 .pipeline-dot { width: 6px; height: 6px; border-radius: var(--border-radius-pill); background: var(--color-success-500); animation: blink 2.2s ease-in-out infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 .pipeline-status strong { font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+
+/* ── TOP NAV ── */
+.topbar-nav { display: flex; align-items: stretch; margin-left: var(--space-6); gap: 0; }
+.topbar-nav-item {
+  display: flex; align-items: center;
+  padding: 0 var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-neutral-500);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+  white-space: nowrap;
+  position: relative;
+  top: 1px; /* align border with container border */
+}
+.topbar-nav-item:hover { color: var(--color-neutral-900); }
+.topbar-nav-item.active {
+  color: var(--color-brand-600);
+  font-weight: var(--font-weight-semibold);
+  border-bottom-color: var(--color-brand-600);
+}
+.topbar-nav-item.placeholder { opacity: 0.45; pointer-events: none; }
+
 .topbar-right { margin-left: auto; display: flex; align-items: center; gap: var(--space-5); }
 .user-avatar { width: 28px; height: 28px; border-radius: var(--border-radius-pill); background: var(--color-brand-100); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: var(--font-weight-semibold); color: var(--color-brand-600); border: 1px solid var(--border-color); }
 
 /* ── PAGE LAYOUT ── */
 .page-wrap {
   flex: 1; overflow-y: auto;
-  padding: var(--space-4) var(--space-6);
+  padding: var(--space-5) var(--space-6) var(--space-6);
   display: flex; flex-direction: column; gap: var(--space-5);
   min-height: 0;
 }
-.page-header { display: flex; align-items: center; gap: var(--space-3); }
-.page-title { font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); margin: 0; }
+.page-header {
+  display: flex; align-items: center; gap: var(--space-4);
+  padding-bottom: var(--space-1);
+}
+.page-title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--color-neutral-900);
+  margin: 0;
+}
+.page-header-spacer { flex: 1; }
+
+/* ── SEARCH ── */
+.search-wrap-top { position: relative; }
+.search-input-top {
+  display: flex; align-items: center; gap: 8px;
+  width: 280px;
+  padding: 7px 12px;
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-neutral-900);
+  font-family: var(--font-family-base);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.search-input-top:focus-within {
+  border-color: var(--color-brand-400);
+  box-shadow: 0 0 0 3px var(--color-brand-100);
+}
+.search-input-top svg { color: var(--color-neutral-400); flex-shrink: 0; }
+.search-input-top input {
+  flex: 1; border: none; outline: none; background: transparent;
+  font-size: var(--font-size-sm); font-family: var(--font-family-base);
+  color: var(--color-neutral-900); padding: 0; min-width: 0;
+}
+.search-input-top input::placeholder { color: var(--color-neutral-400); }
+.search-kbd {
+  font-family: var(--font-family-mono); font-size: 10px;
+  color: var(--color-neutral-400);
+  background: var(--color-neutral-50);
+  border: 1px solid var(--border-color);
+  border-radius: 3px; padding: 1px 5px;
+}
+.search-results {
+  position: absolute; top: calc(100% + 6px); right: 0;
+  width: 360px; max-height: 360px; overflow-y: auto;
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-popover);
+  display: none;
+}
+.search-results.is-open { display: block; }
+.search-result-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; cursor: pointer;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color var(--transition-fast);
+}
+.search-result-row:last-child { border-bottom: none; }
+.search-result-row:hover, .search-result-row.is-active { background: var(--color-neutral-50); }
+.search-result-id { font-family: var(--font-family-mono); font-size: 12px; font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+.search-result-meta { font-size: 11px; color: var(--color-neutral-500); margin-left: auto; }
+.search-result-stage { font-size: 10px; font-weight: var(--font-weight-medium); padding: 1px 6px; border-radius: var(--border-radius-sm); color: var(--color-white); white-space: nowrap; }
+.search-result-status {
+  font-size: 10px; font-weight: var(--font-weight-medium);
+  padding: 1px 8px; border-radius: var(--border-radius-pill);
+  white-space: nowrap;
+}
+.search-result-status.completed   { background: var(--color-success-100); color: var(--color-success-700); }
+.search-result-status.in-progress { background: var(--color-info-100);    color: var(--color-info-700); }
+.search-result-status.blocked     { background: var(--color-warning-100); color: var(--color-warning-700); }
+.search-result-status.failed      { background: var(--color-danger-100);  color: var(--color-danger-700); }
+.search-empty { padding: 20px 12px; font-size: var(--font-size-sm); color: var(--color-neutral-400); text-align: center; }
+
+/* ── LOAN DRAWER ── */
+.drawer-overlay {
+  position: fixed; inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(2px);
+  opacity: 0; pointer-events: none;
+  transition: opacity 200ms ease;
+  z-index: 9000;
+}
+.drawer-overlay.is-open { opacity: 1; pointer-events: auto; }
+
+.drawer-panel {
+  position: fixed; top: 0; right: 0; bottom: 0;
+  width: 540px; max-width: 92vw;
+  background: var(--color-white);
+  border-left: 1px solid var(--border-color);
+  box-shadow: -8px 0 24px rgba(15, 23, 42, 0.08);
+  transform: translateX(100%);
+  transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 9100;
+  display: flex; flex-direction: column;
+}
+.drawer-overlay.is-open + .drawer-panel,
+.drawer-panel.is-open { transform: translateX(0); }
+
+.drawer-header {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+.drawer-id { font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-neutral-900); letter-spacing: -0.01em; font-family: var(--font-family-mono); }
+.drawer-status {
+  font-size: 11px; font-weight: var(--font-weight-medium);
+  padding: 3px 10px; border-radius: var(--border-radius-pill);
+  white-space: nowrap;
+}
+.drawer-status.completed   { background: var(--color-success-100); color: var(--color-success-700); }
+.drawer-status.in-progress { background: var(--color-info-100);    color: var(--color-info-700); }
+.drawer-status.blocked     { background: var(--color-warning-100); color: var(--color-warning-700); }
+.drawer-status.failed      { background: var(--color-danger-100);  color: var(--color-danger-700); }
+.drawer-meta { display: flex; flex-direction: column; gap: 2px; margin-left: auto; text-align: right; }
+.drawer-meta-id   { font-family: var(--font-family-mono); font-size: 11px; color: var(--color-neutral-400); }
+.drawer-meta-date { font-size: 11px; color: var(--color-neutral-500); }
+.drawer-close {
+  width: 32px; height: 32px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background: var(--color-white);
+  color: var(--color-neutral-500);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+.drawer-close:hover { background: var(--color-neutral-50); color: var(--color-neutral-900); border-color: var(--border-color-hover); }
+
+.drawer-body {
+  flex: 1; overflow-y: auto;
+  padding: var(--space-5);
+  display: flex; flex-direction: column; gap: var(--space-5);
+}
+.drawer-section-title { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); margin-bottom: var(--space-3); display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
+.drawer-section-meta { font-size: var(--font-size-xs); color: var(--color-neutral-400); font-weight: var(--font-weight-medium); }
+
+/* file grid (matches screenshot style) */
+.file-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+.file-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.file-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-white);
+  padding: var(--space-4) var(--space-3) var(--space-3);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  cursor: default;
+  position: relative;
+}
+.file-card:hover { border-color: var(--border-color-hover); background: var(--color-neutral-50); }
+.file-card-icon { position: relative; width: 48px; height: 60px; }
+.file-card-icon svg { width: 48px; height: 60px; }
+.file-card-type {
+  position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+  font-size: 9px; font-weight: var(--font-weight-bold); font-family: var(--font-family-mono);
+  letter-spacing: 0.04em; padding: 1px 6px; border-radius: 3px;
+  white-space: nowrap;
+}
+.file-card-type.pdf  { background: var(--color-danger-50);  color: var(--color-danger-600); }
+.file-card-type.json { background: var(--color-info-50);    color: var(--color-info-600); }
+.file-card-type.ssr  { background: var(--color-info-50);    color: var(--color-info-600); }
+.file-card-type.xml  { background: var(--color-success-50); color: var(--color-success-600); }
+.file-card-type.qc   { background: var(--color-info-50);    color: var(--color-info-600); }
+.file-card-type.uw   { background: var(--color-warning-50); color: var(--color-warning-600); }
+.file-card-name { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); text-align: center; margin-top: 4px; word-break: break-word; }
+.file-card-meta { font-size: 11px; color: var(--color-neutral-400); text-align: center; }
+.file-card-flags { font-size: 11px; color: var(--color-danger-600); font-weight: var(--font-weight-medium); margin-top: 2px; }
+.file-card-badge {
+  position: absolute; top: -6px; right: -6px;
+  min-width: 22px; height: 22px;
+  padding: 0 6px;
+  background: var(--color-danger-500); color: var(--color-white);
+  border-radius: var(--border-radius-pill);
+  font-size: 11px; font-weight: var(--font-weight-bold);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+.output-section {
+  background: linear-gradient(135deg, var(--color-danger-50) 0%, transparent 70%);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-3);
+  margin: 0 calc(-1 * var(--space-3));
+}
+
+/* pipeline steps (ported from loan-detail) */
+.dwr-pipeline-steps { display: flex; flex-direction: column; }
+.dwr-pipeline-step { display: grid; grid-template-columns: 32px 1fr auto; gap: 0 var(--space-3); position: relative; }
+.dwr-step-col-icon { display: flex; flex-direction: column; align-items: center; position: relative; }
+.dwr-pipeline-step:not(:last-child) .dwr-step-col-icon::after {
+  content: ''; position: absolute; left: 13px; top: 29px; bottom: 0;
+  width: 2px; background: var(--border-color); z-index: 0;
+}
+.dwr-step-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 1; position: relative; }
+.dwr-step-icon.done    { background: var(--color-success-100); color: var(--color-success-600); }
+.dwr-step-icon.running { background: var(--color-info-100);    color: var(--color-info-600); animation: dwr-step-pulse 1.5s ease-in-out infinite; }
+.dwr-step-icon.todo    { background: var(--color-white); color: var(--color-neutral-300); border: 1.5px solid var(--border-color); }
+.dwr-step-icon.error   { background: var(--color-danger-100);  color: var(--color-danger-600); }
+.dwr-step-icon.skipped { background: var(--color-neutral-50);  color: var(--color-neutral-300); border: 1.5px dashed var(--border-color); }
+@keyframes dwr-step-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,.25)} 50%{box-shadow:0 0 0 5px rgba(59,130,246,.08)} }
+.dwr-step-col-body { padding-bottom: var(--space-3); }
+.dwr-step-name-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
+.dwr-step-name { font-size: var(--font-size-base); font-weight: var(--font-weight-medium); color: var(--color-neutral-900); }
+.dwr-step-name.todo    { color: var(--color-neutral-400); }
+.dwr-step-name.skipped { color: var(--color-neutral-400); }
+.dwr-step-name.error   { color: var(--color-danger-700); }
+.dwr-step-name-time { font-size: var(--font-size-xs); color: var(--color-neutral-400); font-family: var(--font-family-mono); white-space: nowrap; }
+.dwr-step-sub { font-size: var(--font-size-sm); color: var(--color-neutral-500); }
+.dwr-step-sub.running { color: var(--color-info-600); font-weight: var(--font-weight-medium); }
+.dwr-step-sub.error   { color: var(--color-danger-600); }
+.dwr-step-col-time { text-align: right; padding-bottom: var(--space-3); }
+.dwr-step-dur-pill { display: inline-block; font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); background: var(--color-neutral-100); padding: 1px 6px; border-radius: var(--border-radius-pill); }
 
 /* Date filter */
 .date-filter { display: flex; gap: 2px; background: var(--color-neutral-100); border-radius: var(--border-radius-md); padding: 3px; border: 1px solid var(--border-color); }
@@ -56,8 +297,7 @@ body {
 .date-btn.active { background: var(--color-white); color: var(--color-neutral-900); box-shadow: var(--shadow-xs); }
 .date-btn:hover:not(.active) { color: var(--color-neutral-900); }
 
-/* ── BENTO GRID ── */
-.bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
+/* ── BENTO CARD (shared) ── */
 .bento-card {
   background: var(--color-white);
   border: 1px solid var(--border-color);
@@ -69,50 +309,146 @@ body {
 .bento-card:hover { border-color: var(--border-color-hover); }
 .bento-title { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
 
-/* ── PIPELINE STATS card ── */
-.ps-hero { display: flex; align-items: baseline; gap: 6px; }
-.ps-num { font-size: var(--font-size-3xl); font-weight: var(--font-weight-bold); line-height: 1; letter-spacing: -0.01em; color: var(--color-neutral-900); font-variant-numeric: tabular-nums; }
-.ps-num-sub { font-size: var(--font-size-sm); color: var(--color-neutral-500); }
-.ps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border-color); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); overflow: hidden; }
-.ps-cell { background: var(--color-white); padding: var(--space-2) var(--space-3); display: flex; flex-direction: column; gap: 2px; }
-.ps-cell-num { font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-neutral-900); line-height: 1; font-variant-numeric: tabular-nums; }
-.ps-cell-label { font-size: 11px; color: var(--color-neutral-500); }
-.ps-cell-num.success { color: var(--color-success-600); }
-.ps-cell-num.danger  { color: var(--color-danger-600); }
-.ps-cell-num.info    { color: var(--color-info-600); }
-
-/* ── AVERAGE TIME card ── */
-.at-list { display: flex; flex-direction: column; gap: 8px; flex: 1; justify-content: space-between; }
-.at-row { display: flex; align-items: center; gap: var(--space-2); }
-.at-label { font-size: var(--font-size-xs); width: 76px; flex-shrink: 0; }
-.at-bar-wrap { flex: 1; height: 6px; background: var(--color-neutral-100); border-radius: var(--border-radius-pill); overflow: hidden; }
-.at-bar { height: 100%; border-radius: var(--border-radius-pill); transition: width var(--transition-base); }
-.at-time { font-size: var(--font-size-xs); color: var(--color-neutral-700); width: 36px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
-.at-delta { font-size: 10px; font-weight: var(--font-weight-medium); width: 28px; text-align: right; flex-shrink: 0; }
-.at-delta.up   { color: var(--color-danger-600); }
-.at-delta.down { color: var(--color-success-600); }
-.at-delta.flat { color: var(--color-neutral-400); }
-
-/* ── ALERTS & METRICS card ── */
-.am-list { display: flex; flex-direction: column; gap: var(--space-2); flex: 1; }
-.am-row {
-  display: flex; align-items: center; gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--border-radius-md);
-  font-size: var(--font-size-sm);
-  border: 1px solid var(--border-color);
-  background: var(--color-white);
+/* ── PAGE NAV (sub-nav below page title) ── */
+.page-nav {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
 }
-.am-row.am-danger { border-color: var(--color-danger-200); background: var(--color-danger-50); }
-.am-row.am-warning { border-color: var(--color-warning-100); background: var(--color-warning-50); }
-.am-row.am-info { border-color: var(--color-info-100); background: var(--color-info-50); }
-.am-dot { width: 6px; height: 6px; border-radius: var(--border-radius-pill); flex-shrink: 0; }
-.am-dot.dot-danger  { background: var(--color-danger-500); }
-.am-dot.dot-warning { background: var(--color-warning-500); }
-.am-dot.dot-info    { background: var(--color-info-500); }
-.am-dot.dot-success { background: var(--color-success-500); }
-.am-text { flex: 1; color: var(--color-neutral-700); }
-.am-count { font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); font-variant-numeric: tabular-nums; }
+.page-nav-item {
+  display: flex; align-items: center;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-sm); font-weight: var(--font-weight-medium);
+  color: var(--color-neutral-500); text-decoration: none;
+  border-bottom: 2px solid transparent;
+  position: relative; bottom: -1px;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+  white-space: nowrap;
+}
+.page-nav-item:hover { color: var(--color-neutral-900); }
+.page-nav-item.active {
+  color: var(--color-brand-600); font-weight: var(--font-weight-semibold);
+  border-bottom-color: var(--color-brand-600);
+}
+
+/* ── ROW 1: METRIC STRIP (borderless inline stats with dividers) ── */
+.metric-strip {
+  display: flex;
+  align-self: flex-start;
+  flex-shrink: 0;
+}
+.metric-card {
+  position: relative;
+  padding: var(--space-4) var(--space-5);
+  display: flex; flex-direction: column; gap: 6px;
+  background: transparent;
+}
+.metric-card + .metric-card::before {
+  content: '';
+  position: absolute; left: 0; top: var(--space-4); bottom: var(--space-4);
+  width: 1px; background: var(--border-color);
+}
+.metric-label { font-size: 10px; font-weight: var(--font-weight-semibold); color: var(--color-neutral-500); letter-spacing: 0.06em; text-transform: uppercase; }
+.metric-value { font-size: var(--font-size-3xl); font-weight: var(--font-weight-bold); line-height: 1; letter-spacing: -0.025em; color: var(--color-neutral-900); font-variant-numeric: tabular-nums; }
+.metric-value-unit { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-400); margin-left: 2px; }
+.metric-trend { font-size: 11px; font-weight: var(--font-weight-medium); color: var(--color-neutral-500); display: flex; align-items: center; gap: 4px; margin-top: 2px; }
+.metric-trend.up   { color: var(--color-success-600); }
+.metric-trend.down { color: var(--color-danger-600); }
+
+/* ── ROW 2: EXCEPTIONS (left) + STAGE CHART (right) ── */
+.row-2 { display: grid; grid-template-columns: 1fr 2fr; gap: var(--space-4); }
+
+.stage-chart-card { padding: var(--space-5); }
+.stage-chart-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-3); }
+.stage-chart-sub  { font-size: 11px; color: var(--color-neutral-400); }
+.stage-chart {
+  width: 100%;
+  height: 220px;
+  position: relative;
+}
+.stage-chart svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.sc-grid-line  { stroke: var(--color-neutral-100); stroke-width: 1; }
+.sc-axis-label { font-size: 10px; fill: var(--color-neutral-400); font-family: var(--font-family-mono); }
+.sc-line {
+  fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  transition: opacity 0.2s ease, stroke-width 0.2s ease;
+}
+.stage-chart.is-hovering .sc-line:not(.is-active) { opacity: 0.12; }
+.stage-chart.is-hovering .sc-line.is-active { stroke-width: 2.5; }
+.sc-dot {
+  r: 0; fill: var(--color-white); stroke-width: 2;
+  transition: r 0.18s ease;
+}
+.stage-chart.is-hovering .sc-line.is-active ~ .sc-dot.is-active,
+.stage-chart .sc-dot.is-active { r: 3; }
+
+.stage-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  column-gap: var(--space-5);
+  row-gap: 2px;
+  margin-top: var(--space-4);
+}
+.stage-cell {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px var(--space-2);
+  border-radius: var(--border-radius-sm);
+  cursor: default;
+  transition: background-color var(--transition-fast);
+}
+.stage-cell:hover { background: var(--color-neutral-50); }
+.stage-cell-dot { width: 8px; height: 8px; border-radius: var(--border-radius-pill); flex-shrink: 0; }
+.stage-cell-name { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-800); flex: 1; }
+.stage-cell-time { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); font-variant-numeric: tabular-nums; }
+
+/* ── EXCEPTIONS CARD (ported from v2) ── */
+.exceptions-card { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-5) var(--space-6); }
+.exceptions-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.exceptions-requeue-all {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-white);
+  background: var(--color-brand-600);
+  border: 1px solid var(--color-brand-600);
+  border-radius: var(--border-radius-md);
+  padding: 6px var(--space-3);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+.exceptions-requeue-all:hover { background: var(--color-brand-700); border-color: var(--color-brand-700); box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25); transform: translateY(-1px); }
+.exceptions-requeue-all:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+.exceptions-requeue-all:disabled { opacity: 0.5; cursor: default; transform: none; box-shadow: none; }
+
+/* Merged heading: "2 Exceptions · 1 shares same root cause" */
+.ex-heading { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.ex-heading-count { font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-danger-600); font-variant-numeric: tabular-nums; line-height: 1; }
+.ex-heading-label { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+.ex-heading-sep { color: var(--color-neutral-300); font-weight: var(--font-weight-medium); }
+.ex-heading-shared { font-size: var(--font-size-sm); color: var(--color-neutral-500); font-weight: var(--font-weight-medium); }
+
+.exceptions-list { display: flex; flex-direction: column; gap: 4px; flex: 1; overflow-y: auto; max-height: 180px; }
+.exceptions-empty { font-size: var(--font-size-xs); color: var(--color-neutral-500); padding: var(--space-3) 0; text-align: center; }
+.exception-row {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: 5px var(--space-2);
+  background: var(--color-white);
+  border: 1px solid var(--color-danger-200);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+.exception-row:hover { border-color: var(--color-danger-400); background: var(--color-danger-50); }
+.ex-id { font-family: var(--font-family-mono); font-size: 11px; font-weight: var(--font-weight-semibold); color: var(--color-danger-600); flex-shrink: 0; }
+.ex-stage { font-size: 10px; font-weight: var(--font-weight-medium); padding: 1px 6px; border-radius: var(--border-radius-sm); color: var(--color-white); white-space: nowrap; flex-shrink: 0; }
+.ex-reason { color: var(--color-neutral-700); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ex-date { font-size: 11px; color: var(--color-neutral-400); flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.ex-retry { font-family: var(--font-family-base); font-size: 11px; font-weight: var(--font-weight-medium); color: var(--color-danger-600); background: var(--color-white); border: 1px solid var(--color-danger-200); border-radius: var(--border-radius-sm); padding: 1px 6px; cursor: pointer; flex-shrink: 0; }
+.ex-retry:hover { background: var(--color-danger-100); border-color: var(--color-danger-300); }
 
 /* ── REALTIME LOAN STATUS ── */
 .rt-section {
@@ -141,16 +477,18 @@ body {
 }
 .rt-title { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); }
 .rt-meta  { margin-left: auto; font-size: 11px; color: var(--color-neutral-500); }
-.rt-feed { display: flex; flex-direction: column; gap: 6px; max-height: 230px; overflow-y: auto; padding-right: 4px; }
+.rt-feed { display: flex; flex-direction: column; max-height: 240px; overflow-y: auto; padding-right: 4px; }
 .rt-row {
   display: flex; align-items: center; gap: var(--space-3);
-  padding: 6px var(--space-3);
+  padding: 8px var(--space-3);
   border-radius: var(--border-radius-md);
-  border: 1px solid var(--border-color);
-  background: var(--color-white);
+  background: transparent;
   font-size: var(--font-size-sm);
   animation: rt-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition: background-color var(--transition-fast);
 }
+.rt-row + .rt-row { border-top: 1px solid var(--color-neutral-100); }
+.rt-row:hover { background: var(--color-neutral-50); }
 @keyframes rt-enter {
   from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -159,49 +497,19 @@ body {
 .rt-action { color: var(--color-neutral-600); }
 .rt-stage-chip { font-size: 10px; font-weight: var(--font-weight-medium); padding: 1px 6px; border-radius: var(--border-radius-sm); color: var(--color-white); white-space: nowrap; flex-shrink: 0; }
 .rt-time { margin-left: auto; font-size: 11px; color: var(--color-neutral-400); flex-shrink: 0; font-variant-numeric: tabular-nums; }
-.rt-row.rt-complete { background: var(--color-success-50); border-color: var(--color-success-200); }
-.rt-row.rt-spawn    { background: var(--color-info-50);    border-color: var(--color-info-100); }
-
-/* ── PLATFORM UPSELL ── */
-.platform-section { display: flex; flex-direction: column; gap: var(--space-3); }
-.platform-section-header { display: flex; align-items: baseline; gap: var(--space-3); }
-.platform-section-sub { font-size: var(--font-size-sm); color: var(--color-neutral-500); }
-.platform-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
-.platform-card {
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-xl);
-  padding: var(--space-5);
-  background: var(--color-white);
-  display: flex; flex-direction: column; gap: var(--space-2);
-  position: relative;
-  overflow: hidden;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
-  cursor: pointer;
-}
-.platform-card:hover { border-color: var(--color-brand-400); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
-.platform-card.is-active {
-  border-color: var(--color-brand-300);
-  background: linear-gradient(135deg, var(--color-brand-50) 0%, var(--color-white) 70%);
-}
-.platform-icon { width: 32px; height: 32px; border-radius: var(--border-radius-md); display: flex; align-items: center; justify-content: center; color: var(--color-white); margin-bottom: var(--space-1); flex-shrink: 0; }
-.platform-icon.is-current   { background: var(--color-neutral-900); }
-.platform-icon.is-crm       { background: var(--color-info-500); }
-.platform-icon.is-consensus { background: var(--color-warning-500); }
-.platform-name-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
-.platform-name { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
-.platform-status { font-size: 10px; font-weight: var(--font-weight-medium); text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 6px; border-radius: var(--border-radius-sm); }
-.platform-status.is-active { color: var(--color-brand-700); background: var(--color-brand-100); }
-.platform-status.is-soon   { color: var(--color-neutral-500); background: var(--color-neutral-100); border: 1px dashed var(--color-neutral-300); }
-.platform-desc { font-size: var(--font-size-sm); color: var(--color-neutral-600); line-height: 1.5; }
-.platform-tag { font-size: 11px; color: var(--color-neutral-400); margin-top: auto; padding-top: var(--space-3); border-top: 1px dashed var(--border-color); display: flex; align-items: center; gap: 6px; }
-.platform-tag-spark { color: var(--color-brand-500); }
+.rt-row.rt-complete { background: var(--color-success-50); }
+.rt-row.rt-spawn    { background: var(--color-info-50); }
+.rt-row.rt-complete + .rt-row,
+.rt-row + .rt-row.rt-complete,
+.rt-row.rt-spawn + .rt-row,
+.rt-row + .rt-row.rt-spawn { border-top-color: transparent; }
 
 </style>
 </head>
 <body>
 
 <header class="topbar">
-  <div class="topbar-logo">
+  <a class="topbar-logo" href="dashboard.html">
     <div class="topbar-logo-icon">
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
         <path d="M8 1.5L2.5 3.5V8c0 3.04 2.4 5.87 5.5 6.5 3.1-.63 5.5-3.46 5.5-6.5V3.5L8 1.5Z" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/>
@@ -209,13 +517,7 @@ body {
       </svg>
     </div>
     QC Appraisal
-  </div>
-  <div class="topbar-divider"></div>
-  <div class="pipeline-status">
-    <div class="pipeline-dot"></div>
-    Pipeline <strong>Running</strong>
-    &nbsp;·&nbsp; Last batch <span id="topbar-time">9:41 AM</span>
-  </div>
+  </a>
   <div class="topbar-right">
     <div class="user-avatar">SU</div>
   </div>
@@ -225,61 +527,81 @@ body {
 
   <!-- HEADER -->
   <div class="page-header">
-    <h1 class="page-title">Observability Hub</h1>
+    <h1 class="page-title">Observability</h1>
     <div class="date-filter">
       <button class="date-btn active" onclick="setDate(this)">All</button>
       <button class="date-btn" onclick="setDate(this)">Daily</button>
       <button class="date-btn" onclick="setDate(this)">Weekly</button>
       <button class="date-btn" onclick="setDate(this)">Monthly</button>
     </div>
+    <div class="page-header-spacer"></div>
+    <div class="search-wrap-top">
+      <label class="search-input-top">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <input id="loanSearch" type="text" placeholder="Search loans by ID…" autocomplete="off"
+               oninput="onSearchInput()" onfocus="onSearchInput()" onkeydown="onSearchKey(event)"/>
+        <span class="search-kbd">/</span>
+      </label>
+      <div class="search-results" id="searchResults"></div>
+    </div>
   </div>
 
-  <!-- BENTO: Pipeline Stats / Average Time / Alerts & Metrics -->
-  <div class="bento-grid">
-    <!-- Pipeline Stats -->
-    <div class="bento-card">
-      <div class="bento-title">Pipeline Stats</div>
-      <div class="ps-hero">
-        <span class="ps-num" id="ps-total">—</span>
-        <span class="ps-num-sub">loans today</span>
+  <nav class="page-nav" aria-label="Main">
+    <a class="page-nav-item active" href="dashboard.html">Observability</a>
+    <a class="page-nav-item" href="dashboard-v2.html">Pipeline</a>
+    <a class="page-nav-item" href="exceptions.html">Exceptions</a>
+    <a class="page-nav-item" href="reports.html">Reports</a>
+  </nav>
+
+  <!-- ROW 1: METRIC STRIP -->
+  <div class="metric-strip">
+    <div class="metric-card">
+      <span class="metric-label">Loans Today</span>
+      <span class="metric-value" id="m-total">—</span>
+      <span class="metric-trend">vs. prev batch</span>
+    </div>
+    <div class="metric-card">
+      <span class="metric-label">Completed</span>
+      <span class="metric-value" id="m-completed">—</span>
+      <span class="metric-trend up">↑ since last batch</span>
+    </div>
+    <div class="metric-card">
+      <span class="metric-label">Throughput</span>
+      <span class="metric-value"><span id="m-throughput">—</span><span class="metric-value-unit">/min</span></span>
+      <span class="metric-trend">rolling 60s</span>
+    </div>
+    <div class="metric-card">
+      <span class="metric-label">Avg Time</span>
+      <span class="metric-value" id="m-avg-time">—</span>
+      <span class="metric-trend">end-to-end</span>
+    </div>
+  </div>
+
+  <!-- ROW 2: EXCEPTIONS (left) + STAGE THROUGHPUT CHART (right) -->
+  <div class="row-2">
+    <div class="bento-card exceptions-card">
+      <div class="exceptions-header">
+        <div class="ex-heading">
+          <span class="ex-heading-count" id="ex-heading-count">—</span>
+          <span class="ex-heading-label" id="ex-heading-label">Exceptions</span>
+          <span class="ex-heading-sep" id="ex-heading-sep">·</span>
+          <span class="ex-heading-shared" id="ex-heading-shared"></span>
+        </div>
+        <button class="exceptions-requeue-all" id="requeueAllBtn">↻ Re-queue all</button>
       </div>
-      <div class="ps-grid">
-        <div class="ps-cell">
-          <span class="ps-cell-num info" id="ps-active">—</span>
-          <span class="ps-cell-label">In flight</span>
-        </div>
-        <div class="ps-cell">
-          <span class="ps-cell-num success" id="ps-completed">—</span>
-          <span class="ps-cell-label">Completed</span>
-        </div>
-        <div class="ps-cell">
-          <span class="ps-cell-num" id="ps-throughput">—</span>
-          <span class="ps-cell-label">Throughput / min</span>
-        </div>
-        <div class="ps-cell">
-          <span class="ps-cell-num danger" id="ps-exceptions">—</span>
-          <span class="ps-cell-label">Exceptions</span>
-        </div>
-      </div>
+      <div class="exceptions-list" id="exceptions-list"></div>
     </div>
 
-    <!-- Average Time Taken -->
-    <div class="bento-card">
-      <div class="bento-title">Average Time Taken <span style="font-size:11px;font-weight:400;color:var(--color-neutral-400);margin-left:4px;">vs. prev batch</span></div>
-      <div class="at-list">
-        <div class="at-row"><div class="at-label" style="color:var(--stage-ingest)">Ingest</div><div class="at-bar-wrap"><div class="at-bar" style="background:var(--stage-ingest);width:18%"></div></div><div class="at-time">0:28</div><div class="at-delta down">↓7s</div></div>
-        <div class="at-row"><div class="at-label" style="color:var(--stage-classify)">Classify</div><div class="at-bar-wrap"><div class="at-bar" style="background:var(--stage-classify);width:38%"></div></div><div class="at-time">1:02</div><div class="at-delta flat">—</div></div>
-        <div class="at-row"><div class="at-label" style="color:var(--stage-qc-check)">QC Check</div><div class="at-bar-wrap"><div class="at-bar" style="background:var(--stage-qc-check);width:100%"></div></div><div class="at-time">2:44</div><div class="at-delta up">↑18s</div></div>
-        <div class="at-row"><div class="at-label" style="color:var(--stage-code-map)">Code Map</div><div class="at-bar-wrap"><div class="at-bar" style="background:var(--stage-code-map);width:55%"></div></div><div class="at-time">1:31</div><div class="at-delta down">↓4s</div></div>
-        <div class="at-row"><div class="at-label" style="color:var(--stage-report-gen)">Report Gen</div><div class="at-bar-wrap"><div class="at-bar" style="background:var(--stage-report-gen);width:42%"></div></div><div class="at-time">1:08</div><div class="at-delta flat">—</div></div>
-        <div class="at-row"><div class="at-label" style="color:var(--stage-uw-report)">UW Report</div><div class="at-bar-wrap"><div class="at-bar" style="background:var(--stage-uw-report);width:68%"></div></div><div class="at-time">1:50</div><div class="at-delta up">↑22s</div></div>
+    <div class="bento-card stage-chart-card">
+      <div class="stage-chart-head">
+        <div class="bento-title">Stage Throughput</div>
+        <span class="stage-chart-sub">last 12 batches · seconds</span>
       </div>
-    </div>
-
-    <!-- Alerts & Metrics -->
-    <div class="bento-card">
-      <div class="bento-title">Alerts &amp; Metrics</div>
-      <div class="am-list" id="amList"></div>
+      <div class="stage-chart" id="stageChart"></div>
+      <div class="stage-grid" id="stageGrid"></div>
     </div>
   </div>
 
@@ -293,63 +615,27 @@ body {
     <div class="rt-feed" id="rtFeed"></div>
   </div>
 
-  <!-- PLATFORM CAPABILITIES (upsell) -->
-  <div class="platform-section">
-    <div class="platform-section-header">
-      <h2 class="page-title">Platform Capabilities</h2>
-      <span class="platform-section-sub">One intelligence layer · three product surfaces</span>
-    </div>
-    <div class="platform-grid">
-
-      <div class="platform-card is-active">
-        <div class="platform-icon is-current">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M8 1.5L2.5 3.5V8c0 3.04 2.4 5.87 5.5 6.5 3.1-.63 5.5-3.46 5.5-6.5V3.5L8 1.5Z" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/>
-            <path d="M5.5 8L7 9.5L10.5 6" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="platform-name-row">
-          <span class="platform-name">QC Appraisal</span>
-          <span class="platform-status is-active">Active</span>
-        </div>
-        <p class="platform-desc">Automated quality control for appraisal reports — ingestion, classification, QC checks, and underwriter report generation.</p>
-        <div class="platform-tag"><span class="platform-tag-spark">✦</span>Powered by the QC intelligence layer</div>
-      </div>
-
-      <div class="platform-card">
-        <div class="platform-icon is-crm">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <circle cx="8" cy="6" r="3" stroke="#fff" stroke-width="1.4"/>
-            <path d="M2 14c0-3 2.7-5 6-5s6 2 6 5" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <div class="platform-name-row">
-          <span class="platform-name">CRM</span>
-          <span class="platform-status is-soon">Coming soon</span>
-        </div>
-        <p class="platform-desc">Borrower &amp; broker relationships. The same intelligence layer working across leads, conversations, and conversion.</p>
-        <div class="platform-tag"><span class="platform-tag-spark">✦</span>Built on the same intelligence layer</div>
-      </div>
-
-      <div class="platform-card">
-        <div class="platform-icon is-consensus">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M3 4h10M3 8h10M3 12h6" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>
-            <circle cx="13" cy="12" r="2" fill="#fff"/>
-          </svg>
-        </div>
-        <div class="platform-name-row">
-          <span class="platform-name">Consensus</span>
-          <span class="platform-status is-soon">Coming soon</span>
-        </div>
-        <p class="platform-desc">Multi-party agreement workflows for underwriters, appraisers, and reviewers — synchronous decisioning on complex files.</p>
-        <div class="platform-tag"><span class="platform-tag-spark">✦</span>Built on the same intelligence layer</div>
-      </div>
-
-    </div>
-  </div>
 
 </div><!-- /page-wrap -->
+
+<!-- LOAN DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<aside class="drawer-panel" id="drawerPanel" role="dialog" aria-modal="true" aria-label="Loan details">
+  <div class="drawer-header">
+    <span class="drawer-id" id="drawerLoanId">—</span>
+    <span class="drawer-status" id="drawerStatus">—</span>
+    <div class="drawer-meta">
+      <span class="drawer-meta-id" id="drawerSubId">—</span>
+      <span class="drawer-meta-date" id="drawerDate">—</span>
+    </div>
+    <button class="drawer-close" onclick="closeDrawer()" aria-label="Close">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
 
 <!-- V1 / V2 switcher -->
 <div style="position:fixed;bottom:20px;right:20px;background:var(--color-white);border:1px solid var(--border-color);border-radius:20px;padding:4px;display:flex;gap:4px;box-shadow:var(--shadow-md);z-index:9999;">
@@ -414,49 +700,188 @@ function nowSecFmt() {
   return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')} ${ampm}`;
 }
 
-/* ── RENDER: STATS ── */
+/* ── RENDER: METRIC STRIP ── */
+function fmtMMSS(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}m ${String(s).padStart(2,'0')}s`;
+}
 function renderStats() {
   const total = LOANS.length;
   const inFlight = LOANS.filter(l => l.status === 'in-progress' || l.status === 'blocked').length;
   const completed = LOANS.filter(l => l.status === 'completed').length;
-  const exceptions = LOANS.filter(l => l.status === 'failed').length;
 
   // Throughput: advances in the last 60s, scaled to per-min.
   const cutoff = Date.now() - 60_000;
   advanceTimestamps = advanceTimestamps.filter(t => t >= cutoff);
   const throughput = advanceTimestamps.length;
 
-  document.getElementById('ps-total').textContent      = total;
-  document.getElementById('ps-active').textContent     = inFlight;
-  document.getElementById('ps-completed').textContent  = completed;
-  document.getElementById('ps-throughput').textContent = throughput || '—';
-  document.getElementById('ps-exceptions').textContent = exceptions;
+  // End-to-end avg = sum of stage averages
+  const avgEnd = STAGE_ORDER.reduce((sum, s) => sum + STAGE_AVG_SEC[s], 0);
+
+  document.getElementById('m-total').textContent      = total;
+  document.getElementById('m-completed').textContent  = completed;
+  document.getElementById('m-throughput').textContent = throughput || '—';
+  document.getElementById('m-avg-time').textContent   = fmtMMSS(avgEnd);
 }
 
-/* ── RENDER: ALERTS ── */
-function renderAlerts() {
-  document.getElementById('amList').innerHTML = `
-    <div class="am-row am-danger">
-      <div class="am-dot dot-danger"></div>
-      <span class="am-text">2 exceptions need attention</span>
-      <span class="am-count">2</span>
-    </div>
-    <div class="am-row am-warning">
-      <div class="am-dot dot-warning"></div>
-      <span class="am-text">QC Check is the current bottleneck</span>
-      <span class="am-count">+18s</span>
-    </div>
-    <div class="am-row am-info">
-      <div class="am-dot dot-info"></div>
-      <span class="am-text">All ingestion sources active</span>
-      <span class="am-count" style="color:var(--color-success-600);">●</span>
-    </div>
-    <div class="am-row">
-      <div class="am-dot" style="background:var(--color-neutral-400)"></div>
-      <span class="am-text">Avg confidence on UW reports</span>
-      <span class="am-count">91%</span>
-    </div>
-  `;
+/* ── STAGE CHART (line chart with hover-highlight) ── */
+const STAGE_COLORS = {
+  ingest:      'var(--stage-ingest)',
+  classify:    'var(--stage-classify)',
+  'qc-check':  'var(--stage-qc-check)',
+  'code-map':  'var(--stage-code-map)',
+  'report-gen':'var(--stage-report-gen)',
+  'uw-report': 'var(--stage-uw-report)',
+};
+const N_BATCHES = 12;
+function makeSeries() {
+  const series = {};
+  STAGE_ORDER.forEach((s, sIdx) => {
+    const avg = STAGE_AVG_SEC[s];
+    const arr = [];
+    for (let i = 0; i < N_BATCHES; i++) {
+      // deterministic wobble around avg, ±20%
+      const phase = (i + sIdx * 1.7) * 0.9;
+      const w = Math.sin(phase) * 0.12 + Math.cos(phase * 0.6) * 0.08;
+      arr.push(Math.max(8, Math.round(avg * (1 + w))));
+    }
+    series[s] = arr;
+  });
+  return series;
+}
+const STAGE_SERIES = makeSeries();
+
+function renderStageChart() {
+  const W = 800, H = 220;
+  const padL = 36, padR = 12, padT = 16, padB = 26;
+  const innerW = W - padL - padR;
+  const innerH = H - padT - padB;
+
+  const allVals = Object.values(STAGE_SERIES).flat();
+  const yMax = Math.ceil(Math.max(...allVals) / 30) * 30;
+  const yTicks = [0, yMax * 0.25, yMax * 0.5, yMax * 0.75, yMax].map(v => Math.round(v));
+
+  const xFor = i => padL + (i / (N_BATCHES - 1)) * innerW;
+  const yFor = v => padT + innerH - (v / yMax) * innerH;
+
+  const gridLines = yTicks.map(t => {
+    const y = yFor(t);
+    return `<line class="sc-grid-line" x1="${padL}" x2="${W - padR}" y1="${y}" y2="${y}"/>
+            <text class="sc-axis-label" x="${padL - 6}" y="${y + 3}" text-anchor="end">${t}</text>`;
+  }).join('');
+
+  const xLabels = [0, Math.floor(N_BATCHES / 2), N_BATCHES - 1].map(i => {
+    const x = xFor(i);
+    const lbl = i === N_BATCHES - 1 ? 'now' : `B${i + 1}`;
+    return `<text class="sc-axis-label" x="${x}" y="${H - 8}" text-anchor="middle">${lbl}</text>`;
+  }).join('');
+
+  const lines = STAGE_ORDER.map(s => {
+    const pts = STAGE_SERIES[s].map((v, i) => `${xFor(i).toFixed(1)},${yFor(v).toFixed(1)}`).join(' ');
+    return `<polyline class="sc-line" data-stage="${s}" points="${pts}" stroke="${STAGE_COLORS[s]}"/>`;
+  }).join('');
+
+  const lastDots = STAGE_ORDER.map(s => {
+    const i = N_BATCHES - 1;
+    const v = STAGE_SERIES[s][i];
+    return `<circle class="sc-dot is-active" data-stage="${s}" cx="${xFor(i).toFixed(1)}" cy="${yFor(v).toFixed(1)}" stroke="${STAGE_COLORS[s]}"/>`;
+  }).join('');
+
+  document.getElementById('stageChart').innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+      ${gridLines}
+      ${xLabels}
+      ${lines}
+      ${lastDots}
+    </svg>`;
+}
+
+function renderStageGrid() {
+  const html = STAGE_ORDER.map(s => {
+    const last = STAGE_SERIES[s][N_BATCHES - 1];
+    const m = Math.floor(last / 60);
+    const sec = last % 60;
+    const t = `${m}:${String(sec).padStart(2, '0')}`;
+    return `
+      <div class="stage-cell" data-stage="${s}"
+           onmouseenter="highlightStage('${s}')"
+           onmouseleave="clearHighlight()">
+        <span class="stage-cell-dot" style="background:${STAGE_COLORS[s]}"></span>
+        <span class="stage-cell-name">${STAGE_LABELS[s]}</span>
+        <span class="stage-cell-time">${t}</span>
+      </div>`;
+  }).join('');
+  document.getElementById('stageGrid').innerHTML = html;
+}
+
+function highlightStage(stage) {
+  const chart = document.getElementById('stageChart');
+  chart.classList.add('is-hovering');
+  chart.querySelectorAll('.sc-line').forEach(el => {
+    el.classList.toggle('is-active', el.dataset.stage === stage);
+  });
+  chart.querySelectorAll('.sc-dot').forEach(el => {
+    el.classList.toggle('is-active', el.dataset.stage === stage);
+  });
+}
+function clearHighlight() {
+  const chart = document.getElementById('stageChart');
+  chart.classList.remove('is-hovering');
+  chart.querySelectorAll('.sc-line').forEach(el => el.classList.remove('is-active'));
+  chart.querySelectorAll('.sc-dot').forEach(el => el.classList.add('is-active'));
+}
+
+/* ── RENDER: EXCEPTIONS (ported from v2) ── */
+const STAGE_LABEL_SHORT = { ingest:'Ingest', classify:'Classify', 'qc-check':'QC', 'code-map':'Code Map', 'report-gen':'Report', 'uw-report':'UW' };
+
+function renderExceptions() {
+  const failed = LOANS.filter(l => l.status === 'failed');
+  const list = document.getElementById('exceptions-list');
+  const headCount  = document.getElementById('ex-heading-count');
+  const headLabel  = document.getElementById('ex-heading-label');
+  const headSep    = document.getElementById('ex-heading-sep');
+  const headShared = document.getElementById('ex-heading-shared');
+  const requeueBtn = document.getElementById('requeueAllBtn');
+
+  headCount.textContent = failed.length;
+  headLabel.textContent = failed.length === 1 ? 'Exception' : 'Exceptions';
+
+  if (!failed.length) {
+    list.innerHTML = `<div class="exceptions-empty">No exceptions — all loans on track</div>`;
+    headSep.style.display = 'none';
+    headShared.textContent = '';
+    requeueBtn.disabled = true;
+    return;
+  }
+  requeueBtn.disabled = false;
+  requeueBtn.innerHTML = `↻ Re-queue all (${failed.length})`;
+  if (failed.length >= 2) {
+    headSep.style.display = '';
+    const n = failed.length - 1;
+    headShared.textContent = `${n} ${n === 1 ? 'shares' : 'share'} same root cause`;
+  } else {
+    headSep.style.display = 'none';
+    headShared.textContent = '';
+  }
+
+  // Augment failed loans with stage / reason for display
+  const reasons = {
+    'LN-000121': { stage: 'ingest',   reason: 'Missing SSR FNM file' },
+    'LN-000122': { stage: 'classify', reason: 'LLM parse error' },
+  };
+  list.innerHTML = failed.map(l => {
+    const r = reasons[l.id] || { stage: 'ingest', reason: 'Unknown error' };
+    const stageColor = `var(--stage-${r.stage})`;
+    return `
+      <div class="exception-row">
+        <span class="ex-id">${l.id}</span>
+        <span class="ex-stage" style="background:${stageColor}">${STAGE_LABEL_SHORT[r.stage]}</span>
+        <span class="ex-reason">${r.reason}</span>
+        <span class="ex-date">9:41 AM</span>
+        <button class="ex-retry">Retry</button>
+      </div>`;
+  }).join('');
 }
 
 /* ── REALTIME FEED ── */
@@ -537,9 +962,224 @@ function setDate(btn) {
   btn.classList.add('active');
 }
 
+/* ── SEARCH ── */
+let searchActiveIndex = -1;
+function getSearchMatches(q) {
+  q = q.trim().toLowerCase();
+  if (!q) return LOANS.slice(0, 8);
+  return LOANS.filter(l => l.id.toLowerCase().includes(q)).slice(0, 8);
+}
+function onSearchInput() {
+  const input = document.getElementById('loanSearch');
+  const results = document.getElementById('searchResults');
+  const matches = getSearchMatches(input.value);
+  searchActiveIndex = -1;
+  if (!matches.length) {
+    results.innerHTML = `<div class="search-empty">No loans match "${input.value}"</div>`;
+  } else {
+    results.innerHTML = matches.map((l, i) => {
+      const stage = l.stage ? `<span class="search-result-stage" style="background:var(--stage-${l.stage})">${STAGE_LABELS[l.stage]}</span>` : '';
+      return `
+        <div class="search-result-row" data-loan-id="${l.id}" data-idx="${i}" onclick="openDrawer('${l.id}')">
+          <span class="search-result-id">${l.id}</span>
+          <span class="search-result-status ${l.status}">${l.status.replace('-', ' ')}</span>
+          ${stage}
+        </div>`;
+    }).join('');
+  }
+  results.classList.add('is-open');
+}
+function onSearchKey(e) {
+  const results = document.getElementById('searchResults');
+  const rows = results.querySelectorAll('.search-result-row');
+  if (e.key === 'Escape') { results.classList.remove('is-open'); e.target.blur(); return; }
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    searchActiveIndex = Math.min(rows.length - 1, searchActiveIndex + 1);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    searchActiveIndex = Math.max(0, searchActiveIndex - 1);
+  } else if (e.key === 'Enter') {
+    if (searchActiveIndex >= 0 && rows[searchActiveIndex]) {
+      openDrawer(rows[searchActiveIndex].dataset.loanId);
+    } else if (rows[0]) {
+      openDrawer(rows[0].dataset.loanId);
+    }
+    return;
+  } else { return; }
+  rows.forEach((r, i) => r.classList.toggle('is-active', i === searchActiveIndex));
+  if (rows[searchActiveIndex]) rows[searchActiveIndex].scrollIntoView({ block: 'nearest' });
+}
+document.addEventListener('click', (e) => {
+  const wrap = document.querySelector('.search-wrap-top');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('searchResults').classList.remove('is-open');
+  }
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+    e.preventDefault();
+    document.getElementById('loanSearch').focus();
+  }
+  if (e.key === 'Escape') closeDrawer();
+});
+
+/* ── DRAWER ── */
+const ICON_CHECK_DWR = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const ICON_X_DWR     = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+const ICON_SPIN_DWR  = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="2" stroke-dasharray="8 24" stroke-linecap="round"><animateTransform attributeName="transform" type="rotate" from="0 7 7" to="360 7 7" dur="0.8s" repeatCount="indefinite"/></circle></svg>`;
+
+const FILE_SVG_DWR = `<svg viewBox="0 0 48 60" fill="none">
+  <path d="M6 0h26l10 10v46a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4z" fill="#fff" stroke="#e5e7eb" stroke-width="1.2"/>
+  <path d="M32 0v6a4 4 0 0 0 4 4h6" stroke="#e5e7eb" stroke-width="1.2" fill="#f9fafb"/>
+</svg>`;
+
+function fmtMMSSdash(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${String(s).padStart(2,'0')}`;
+}
+
+function buildSteps(loan) {
+  const ts = '9:41 AM';
+  const out = STAGE_ORDER.map(s => ({
+    stage: s, name: STAGE_LABELS[s], status: 'todo', sub: 'Waiting', time: '', dur: ''
+  }));
+  if (loan.status === 'completed') {
+    out.forEach(st => { st.status = 'done'; st.sub = 'Completed'; st.time = ts; st.dur = fmtMMSSdash(STAGE_AVG_SEC[st.stage]); });
+  } else if (loan.status === 'failed') {
+    const idx = STAGE_ORDER.indexOf(loan.stage);
+    if (idx >= 0) {
+      for (let i = 0; i < idx; i++) {
+        out[i].status = 'done'; out[i].sub = 'Completed'; out[i].time = ts;
+        out[i].dur = fmtMMSSdash(STAGE_AVG_SEC[out[i].stage]);
+      }
+      out[idx].status = 'error';
+      out[idx].sub = 'Failed — see Exceptions';
+      out[idx].time = ts;
+    }
+  } else {
+    const idx = STAGE_ORDER.indexOf(loan.stage);
+    if (idx >= 0) {
+      for (let i = 0; i < idx; i++) {
+        out[i].status = 'done'; out[i].sub = 'Completed'; out[i].time = ts;
+        out[i].dur = fmtMMSSdash(STAGE_AVG_SEC[out[i].stage]);
+      }
+      const isBlocked = loan.status === 'blocked';
+      out[idx].status = isBlocked ? 'error' : 'running';
+      out[idx].time = ts;
+      out[idx].sub = isBlocked
+        ? 'Blocked — overdue'
+        : `Running · ${fmtMMSSdash(loan.timeTakenSec || 0)} / ${fmtMMSSdash(loan.avgSec || STAGE_AVG_SEC[loan.stage])}`;
+    }
+  }
+  return out;
+}
+
+function stepHTMLDwr(s) {
+  const icons = { done: ICON_CHECK_DWR, running: ICON_SPIN_DWR, todo: '', error: ICON_X_DWR, skipped: '' };
+  const dur = s.dur && s.status === 'done' ? `<span class="dwr-step-dur-pill">${s.dur}</span>` : '';
+  return `
+    <div class="dwr-pipeline-step">
+      <div class="dwr-step-col-icon">
+        <div class="dwr-step-icon ${s.status}">${icons[s.status] || ''}</div>
+      </div>
+      <div class="dwr-step-col-body">
+        <div class="dwr-step-name-row">
+          <span class="dwr-step-name ${s.status}">${s.name}</span>
+          ${s.time ? `<span class="dwr-step-name-time">${s.time}</span>` : ''}
+        </div>
+        <div class="dwr-step-sub ${s.status}">${s.sub}</div>
+      </div>
+      <div class="dwr-step-col-time">${dur}</div>
+    </div>`;
+}
+
+function fileCardHTML(f) {
+  const badge = f.flags ? `<span class="file-card-badge">${f.flags}</span>` : '';
+  const flagText = f.flags ? `<div class="file-card-flags">${f.flags} flag${f.flags > 1 ? 's' : ''} to review</div>` : '';
+  const meta = f.meta ? `<div class="file-card-meta">${f.meta}</div>` : '';
+  return `
+    <div class="file-card">
+      ${badge}
+      <div class="file-card-icon">
+        ${FILE_SVG_DWR}
+        <span class="file-card-type ${f.type}">${f.type.toUpperCase()}</span>
+      </div>
+      <div class="file-card-name">${f.name}</div>
+      ${meta}
+      ${flagText}
+    </div>`;
+}
+
+function openDrawer(loanId) {
+  const loan = LOANS.find(l => l.id === loanId);
+  if (!loan) return;
+  document.getElementById('searchResults').classList.remove('is-open');
+  document.getElementById('loanSearch').blur();
+
+  const idShort = loan.id.replace('LN-000', 'LN');
+  const traceId = `${idShort}—${Date.now().toString().slice(-10)}`;
+  const date = 'Apr 30, 9:41 AM';
+
+  document.getElementById('drawerLoanId').textContent = idShort;
+  document.getElementById('drawerSubId').textContent = traceId;
+  document.getElementById('drawerDate').textContent = date;
+  const statusEl = document.getElementById('drawerStatus');
+  statusEl.className = 'drawer-status ' + loan.status;
+  statusEl.textContent = loan.status === 'in-progress' ? 'In Progress'
+                       : loan.status.charAt(0).toUpperCase() + loan.status.slice(1);
+
+  // Source files (always)
+  const sourceFiles = [
+    { type: 'pdf',  name: `${idShort}_appraisal.pdf`,    meta: '4.2 MB · Apr 30, 9:41 AM' },
+    { type: 'ssr',  name: `${idShort}_ssr_response.json`, meta: '186 KB · Apr 30, 9:41 AM' },
+    { type: 'xml',  name: `${idShort}_uad.xml`,           meta: '92 KB · Apr 30, 9:41 AM' },
+  ];
+
+  // Output files (only if completed)
+  const outputFiles = loan.status === 'completed' ? [
+    { type: 'qc', name: 'QC Report',         meta: 'Generated Apr 30', flags: 5 },
+    { type: 'uw', name: 'Underwriter Packet', meta: `${idShort}_uw_packet.pdf` },
+  ] : [];
+
+  const steps = buildSteps(loan);
+  const stepsHTML = steps.map(stepHTMLDwr).join('');
+  const stepsDoneCount = steps.filter(s => s.status === 'done').length;
+
+  let body = '';
+  if (outputFiles.length) {
+    body += `
+      <section class="output-section">
+        <div class="drawer-section-title">Output files <span class="drawer-section-meta">${outputFiles.length} ${outputFiles.length === 1 ? 'file' : 'files'}</span></div>
+        <div class="file-grid cols-2">${outputFiles.map(fileCardHTML).join('')}</div>
+      </section>`;
+  }
+  body += `
+    <section>
+      <div class="drawer-section-title">Pipeline steps <span class="drawer-section-meta">${stepsDoneCount} / ${steps.length}</span></div>
+      <div class="dwr-pipeline-steps">${stepsHTML}</div>
+    </section>
+    <section>
+      <div class="drawer-section-title">Source files <span class="drawer-section-meta">${sourceFiles.length} files</span></div>
+      <div class="file-grid">${sourceFiles.map(fileCardHTML).join('')}</div>
+    </section>`;
+
+  document.getElementById('drawerBody').innerHTML = body;
+  document.getElementById('drawerOverlay').classList.add('is-open');
+  document.getElementById('drawerPanel').classList.add('is-open');
+}
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('is-open');
+  document.getElementById('drawerPanel').classList.remove('is-open');
+}
+
 /* ── INIT ── */
 renderStats();
-renderAlerts();
+renderStageChart();
+renderStageGrid();
+renderExceptions();
 // Seed the feed so it isn't empty on first paint
 [
   { id:'LN-000257', action:'completed',   stage:'',           time: nowSecFmt() },
