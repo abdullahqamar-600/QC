@@ -317,6 +317,47 @@ body {
 .group-card-detail .gc-warn { color: var(--color-warning-600); font-weight: var(--font-weight-medium); }
 .group-card:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-md); }
 
+/* ── COMPACT OPS ── */
+.ops-num-sm { font-size: var(--font-size-xl) !important; font-weight: var(--font-weight-bold); color: var(--color-neutral-900); line-height: 1.2; }
+
+/* ── STAGE FAILURE BREAKDOWN ── */
+.failure-section-label { font-size: 11px; font-weight: var(--font-weight-medium); color: var(--color-neutral-400); text-transform: uppercase; letter-spacing: 0.05em; margin: var(--space-3) 0 var(--space-2); }
+.stage-failure-list { display: flex; flex-direction: column; gap: 6px; }
+.stage-failure-row { display: flex; align-items: center; gap: var(--space-2); }
+.stage-failure-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.stage-failure-name { font-size: var(--font-size-xs); color: var(--color-neutral-600); width: 60px; flex-shrink: 0; }
+.stage-failure-bar-wrap { flex: 1; height: 4px; background: var(--color-neutral-100); border-radius: var(--border-radius-pill); overflow: hidden; }
+.stage-failure-bar-fill { height: 100%; border-radius: var(--border-radius-pill); }
+.stage-failure-count { font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); color: var(--color-neutral-600); width: 12px; text-align: right; flex-shrink: 0; }
+
+/* ── PIPELINE HEADING ── */
+.pipeline-heading { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); margin-bottom: var(--space-1); }
+.pipeline-heading-wrap { display: flex; align-items: baseline; gap: var(--space-3); margin-bottom: var(--space-3); }
+.pipeline-sub { font-size: var(--font-size-xs); color: var(--color-neutral-400); }
+
+/* ── SORT BUTTON ── */
+.sort-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px var(--space-3); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); background: var(--color-white); font-family: var(--font-family-base); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-600); cursor: pointer; transition: all var(--transition-fast); white-space: nowrap; height: 30px; }
+.sort-btn:hover { border-color: var(--border-color-hover); color: var(--color-neutral-900); }
+.sort-btn svg { width: 11px; height: 11px; flex-shrink: 0; }
+
+/* ── GROUPED TOGGLE ── */
+.grouped-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 4px var(--space-3); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); background: var(--color-white); font-family: var(--font-family-base); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-600); cursor: pointer; transition: all var(--transition-fast); height: 30px; }
+.grouped-toggle.active { background: var(--color-brand-50); border-color: var(--color-brand-400); color: var(--color-brand-600); }
+
+/* ── ERROR RETRY BUTTON ── */
+.error-retry-btn { margin-top: var(--space-2); display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border: 1px solid var(--color-danger-200); border-radius: var(--border-radius-sm); background: var(--color-white); font-size: 11px; font-weight: var(--font-weight-medium); color: var(--color-danger-600); cursor: pointer; font-family: var(--font-family-base); transition: all var(--transition-fast); }
+.error-retry-btn:hover { background: var(--color-danger-50); border-color: var(--color-danger-300); }
+.error-retry-btn:disabled { opacity: 0.55; cursor: default; }
+
+/* ── COMPACT LOAN CARD ── */
+.loan-card-id-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-2); gap: var(--space-2); }
+.loan-id-main { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+.loan-sub-inline { font-family: var(--font-family-mono); font-size: 10px; color: var(--color-neutral-400); margin-left: 6px; }
+.loan-card-progress-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.loan-progress-steps-sm { font-size: 11px; color: var(--color-neutral-500); }
+.loan-progress-date-sm { font-size: 11px; color: var(--color-neutral-400); }
+.loan-progress-bar-gradient { height: 4px; border-radius: var(--border-radius-pill); overflow: hidden; }
+
 </style>
 </head>
 <body>
@@ -368,14 +409,14 @@ body {
           <div class="ops-sub" id="ops-sub-total">Loading…</div>
         </div>
         <div class="ops-cell">
+          <div class="ops-num ops-num-sm" id="ops-avgtime">—</div>
+          <div class="ops-label">Avg Processing Time</div>
+          <div class="ops-sub" id="ops-sub-avgtime">Loading…</div>
+        </div>
+        <div class="ops-cell">
           <div class="ops-num" id="ops-completed">—</div>
           <div class="ops-label">Completed</div>
           <div class="ops-sub" id="ops-sub-completed">Loading…</div>
-        </div>
-        <div class="ops-cell">
-          <div class="ops-num" id="ops-pipeline">—</div>
-          <div class="ops-label">In Pipeline</div>
-          <div class="ops-sub" id="ops-sub-pipeline">Loading…</div>
         </div>
         <div class="ops-cell danger">
           <div class="ops-num danger" id="ops-exceptions">—</div>
@@ -398,41 +439,18 @@ body {
       </div>
     </div>
 
-    <!-- Card 3: Alerts & Errors -->
+    <!-- Card 3: Exceptions -->
     <div class="bento-card" style="padding: var(--space-4);">
-      <div class="bento-title">Alerts & Errors</div>
-      <div class="alert-list">
-        <div class="alert-row alert-danger">
-          <div class="alert-dot dot-danger"></div>
-          <span class="alert-text">Failed loans</span>
-          <span class="alert-count" style="color:var(--color-danger-600)">2</span>
-        </div>
-        <div class="alert-row alert-warning">
-          <div class="alert-dot dot-warning"></div>
-          <span class="alert-text">Blocked / needs review</span>
-          <span class="alert-count" style="color:var(--color-warning-600)">1</span>
-        </div>
-        <div class="alert-row">
-          <div class="alert-dot dot-warning"></div>
-          <span class="alert-text">Guardrail blocks</span>
-          <span class="alert-count">1</span>
-        </div>
-        <div class="alert-row">
-          <div class="alert-dot dot-info"></div>
-          <span class="alert-text">Human flags</span>
-          <span class="alert-count">3</span>
-        </div>
-        <div class="alert-row">
-          <div class="alert-dot dot-info"></div>
-          <span class="alert-text">Low confidence warnings</span>
-          <span class="alert-count">2</span>
-        </div>
-      </div>
+      <div class="bento-title">Exceptions</div>
+      <div id="alerts-container"></div>
     </div>
   </div><!-- /bento-grid -->
 
-  <!-- Section Separator -->
-  <div class="section-sep"><span class="section-sep-label">Pipeline</span></div>
+  <!-- Pipeline Heading -->
+  <div class="pipeline-heading-wrap">
+    <span class="pipeline-heading">Active Pipeline</span>
+    <span class="pipeline-sub" id="pipeline-sub-count"></span>
+  </div>
 
   <!-- ── KANBAN SECTION ── -->
   <div class="kanban-section">
@@ -445,30 +463,28 @@ body {
         <span class="search-shortcut">/</span>
       </div>
 
-      <select class="filter-select" id="sortSelect" onchange="renderBoard()">
-        <option value="newest">Newest first</option>
-        <option value="oldest">Oldest first</option>
-      </select>
-
-      <select class="filter-select" id="dateFilter" onchange="renderBoard()">
+      <select class="filter-select" id="dateFilter" onchange="renderBoard()" style="height:30px;">
         <option value="">All time</option>
         <option value="today">Today</option>
         <option value="week">This week</option>
       </select>
 
+      <button class="sort-btn" id="sort-btn" onclick="toggleSort()">
+        Newest
+        <svg viewBox="0 0 11 11" fill="none"><path d="M5.5 2v7M5.5 9 3 6.5m2.5 2.5L8 6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
       <div class="toolbar-spacer"></div>
 
-      <div class="kanban-summary">
-        <div class="ks-item"><span class="ks-num success" id="ks-completed">3</span> <span>Completed</span></div>
-        <div class="ks-item"><span class="ks-num info" id="ks-progress">3</span> <span>In Progress</span></div>
-        <div class="ks-item"><span class="ks-num danger" id="ks-failed">2</span> <span>Failed</span></div>
-      </div>
+      <button class="grouped-toggle active" id="btn-grouped" onclick="toggleGrouped()">
+        <svg viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="8" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="1" y="8" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="8" y="8" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
+        Grouped
+      </button>
 
-      <div class="view-toggle">
-        <button class="view-btn active" id="btn-simplified" onclick="setView('simplified')">Status</button>
-        <button class="view-btn" id="btn-detailed" onclick="setView('detailed')">Stage</button>
+      <div class="view-toggle" id="view-switcher">
+        <button class="view-btn active" id="btn-detailed" onclick="setView('detailed')">Stage</button>
+        <button class="view-btn" id="btn-simplified" onclick="setView('simplified')">Status</button>
       </div>
-      <button class="view-btn" id="btn-grouped" onclick="setGrouping(true)" style="border:1px solid var(--border-color);border-radius:var(--border-radius-md);background:var(--color-white);">Grouped</button>
     </div>
 
     <!-- Error Strip (rendered dynamically) -->
@@ -503,8 +519,9 @@ const STAGE_NAMES = ['Ingest','Classify','QC Checklist','Code Mapping','Report G
 const STAGE_KEYS  = ['ingest','classify','qc-check','code-map','report-gen','uw-report'];
 const STAGE_VARS  = ['--stage-ingest','--stage-classify','--stage-qc-check','--stage-code-map','--stage-report-gen','--stage-uw-report'];
 
-let currentView = 'simplified';
-let isGrouped   = false;
+let currentView = 'detailed';   // Stage by default
+let isGrouped   = true;         // Grouped on by default
+let sortOrder   = 'newest';     // 'newest' | 'oldest'
 
 /* ── ICONS ── */
 function statusIcon(status) {
@@ -520,31 +537,49 @@ function fileChips(files) {
   return files.map(f => `<span class="file-chip ${f.toLowerCase()}">${f}</span>`).join('');
 }
 
-/* ── LOAN CARD HTML ── */
+/* ── STAGE GRADIENT (progress bar) ── */
+const STAGE_COLORS_HEX = ['#3D7A38','#3B87D1','#5840A0','#8E54C8','#C24F82','#C8521A'];
+function progressGradient(stepsComplete) {
+  if (stepsComplete === 0) return 'var(--color-neutral-200)';
+  const stops = STAGE_COLORS_HEX.slice(0, stepsComplete);
+  return stops.length === 1 ? stops[0] : `linear-gradient(to right, ${stops.join(', ')})`;
+}
+
+/* ── LOAN CARD HTML (compact) ── */
 function loanCardHTML(l) {
-  const progressBar = (l.status === 'in-progress' || l.status === 'blocked')
-    ? `<div class="loan-progress-bar-wrap">
-         <div class="loan-progress-bar-track"><div class="loan-progress-bar-fill" style="width:${Math.round((l.stepsComplete/6)*100)}%"></div></div>
-         <div class="loan-progress-steps">${l.stepsComplete} of 6 steps complete</div>
-       </div>`
-    : '';
-  const reasonText = (l.status === 'failed')
-    ? `<div style="font-size: var(--font-size-xs); color: var(--color-danger-600); margin-bottom: var(--space-2);">${l.reason}</div>`
-    : '';
   const errorClass = (l.status === 'failed') ? ' loan-card-error' : '';
-  return `
+
+  if (l.status === 'failed') {
+    return `
     <div class="loan-card${errorClass}" onclick="goLoan('${l.id}')">
-      <div class="loan-card-header">
-        <span class="loan-card-id">${l.id}</span>
+      <div class="loan-card-id-row">
+        <span><span class="loan-id-main">${l.id}</span><span class="loan-sub-inline">${l.sub}</span></span>
         ${statusIcon(l.status)}
       </div>
-      <div class="loan-card-sub">${l.sub}</div>
-      <div class="loan-card-files">${fileChips(l.files)}</div>
-      ${reasonText}
-      ${progressBar}
-      <div class="loan-card-footer">
-        <div class="loan-card-date">${l.date}</div>
+      <div style="font-size:var(--font-size-xs);color:var(--color-danger-600);">${l.reason}</div>
+    </div>`;
+  }
+
+  const pct = Math.round((l.stepsComplete / 6) * 100);
+  const gradient = progressGradient(l.stepsComplete);
+  const hasProgress = l.status === 'in-progress' || l.status === 'blocked' || l.status === 'completed';
+
+  const progressBlock = hasProgress ? `
+    <div class="loan-card-progress-header">
+      <span class="loan-progress-steps-sm">${l.stepsComplete} of 6 stages</span>
+      <span class="loan-progress-date-sm">${l.date}</span>
+    </div>
+    <div class="loan-progress-bar-gradient" style="background:var(--color-neutral-100);">
+      <div style="width:${pct}%;height:4px;border-radius:9999px;background:${gradient};"></div>
+    </div>` : `<div class="loan-progress-date-sm" style="text-align:right;">${l.date}</div>`;
+
+  return `
+    <div class="loan-card" onclick="goLoan('${l.id}')">
+      <div class="loan-card-id-row">
+        <span><span class="loan-id-main">${l.id}</span><span class="loan-sub-inline">${l.sub}</span></span>
+        ${statusIcon(l.status)}
       </div>
+      ${progressBlock}
     </div>`;
 }
 
@@ -631,12 +666,13 @@ const DETAILED_COLS = [
 
 /* ── FILTER LOANS ── */
 function getFiltered() {
-  const search   = document.getElementById('searchInput').value.toLowerCase().trim();
-
-  return LOANS.filter(l => {
+  const search = document.getElementById('searchInput').value.toLowerCase().trim();
+  let loans = LOANS.filter(l => {
     if (search && !l.id.toLowerCase().includes(search)) return false;
     return true;
   });
+  if (sortOrder === 'oldest') loans = [...loans].reverse();
+  return loans;
 }
 
 
@@ -702,33 +738,75 @@ function renderBoard() {
     return colHTML(col, colLoans, isDetail);
   }).join('');
 
-  // Update summary counts
-  const completed = filtered.filter(l => l.status === 'completed').length;
-  const inprog    = filtered.filter(l => ['in-progress','blocked'].includes(l.status)).length;
-  const failed    = filtered.filter(l => l.status === 'failed').length;
-  document.getElementById('ks-completed').textContent = completed;
-  document.getElementById('ks-progress').textContent  = inprog;
-  document.getElementById('ks-failed').textContent    = failed;
+  // Stage bar: only when not grouped
+  const stageBarEl = document.getElementById('stage-bar-container');
+  stageBarEl.style.display = isGrouped ? 'none' : '';
+
+  // Pipeline sub-count
+  const total = filtered.length;
+  const inprog = filtered.filter(l => ['in-progress','blocked'].includes(l.status)).length;
+  const sub = document.getElementById('pipeline-sub-count');
+  if (sub) sub.textContent = `${total} loans · ${inprog} processing`;
 }
 
 /* ── RENDER METRICS (Operations card) ── */
 function renderMetrics() {
   const total      = LOANS.length;
   const completed  = LOANS.filter(l => l.status === 'completed').length;
-  const inPipeline = LOANS.filter(l => ['in-progress','blocked'].includes(l.status)).length;
   const exceptions = LOANS.filter(l => l.status === 'failed').length;
-  const rate       = Math.round((completed / total) * 100);
 
   document.getElementById('ops-total').textContent      = total;
+  document.getElementById('ops-avgtime').textContent    = '8m 43s';
   document.getElementById('ops-completed').textContent  = completed;
-  document.getElementById('ops-pipeline').textContent   = inPipeline;
   document.getElementById('ops-exceptions').textContent = exceptions;
 
-  document.getElementById('ops-sub-total').innerHTML      = `${total} in today's batch<br><span class="accent">Batch started 9:15 AM</span>`;
-  document.getElementById('ops-sub-completed').innerHTML  = `${rate}% success rate<br><span class="accent">avg confidence 91%</span>`;
-  document.getElementById('ops-sub-pipeline').innerHTML   = `avg 4.2 min/stage<br><span class="warn">Bottleneck: QC rules</span>`;
-  const shared = exceptions >= 2 ? `<span class="err">${exceptions - 1} share same root cause</span><br>` : '';
+  document.getElementById('ops-sub-total').innerHTML    = `Batch #47 · Started 9:15 AM`;
+  document.getElementById('ops-sub-avgtime').innerHTML  = `<span class="err">↑ 40s vs. yesterday</span>`;
+  document.getElementById('ops-sub-completed').innerHTML = `Avg processing 4m 02s`;
+  const shared = exceptions >= 2 ? `<span class="err">${exceptions - 1} share a root cause</span><br>` : '';
   document.getElementById('ops-sub-exceptions').innerHTML = `${shared}Needs attention`;
+}
+
+/* ── RENDER ALERTS (Exceptions card) ── */
+function renderAlerts() {
+  const failed = LOANS.filter(l => l.status === 'failed');
+  const total  = failed.length;
+  const byStage = {};
+  failed.forEach(l => { if (l.stage) byStage[l.stage] = (byStage[l.stage] || 0) + 1; });
+
+  const stageItems = Object.entries(byStage)
+    .sort((a, b) => b[1] - a[1])
+    .map(([stage, count]) => {
+      const color = `var(--stage-${stage})`;
+      const label = stage.charAt(0).toUpperCase() + stage.slice(1);
+      const pct = Math.round(count / total * 100);
+      return `
+        <div class="stage-failure-row">
+          <span class="stage-failure-dot" style="background:${color}"></span>
+          <span class="stage-failure-name">${label}</span>
+          <div class="stage-failure-bar-wrap"><div class="stage-failure-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+          <span class="stage-failure-count">${count}</span>
+        </div>`;
+    }).join('');
+
+  document.getElementById('alerts-container').innerHTML = `
+    <div class="alert-row alert-danger">
+      <div class="alert-dot dot-danger"></div>
+      <span class="alert-text">AI workflow exceptions</span>
+      <span class="alert-count" style="color:var(--color-danger-600);margin-left:auto;">${total}</span>
+    </div>
+    ${stageItems ? `
+    <div class="failure-section-label">Failing at stage</div>
+    <div class="stage-failure-list">${stageItems}</div>` : ''}`;
+}
+
+/* ── RETRY ERROR LOAN ── */
+function retryErrorLoan(e, id) {
+  e.stopPropagation();
+  const btn = e.currentTarget;
+  btn.innerHTML = '↺ Queued';
+  btn.disabled = true;
+  showToast(id + ' re-queued for processing');
 }
 
 /* ── RENDER STAGE BAR ── */
@@ -793,6 +871,10 @@ function renderErrorStrip() {
         <div class="error-card-footer">
           <span class="error-card-date">${l.date}</span>
         </div>
+        <button class="error-retry-btn" onclick="retryErrorLoan(event,'${l.id}')">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5a3.5 3.5 0 1 0 .7-2.1M1.5 1.5v2h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Re-queue
+        </button>
       </div>`;
   }).join('');
 
@@ -810,20 +892,25 @@ function renderErrorStrip() {
 /* ── VIEW & GROUPING TOGGLES ── */
 function setView(mode) {
   currentView = mode;
-  isGrouped = false;
   document.getElementById('btn-simplified').classList.toggle('active', mode === 'simplified');
   document.getElementById('btn-detailed').classList.toggle('active', mode === 'detailed');
-  document.getElementById('btn-grouped').classList.remove('active');
   renderBoard();
 }
 
-function setGrouping(grouped) {
-  isGrouped = true;
-  // When grouped is clicked, deactivate Status/Stage, activate Grouped
-  document.getElementById('btn-simplified').classList.remove('active');
-  document.getElementById('btn-detailed').classList.remove('active');
-  document.getElementById('btn-grouped').classList.add('active');
-  currentView = 'simplified'; // grouped uses simplified columns
+function toggleGrouped() {
+  isGrouped = !isGrouped;
+  document.getElementById('btn-grouped').classList.toggle('active', isGrouped);
+  renderBoard();
+}
+
+/* ── SORT TOGGLE ── */
+function toggleSort() {
+  sortOrder = sortOrder === 'newest' ? 'oldest' : 'newest';
+  const btn = document.getElementById('sort-btn');
+  const arrow = sortOrder === 'newest'
+    ? `<svg viewBox="0 0 11 11" fill="none"><path d="M5.5 2v7M5.5 9 3 6.5m2.5 2.5L8 6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+    : `<svg viewBox="0 0 11 11" fill="none"><path d="M5.5 9V2M5.5 2 3 4.5m2.5-2.5L8 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  btn.innerHTML = (sortOrder === 'newest' ? 'Newest' : 'Oldest') + arrow;
   renderBoard();
 }
 
@@ -858,6 +945,12 @@ renderStageBar();
 renderErrorStrip();
 renderBoard();
 </script>
+
+<!-- V1 / V2 Switcher -->
+<div style="position:fixed;bottom:20px;right:20px;background:var(--color-white);border:1px solid var(--border-color);border-radius:20px;padding:4px;display:flex;gap:4px;box-shadow:var(--shadow-md);z-index:9999;">
+  <a href="dashboard.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-white);background:var(--color-neutral-900);">V1</a>
+  <a href="dashboard-v2.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-neutral-500);">V2</a>
+</div>
 
 </body>
 </html>

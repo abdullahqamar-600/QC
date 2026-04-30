@@ -8,629 +8,314 @@
 <link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="components.css">
 <style>
-
 /* ── SHELL ── */
 html, body { height: 100%; }
 body {
-  background: var(--color-neutral-100);
+  background: var(--surface-page);
   min-width: 1024px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  color: var(--color-neutral-900);
 }
 
 .topbar {
-  position: sticky;
-  top: 0;
-  z-index: var(--z-sticky);
-  flex-shrink: 0;
-  padding: 0 var(--space-8);
-  gap: var(--space-4);
+  position: sticky; top: 0; z-index: var(--z-sticky);
+  flex-shrink: 0; padding: 0 var(--space-6); gap: var(--space-4);
+  background: var(--color-white);
+  border-bottom: 1px solid var(--border-color);
 }
-
-/* Topbar internals */
-.topbar-logo {
-  display: flex; align-items: center;
-  gap: var(--space-2);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-neutral-900);
-  letter-spacing: var(--letter-spacing-tight);
-}
-.topbar-logo-icon {
-  width: 26px; height: 26px;
-  border-radius: var(--border-radius-md);
-  background: var(--color-neutral-900);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
+.topbar-logo { display: flex; align-items: center; gap: var(--space-2); font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+.topbar-logo-icon { width: 26px; height: 26px; border-radius: var(--border-radius-md); background: var(--color-neutral-900); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .topbar-divider { width: 1px; height: 16px; background: var(--border-color); flex-shrink: 0; }
-.pipeline-status {
-  display: flex; align-items: center;
-  gap: var(--space-2);
-  font-size: var(--font-size-sm);
-  color: var(--color-neutral-500);
-}
-.pipeline-dot {
-  width: 6px; height: 6px;
-  border-radius: var(--border-radius-pill);
-  background: var(--color-success-500);
-  animation: blink 2.2s ease-in-out infinite;
-}
+.pipeline-status { display: flex; align-items: center; gap: var(--space-2); font-size: var(--font-size-sm); color: var(--color-neutral-500); }
+.pipeline-dot { width: 6px; height: 6px; border-radius: var(--border-radius-pill); background: var(--color-success-500); animation: blink 2.2s ease-in-out infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
-.pipeline-status strong { font-weight: var(--font-weight-semibold); color: var(--color-success-600); }
+.pipeline-status strong { font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
 .topbar-right { margin-left: auto; display: flex; align-items: center; gap: var(--space-5); }
 .topbar-stat { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
-.topbar-stat-label {
-  font-size: 10px; font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--letter-spacing-wider);
-  text-transform: uppercase; color: var(--color-neutral-400);
-}
-.topbar-stat-value {
-  font-size: var(--font-size-md); font-weight: var(--font-weight-bold);
-  color: var(--color-neutral-900); letter-spacing: var(--letter-spacing-tight);
-}
+.topbar-stat-label { font-size: 10px; font-weight: var(--font-weight-medium); color: var(--color-neutral-500); }
+.topbar-stat-value { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
 .topbar-stat-value.success { color: var(--color-success-600); }
 .topbar-stat-value.danger  { color: var(--color-danger-600); }
-.user-avatar {
-  width: 28px; height: 28px;
-  border-radius: var(--border-radius-pill);
-  background: var(--stage-qc-check);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px; font-weight: var(--font-weight-bold);
-  color: var(--color-white); letter-spacing: var(--letter-spacing-wide);
-}
+.user-avatar { width: 28px; height: 28px; border-radius: var(--border-radius-pill); background: var(--color-brand-100); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: var(--font-weight-semibold); color: var(--color-brand-600); border: 1px solid var(--border-color); }
 
 /* ── PAGE LAYOUT ── */
 .page-wrap {
-  padding: var(--space-8) 60px;
-  max-width: var(--max-width);
-  margin: 0 auto;
-  display: flex;
-  gap: var(--space-6);
-  align-items: flex-start;
-  flex: 1;
-  overflow-y: auto;
+  flex: 1; overflow-y: auto;
+  padding: var(--space-6) var(--space-8);
+  display: flex; flex-direction: column; gap: var(--space-5);
   min-height: 0;
 }
 
-/* ── COMPACT OBSERVABILITY CARD ── */
-/* extends .card from components.css */
-.obs-card {
-  flex: 0 0 33%;
+/* ── BENTO GRID ── */
+.bento-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+
+.bento-card {
   background: var(--color-white);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-xl);
   padding: var(--space-5);
-  box-shadow: var(--shadow-sm);
-  position: sticky;
-  top: 80px;
-  max-height: calc(100vh - 100px);
-  overflow-y: auto;
+  box-shadow: none;
+  display: flex; flex-direction: column; gap: var(--space-3);
+  transition: border-color var(--transition-fast);
+}
+.bento-card:hover { border-color: var(--border-color-hover); box-shadow: var(--shadow-xs); }
+
+.bento-title {
+  font-size: var(--font-size-base); font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-900);
 }
 
-.obs-header {
+.hero-rate { font-size: var(--font-size-3xl); font-weight: var(--font-weight-bold); line-height: 1; letter-spacing: -0.01em; color: var(--color-neutral-900); }
+.hero-rate .hero-denom { font-weight: var(--font-weight-medium); color: var(--color-neutral-500); }
+.hero-sub { font-size: var(--font-size-sm); color: var(--color-neutral-500); }
+.hero-metrics { display: flex; gap: var(--space-4); padding-top: var(--space-3); border-top: 1px solid var(--border-color); margin-top: auto; }
+
+.bento-pill-group { display: flex; flex-direction: column; gap: var(--space-2); margin-top: auto; }
+.bento-pill {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: var(--space-4);
-}
-.obs-header-title {
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wider);
-  color: var(--color-neutral-400);
-}
-
-/* Date filter — segmented pill */
-.date-filter {
-  display: flex; gap: 1px;
-  background: var(--color-neutral-200);
-  border-radius: var(--border-radius-md);
-  padding: 2px;
-}
-.date-btn {
-  padding: 3px var(--space-3);
-  border-radius: 5px;
-  border: none;
-  font-family: var(--font-family-base);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-neutral-500);
-  background: transparent;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-}
-.date-btn.active {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--border-radius-md); border: 1px solid var(--border-color);
   background: var(--color-white);
-  color: var(--color-neutral-900);
-  font-weight: var(--font-weight-semibold);
-  box-shadow: var(--shadow-xs);
+  font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-700);
 }
-.date-btn:hover:not(.active) { color: var(--color-neutral-700); }
+.bento-pill .pill-val { font-weight: var(--font-weight-semibold); font-size: var(--font-size-md); color: var(--color-neutral-900); }
+.bento-pill.warning { background: var(--color-warning-50); border-color: var(--color-warning-100); color: var(--color-warning-600); }
 
-/* Metrics panel — scannable row sections */
-.metrics-rows {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
+/* Date filter — segmented pill (Relevance style) */
+.date-filter { display: flex; gap: 2px; background: var(--color-neutral-100); border-radius: var(--border-radius-md); padding: 3px; border: 1px solid var(--border-color); }
+.date-btn {
+  padding: 4px var(--space-3); border-radius: var(--border-radius-sm); border: none;
+  font-family: var(--font-family-base); font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium); color: var(--color-neutral-600);
+  background: transparent; cursor: pointer; transition: all var(--transition-fast); white-space: nowrap;
 }
-.metrics-row {
-  display: flex;
-  gap: var(--space-4);
-  padding: var(--space-3) 0 var(--space-3) var(--space-3);
-  border-left: 3px solid var(--color-neutral-200);
-  border-radius: 0;
-}
-.metrics-row.row-ops      { border-left-color: var(--color-info-500); }
-.metrics-row.row-quality   { border-left-color: var(--stage-qc-check); }
-.metrics-row.row-feedback  { border-left-color: var(--color-success-500); }
+.date-btn.active { background: var(--color-white); color: var(--color-neutral-900); box-shadow: var(--shadow-xs); }
+.date-btn:hover:not(.active) { color: var(--color-neutral-900); }
 
-.metrics-row-label {
-  writing-mode: vertical-lr;
-  transform: rotate(180deg);
-  font-size: 8px;
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-neutral-400);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 14px;
-  flex-shrink: 0;
-}
-.metrics-row.row-ops .metrics-row-label      { color: var(--color-info-500); }
-.metrics-row.row-quality .metrics-row-label   { color: var(--stage-qc-check); }
-.metrics-row.row-feedback .metrics-row-label  { color: var(--color-success-500); }
-
-.metrics-row-items {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-4);
-  flex: 1;
-}
-
-.stat-item {
-  display: flex;
-  flex-direction: column;
-}
-.stat-label {
-  font-size: 10px;
-  font-weight: var(--font-weight-semibold);
-  text-transform: uppercase;
-  color: var(--color-neutral-400);
-  margin-bottom: 2px;
-}
-.stat-value {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: var(--letter-spacing-tight);
-  color: var(--color-neutral-900);
-  line-height: 1;
-}
+/* ── STAT ITEMS ── */
+.stat-item { display: flex; flex-direction: column; }
+.stat-label { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); margin-bottom: 2px; }
+.stat-value { font-size: var(--font-size-xl); font-weight: var(--font-weight-semibold); letter-spacing: -0.01em; color: var(--color-neutral-900); line-height: 1; }
 .stat-value.success { color: var(--color-success-600); }
 .stat-value.info    { color: var(--color-info-600); }
 .stat-value.danger  { color: var(--color-danger-600); }
-.stat-meta { font-size: 10px; color: var(--color-neutral-400); margin-top: 4px; }
+.stat-meta { font-size: var(--font-size-xs); color: var(--color-neutral-500); margin-top: 4px; }
 
 /* Confidence gauge */
-.confidence-gauge {
-  display: flex; align-items: center; gap: var(--space-2); margin-top: 4px;
-}
-.confidence-bar-track {
-  flex: 1; height: 4px; background: var(--color-neutral-200);
-  border-radius: var(--border-radius-pill); overflow: hidden;
-}
-.confidence-bar-fill {
-  height: 100%; border-radius: var(--border-radius-pill);
-  transition: width var(--transition-base);
-}
-
-/* Token pill */
-.token-pill {
-  display: inline-flex; align-items: center; gap: 3px;
-  padding: 1px 6px; border-radius: 3px;
-  font-size: 9px; font-weight: var(--font-weight-semibold);
-}
-.token-pill.token-in  { background: var(--tag-blue-bg);  color: var(--tag-blue-text); }
-.token-pill.token-out { background: var(--tag-green-bg); color: var(--tag-green-text); }
+.confidence-gauge { display: flex; align-items: center; gap: var(--space-2); margin-top: 6px; }
+.confidence-bar-track { flex: 1; height: 6px; background: var(--color-neutral-200); border-radius: var(--border-radius-pill); overflow: hidden; }
+.confidence-bar-fill { height: 100%; border-radius: var(--border-radius-pill); transition: width var(--transition-base); }
 
 /* Sentiment bar */
-.sentiment-bar {
-  display: flex; height: 4px; border-radius: var(--border-radius-pill); overflow: hidden; margin-top: 4px;
-}
+.sentiment-bar { display: flex; height: 6px; border-radius: var(--border-radius-pill); overflow: hidden; margin-top: 6px; }
 .sentiment-up   { background: var(--color-success-500); }
 .sentiment-down { background: var(--color-danger-500); }
 
-/* Model tag in throughput */
-.tp-model {
-  font-size: 8px; font-weight: var(--font-weight-semibold);
-  color: var(--color-neutral-400); background: var(--color-neutral-100);
-  padding: 1px 4px; border-radius: 3px; margin-left: 2px;
-  white-space: nowrap;
-}
+/* Token pill */
+.token-pill { display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; border-radius: var(--border-radius-sm); font-size: 11px; font-weight: var(--font-weight-medium); border: 1px solid var(--border-color); }
+.token-pill.token-in  { background: var(--color-white); color: var(--color-neutral-700); }
+.token-pill.token-out { background: var(--color-white); color: var(--color-neutral-700); }
 
-/* Layer label */
-.layer-label {
-  display: inline-block; font-size: 8px; font-weight: var(--font-weight-bold);
-  text-transform: uppercase; letter-spacing: 0.06em;
-  padding: 1px 5px; border-radius: 3px; margin-bottom: 6px;
-}
-.layer-label.l1 { background: var(--tag-blue-bg);   color: var(--tag-blue-text); }
-.layer-label.l3 { background: var(--tag-purple-bg); color: var(--tag-purple-text); }
-.layer-label.l4 { background: var(--tag-green-bg);  color: var(--tag-green-text); }
-
-/* Charts row inside obs card */
-.obs-content-merged {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-}
-.obs-metrics-side { flex: 1; }
-.obs-charts-side {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
-  padding-left: var(--space-6);
-  border-left: 1px solid var(--border-color);
-}
-.obs-chart-label {
-  font-size: 10px;
-  font-weight: var(--font-weight-semibold);
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wider);
-  color: var(--color-neutral-400);
-  margin-bottom: var(--space-2);
-}
+/* Model tag */
+.tp-model { font-size: 11px; font-weight: var(--font-weight-medium); color: var(--color-neutral-600); background: var(--color-white); border: 1px solid var(--border-color); padding: 1px 6px; border-radius: var(--border-radius-sm); margin-left: 2px; white-space: nowrap; }
 
 /* Stage bar */
-.stage-bar { height: 20px; border-radius: var(--border-radius-sm); overflow: hidden; display: flex; margin-bottom: var(--space-2); }
-.stage-seg { display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: var(--font-weight-bold); color: rgba(255,255,255,.9); cursor: pointer; transition: opacity var(--transition-fast); }
-.stage-seg:hover { opacity: .8; }
+.stage-bar { height: 16px; border-radius: var(--border-radius-pill); overflow: hidden; display: flex; margin-bottom: var(--space-3); border: 1px solid var(--border-color); }
+.stage-seg { display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: var(--font-weight-medium); color: var(--color-white); cursor: pointer; transition: opacity var(--transition-fast); }
+.stage-seg:hover { opacity: .9; }
 .stage-legend { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); }
-.stage-legend-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--color-neutral-500); }
-.stage-ldot { width: 6px; height: 6px; border-radius: var(--border-radius-pill); flex-shrink: 0; }
+.stage-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-neutral-600); }
+.stage-ldot { width: 8px; height: 8px; border-radius: var(--border-radius-pill); flex-shrink: 0; }
 
 /* Throughput */
-.tp-list { display: flex; flex-direction: column; gap: 5px; }
+.tp-list { display: flex; flex-direction: column; gap: 8px; }
 .tp-row  { display: flex; align-items: center; gap: var(--space-2); }
-.tp-label { font-size: 10px; color: var(--color-neutral-500); width: 80px; flex-shrink: 0; }
-.tp-bar-wrap { flex: 1; height: 4px; background: var(--color-neutral-100); border-radius: var(--border-radius-pill); overflow: hidden; }
+.tp-label { font-size: var(--font-size-xs); color: var(--color-neutral-600); width: 72px; flex-shrink: 0; }
+.tp-bar-wrap { flex: 1; height: 6px; background: var(--color-neutral-200); border-radius: var(--border-radius-pill); overflow: hidden; }
 .tp-bar { height: 100%; border-radius: var(--border-radius-pill); }
-.tp-time { font-size: 10px; color: var(--color-neutral-400); width: 30px; text-align: right; flex-shrink: 0; }
-.tp-delta { font-size: 10px; font-weight: var(--font-weight-semibold); width: 24px; text-align: right; flex-shrink: 0; }
+.tp-time { font-size: var(--font-size-xs); color: var(--color-neutral-500); width: 28px; text-align: right; flex-shrink: 0; }
+.tp-delta { font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); width: 24px; text-align: right; flex-shrink: 0; }
 .tp-delta.up   { color: var(--color-danger-600); }
 .tp-delta.down { color: var(--color-success-600); }
 .tp-delta.flat { color: var(--color-neutral-400); }
 
 /* ── KANBAN SECTION ── */
-.kanban-section {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  min-height: 0;
-}
-
-/* Toolbar */
-.kanban-toolbar {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-shrink: 0;
-}
-
-/* Search */
-.search-wrap { position: relative; flex: 0 0 200px; }
+.kanban-section { display: flex; flex-direction: column; gap: var(--space-3); flex: 1; min-height: 0; }
+.kanban-toolbar { display: flex; align-items: center; gap: var(--space-2); flex-shrink: 0; }
+.search-wrap { position: relative; flex: 0 0 240px; }
 .search-wrap svg { position: absolute; left: var(--space-3); top: 50%; transform: translateY(-50%); color: var(--color-neutral-400); pointer-events: none; }
-.search-wrap .input { padding-left: var(--space-8); font-size: var(--font-size-sm); }
-.search-shortcut {
-  position: absolute; right: var(--space-2); top: 50%; transform: translateY(-50%);
-  font-size: 10px; color: var(--color-neutral-400);
-  background: var(--color-neutral-100); border: 1px solid var(--border-color);
-  border-radius: 3px; padding: 1px 4px; font-family: var(--font-family-mono);
-}
+.search-wrap .input { padding-left: var(--space-8); font-size: var(--font-size-sm); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); background: var(--color-white); }
+.search-shortcut { position: absolute; right: var(--space-2); top: 50%; transform: translateY(-50%); font-size: 11px; color: var(--color-neutral-500); background: var(--color-neutral-100); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 1px 4px; font-family: var(--font-family-mono); }
 
-/* Selects */
 .filter-select {
   padding: var(--space-1) var(--space-7) var(--space-1) var(--space-3);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  font-family: var(--font-family-base);
-  font-size: var(--font-size-sm);
-  background: var(--color-white);
-  color: var(--color-neutral-700);
-  outline: none;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a3a3a3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right var(--space-2) center;
-  cursor: pointer;
-  transition: border-color var(--transition-fast);
+  border: 1px solid var(--border-color); border-radius: var(--border-radius-md);
+  font-family: var(--font-family-base); font-size: var(--font-size-sm);
+  background: var(--color-white); color: var(--color-neutral-700); outline: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right var(--space-2) center;
+  cursor: pointer; transition: border-color var(--transition-fast);
 }
 .filter-select:hover { border-color: var(--border-color-hover); }
-.filter-select:focus { border-color: var(--color-neutral-400); outline: none; }
-
+.filter-select:focus { border-color: var(--color-brand-500); box-shadow: 0 0 0 1px var(--color-brand-500); }
 .toolbar-spacer { flex: 1; }
 
-/* Kanban summary counts */
 .kanban-summary { display: flex; align-items: center; gap: var(--space-5); }
-.ks-item { display: flex; align-items: center; gap: 4px; font-size: var(--font-size-sm); color: var(--color-neutral-500); }
-.ks-num { font-weight: var(--font-weight-bold); }
+.ks-item { display: flex; align-items: center; gap: 6px; font-size: var(--font-size-sm); color: var(--color-neutral-600); }
+.ks-num { font-weight: var(--font-weight-semibold); }
 .ks-num.success { color: var(--color-success-600); }
-.ks-num.info    { color: var(--color-info-500); }
+.ks-num.info    { color: var(--color-info-600); }
 .ks-num.danger  { color: var(--color-danger-600); }
 
-/* View toggle — Simplified | Detailed segmented */
-.view-toggle {
-  display: flex; gap: 1px;
-  background: var(--color-neutral-200);
-  border-radius: var(--border-radius-md);
-  padding: 2px;
-  flex-shrink: 0;
-}
-.view-btn {
-  padding: 4px var(--space-3);
-  border-radius: 5px; border: none;
-  font-family: var(--font-family-base);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-neutral-500);
-  background: transparent;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-}
-.view-btn.active {
-  background: var(--color-white);
-  color: var(--color-neutral-900);
-  font-weight: var(--font-weight-semibold);
-  box-shadow: var(--shadow-xs);
-}
+/* View toggle */
+.view-toggle { display: flex; gap: 2px; background: var(--color-neutral-100); border-radius: var(--border-radius-md); padding: 3px; flex-shrink: 0; border: 1px solid var(--border-color); }
+.view-btn { padding: 4px var(--space-3); border-radius: var(--border-radius-sm); border: none; font-family: var(--font-family-base); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-600); background: transparent; cursor: pointer; transition: all var(--transition-fast); white-space: nowrap; }
+.view-btn.active { background: var(--color-brand-100); color: var(--color-brand-600); font-weight: var(--font-weight-medium); }
 
 /* Error strip */
-.error-strip {
-  background: var(--color-danger-50);
-  border: 1px solid var(--color-danger-100);
-  border-radius: var(--border-radius-lg);
-  overflow: hidden;
-  flex-shrink: 0;
-}
-.error-strip-header {
-  display: flex; align-items: center; gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  cursor: pointer;
-  user-select: none;
-}
-.error-strip-header:hover { background: rgba(220,38,38,.04); }
-.error-strip-title { font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); text-transform: uppercase; letter-spacing: var(--letter-spacing-wider); color: var(--color-danger-600); }
+.error-strip { background: var(--color-danger-50); border: 1px solid var(--color-danger-100); border-radius: var(--border-radius-xl); overflow: hidden; flex-shrink: 0; }
+.error-strip-header { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-4); cursor: pointer; user-select: none; }
+.error-strip-header:hover { background: rgba(239,68,68,.05); }
+.error-strip-title { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-danger-600); }
 .error-strip-chevron { margin-left: auto; color: var(--color-danger-600); transition: transform var(--transition-base); opacity: .7; }
 .error-strip.collapsed .error-strip-chevron { transform: rotate(-90deg); }
 .error-strip.collapsed .error-strip-body { display: none; }
-
-.error-strip-body {
-  display: flex; gap: var(--space-2);
-  padding: var(--space-2) var(--space-4) var(--space-3);
-  overflow-x: auto;
-  border-top: 1px solid var(--color-danger-100);
-}
-.error-card {
-  background: var(--color-white);
-  border: 1px solid var(--color-danger-100);
-  border-radius: var(--border-radius-md);
-  padding: var(--space-3) var(--space-3);
-  min-width: 200px;
-  flex-shrink: 0;
-  cursor: pointer;
-  transition: box-shadow var(--transition-fast);
-}
-.error-card:hover { box-shadow: var(--shadow-sm); }
-.error-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
-.error-card-id { font-family: var(--font-family-mono); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-danger-600); }
-.error-card-stage { font-size: 10px; font-weight: var(--font-weight-semibold); padding: 2px 6px; border-radius: 3px; color: var(--color-white); }
-.error-card-reason { font-size: var(--font-size-xs); color: var(--color-neutral-500); margin-bottom: var(--space-2); }
+.error-strip-body { display: flex; gap: var(--space-3); padding: var(--space-3) var(--space-4); overflow-x: auto; border-top: 1px solid var(--color-danger-100); }
+.error-card { background: var(--color-white); border: 1px solid var(--color-danger-200); border-radius: var(--border-radius-md); padding: var(--space-3); min-width: 200px; flex-shrink: 0; cursor: pointer; transition: border-color var(--transition-fast); }
+.error-card:hover { border-color: var(--color-danger-300); }
+.error-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.error-card-id { font-family: var(--font-family-mono); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-danger-600); }
+.error-card-stage { font-size: 11px; font-weight: var(--font-weight-medium); padding: 2px 6px; border-radius: var(--border-radius-sm); color: var(--color-white); }
+.error-card-reason { font-size: var(--font-size-xs); color: var(--color-neutral-600); margin-bottom: var(--space-2); }
 .error-card-footer { display: flex; align-items: center; justify-content: space-between; }
-.error-card-date { font-size: 10px; color: var(--color-neutral-400); }
+.error-card-date { font-size: 11px; color: var(--color-neutral-400); }
 
 /* ── KANBAN BOARD ── */
-.kanban-board {
-  display: flex;
-  gap: var(--space-3);
-  overflow-x: auto;
-  padding-bottom: var(--space-2);
-  flex: 1;
-  min-height: 0;
-  align-items: flex-start;
-}
+.kanban-board { display: flex; gap: var(--space-4); overflow-x: auto; padding-bottom: var(--space-2); flex: 1; min-height: 0; align-items: flex-start; }
 
-/* Column */
 .kanban-col {
-  flex: 1;
-  min-width: 260px;
-  display: flex;
-  flex-direction: column;
-  background: var(--color-neutral-50);
-  border-radius: var(--border-radius-lg);
-  overflow: hidden;
-  max-height: 100%;
+  flex: 1; min-width: 260px; display: flex; flex-direction: column;
+  background: var(--color-neutral-50); border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-xl); overflow: hidden;
+  max-height: 560px;
 }
-.kanban-col-error {
-  background: var(--color-danger-50);
-  border: 1px solid var(--color-danger-100);
-}
-.kanban-board.detailed .kanban-col {
-  flex: 0 0 220px;
-  min-width: 220px;
-  max-width: 220px;
-}
-
-/* Column header */
-.kanban-col-header {
-  display: flex; align-items: center; gap: var(--space-2);
-  padding: var(--space-3) var(--space-3) var(--space-2);
-  flex-shrink: 0;
-}
+.kanban-col-error { background: var(--color-danger-50); border-color: var(--color-danger-200); }
+.kanban-board.detailed .kanban-col { flex: 0 0 240px; min-width: 240px; max-width: 240px; }
+.kanban-col-header { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-4) var(--space-2); flex-shrink: 0; }
 .col-icon { width: 16px; height: 16px; flex-shrink: 0; }
-.col-title { font-size: var(--font-size-xs); font-weight: var(--font-weight-bold); text-transform: uppercase; letter-spacing: var(--letter-spacing-wider); color: var(--color-neutral-500); flex: 1; }
-.col-count { font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); color: var(--color-neutral-400); }
-
-/* Column body */
-.kanban-col-body {
-  padding: 0 var(--space-2) var(--space-2);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  overflow-y: auto;
-  flex: 1;
-}
-.kanban-col-empty {
-  padding: var(--space-8) var(--space-3);
-  text-align: center;
-  font-size: var(--font-size-xs);
-  color: var(--color-neutral-300);
-}
+.col-title { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); flex: 1; }
+.col-count { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); background: var(--color-white); border: 1px solid var(--border-color); padding: 2px 8px; border-radius: var(--border-radius-pill); }
+.kanban-col-body { padding: 0 var(--space-3) var(--space-3); display: flex; flex-direction: column; gap: var(--space-3); overflow-y: auto; flex: 1; }
+.kanban-col-empty { padding: var(--space-8) var(--space-3); text-align: center; font-size: var(--font-size-sm); color: var(--color-neutral-400); }
 
 /* ── LOAN CARD ── */
 .loan-card {
-  background: var(--color-white);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  padding: var(--space-3);
-  cursor: pointer;
-  transition: box-shadow var(--transition-fast);
+  background: var(--color-white); border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md); padding: var(--space-3);
+  cursor: pointer; transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
-.loan-card.loan-card-error {
-  border-color: var(--color-danger-300);
-  background: #fffcfc;
-}
-.loan-card:hover { box-shadow: var(--shadow-md); }
-
-.loan-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 2px; gap: var(--space-2); }
-.loan-card-id { font-size: var(--font-size-base); font-weight: var(--font-weight-bold); color: var(--color-neutral-900); letter-spacing: var(--letter-spacing-tight); }
-.loan-card-sub { font-family: var(--font-family-mono); font-size: 10px; color: var(--color-neutral-400); margin-bottom: var(--space-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.loan-card.loan-card-error { border-color: var(--color-danger-300); background: var(--color-danger-50); }
+.loan-card:hover { border-color: var(--color-brand-400); box-shadow: var(--shadow-sm); }
+.loan-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 4px; gap: var(--space-2); }
+.loan-card-id { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+.loan-card-sub { font-family: var(--font-family-mono); font-size: 11px; color: var(--color-neutral-500); margin-bottom: var(--space-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Status icons */
-.icon-todo {
-  width: 16px; height: 16px; border-radius: var(--border-radius-pill);
-  border: 1.5px solid var(--color-neutral-300);
-  flex-shrink: 0; margin-top: 2px;
-}
-.icon-progress {
-  width: 16px; height: 16px; border-radius: var(--border-radius-pill);
-  background: linear-gradient(to right, var(--color-info-500) 50%, transparent 50%);
-  border: 1.5px solid var(--color-info-500);
-  flex-shrink: 0; margin-top: 2px;
-}
-.icon-blocked {
-  width: 16px; height: 16px; border-radius: var(--border-radius-pill);
-  background: linear-gradient(to right, var(--color-warning-500) 50%, transparent 50%);
-  border: 1.5px solid var(--color-warning-500);
-  flex-shrink: 0; margin-top: 2px;
-}
-.icon-complete {
-  width: 16px; height: 16px; border-radius: var(--border-radius-pill);
-  background: var(--color-success-500);
-  border: 1.5px solid var(--color-success-500);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; margin-top: 2px;
-}
+.icon-todo { width: 16px; height: 16px; border-radius: var(--border-radius-pill); border: 1.5px solid var(--color-neutral-300); flex-shrink: 0; margin-top: 2px; }
+.icon-progress { width: 16px; height: 16px; border-radius: var(--border-radius-pill); background: linear-gradient(to right, var(--color-brand-500) 50%, transparent 50%); border: 1.5px solid var(--color-brand-500); flex-shrink: 0; margin-top: 2px; }
+.icon-blocked { width: 16px; height: 16px; border-radius: var(--border-radius-pill); background: linear-gradient(to right, var(--color-warning-500) 50%, transparent 50%); border: 1.5px solid var(--color-warning-500); flex-shrink: 0; margin-top: 2px; }
+.icon-complete { width: 16px; height: 16px; border-radius: var(--border-radius-pill); background: var(--color-success-500); border: 1.5px solid var(--color-success-500); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
 
 /* File chips */
-.loan-card-files { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: var(--space-2); }
-.file-chip {
-  display: inline-flex; align-items: center; gap: 3px;
-  padding: 1px 6px;
-  border-radius: 3px;
-  font-size: 10px; font-weight: var(--font-weight-semibold);
-  letter-spacing: .02em;
-}
-.file-chip.pdf { background: var(--tag-red-bg);   color: var(--tag-red-text); }
-.file-chip.ssr { background: var(--tag-blue-bg);  color: var(--tag-blue-text); }
-.file-chip.xml { background: var(--tag-green-bg); color: var(--tag-green-text); }
+.loan-card-files { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: var(--space-2); }
+.file-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: var(--border-radius-sm); font-size: 11px; font-weight: var(--font-weight-medium); border: 1px solid var(--border-color); background: var(--color-white); color: var(--color-neutral-700); }
+/* Relevance AI doesn't heavily color code tags with backgrounds, mostly outlines */
+.file-chip.pdf { border-color: var(--tag-red-border); color: var(--tag-red-text); }
+.file-chip.ssr { border-color: var(--tag-blue-border); color: var(--tag-blue-text); }
+.file-chip.xml { border-color: var(--tag-green-border); color: var(--tag-green-text); }
 
-/* Progress for in-progress cards */
-.loan-progress-bar-wrap { margin-bottom: var(--space-1); }
-.loan-progress-bar-track { height: 3px; background: var(--color-neutral-200); border-radius: var(--border-radius-pill); overflow: hidden; margin-bottom: 3px; }
-.loan-progress-bar-fill  { height: 100%; background: var(--color-info-500); border-radius: var(--border-radius-pill); }
-.loan-progress-steps { font-size: 10px; color: var(--color-neutral-500); }
-
+/* Progress */
+.loan-progress-bar-wrap { margin-bottom: var(--space-2); }
+.loan-progress-bar-track { height: 4px; background: var(--color-neutral-200); border-radius: var(--border-radius-pill); overflow: hidden; margin-bottom: 4px; }
+.loan-progress-bar-fill  { height: 100%; background: var(--color-brand-500); border-radius: var(--border-radius-pill); }
+.loan-progress-steps { font-size: 11px; color: var(--color-neutral-500); }
 .loan-card-footer { display: flex; align-items: center; justify-content: flex-end; }
-.loan-card-date { font-size: 10px; color: var(--color-neutral-400); }
+.loan-card-date { font-size: 11px; color: var(--color-neutral-400); }
 
-/* Detailed view — slightly tighter cards */
+/* Detailed view */
 .kanban-board.detailed .loan-card { padding: var(--space-2) var(--space-3); }
 .kanban-board.detailed .loan-card-id { font-size: var(--font-size-sm); }
-.kanban-board.detailed .loan-card-sub { font-size: 9px; margin-bottom: var(--space-1); }
+.kanban-board.detailed .loan-card-sub { font-size: 10px; margin-bottom: var(--space-1); }
 
 /* ── GROUP CARD ── */
-.group-card {
-  background: var(--color-white);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  padding: var(--space-4);
-  position: relative;
-  cursor: pointer;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-  z-index: 1;
-  margin-bottom: var(--space-4);
-  margin-right: 4px;
-}
-.group-card::before, .group-card::after {
-  content: '';
-  position: absolute;
-  background: var(--color-white);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  z-index: -1;
-  transition: transform var(--transition-fast);
-}
-.group-card::before {
-  top: 4px; left: 4px; right: -4px; bottom: -4px;
-  background: #fafafa;
-}
-.group-card::after {
-  top: 8px; left: 8px; right: -8px; bottom: -8px;
-  background: #f5f5f5;
-}
-.group-card:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: var(--shadow-sm);
-}
-.group-card:hover::before { transform: translate(2px, 2px); }
-.group-card:hover::after  { transform: translate(4px, 4px); }
-
-.group-card-title {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-neutral-900);
-  margin-bottom: 2px;
-  letter-spacing: var(--letter-spacing-tight);
-}
-.group-card-meta {
-  font-size: var(--font-size-xs);
-  color: var(--color-neutral-500);
-  margin-bottom: var(--space-3);
-}
-.group-card-vendors {
-  display: flex; gap: var(--space-1); flex-wrap: wrap;
-}
-.group-card-vendors .badge { font-size: 9px; padding: 2px 6px; }
-
-/* Stage dot for detailed column headers */
+.group-card { background: var(--color-white); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: var(--space-4); position: relative; cursor: pointer; transition: transform var(--transition-fast), border-color var(--transition-fast); z-index: 1; margin-bottom: var(--space-4); margin-right: 4px; }
+.group-card::before, .group-card::after { content: ''; position: absolute; background: var(--color-white); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); z-index: -1; transition: transform var(--transition-fast); }
+.group-card::before { top: 4px; left: 4px; right: -4px; bottom: -4px; background: var(--color-neutral-50); }
+.group-card::after { top: 8px; left: 8px; right: -8px; bottom: -8px; background: var(--color-neutral-100); }
+.group-card:hover { transform: translate(-2px, -2px); border-color: var(--color-brand-400); }
+.group-card:hover::before { transform: translate(2px, 2px); border-color: var(--border-color-hover); }
+.group-card:hover::after  { transform: translate(4px, 4px); border-color: var(--border-color-hover); }
+.group-card-title { font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); margin-bottom: 2px; }
+.group-card-meta { font-size: var(--font-size-sm); color: var(--color-neutral-500); margin-bottom: var(--space-3); }
+.group-card-vendors { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.group-card-vendors .badge { font-size: 11px; padding: 2px 8px; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); }
 .col-stage-dot { width: 8px; height: 8px; border-radius: var(--border-radius-pill); flex-shrink: 0; }
 
 /* Toast */
-.toast-wrap {
-  position: fixed; bottom: var(--space-6); left: 50%;
-  transform: translateX(-50%) translateY(80px);
-  z-index: var(--z-toast);
-  transition: transform var(--transition-slow);
-  pointer-events: none;
-}
+.toast-wrap { position: fixed; bottom: var(--space-6); left: 50%; transform: translateX(-50%) translateY(80px); z-index: var(--z-toast); transition: transform var(--transition-slow); pointer-events: none; }
 .toast-wrap.show { transform: translateX(-50%) translateY(0); }
+
+
+/* ── OPS GRID (2x2 inside card 1) ── */
+.ops-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border-color); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); overflow: hidden; }
+.ops-cell { background: var(--color-white); padding: var(--space-2) var(--space-3); display: flex; flex-direction: column; gap: 2px; }
+.ops-cell.danger { background: var(--color-danger-50); }
+.ops-num { font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-neutral-900); line-height: 1; }
+.ops-num.danger { color: var(--color-danger-600); }
+.ops-label { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-900); }
+.ops-sub { font-size: 11px; color: var(--color-neutral-500); line-height: 1.3; }
+.ops-sub .accent { color: var(--color-success-600); font-weight: var(--font-weight-medium); }
+.ops-sub .warn { color: var(--color-warning-600); font-weight: var(--font-weight-medium); }
+.ops-sub .err { color: var(--color-danger-600); font-weight: var(--font-weight-medium); }
+
+/* ── ALERTS CARD ── */
+.alert-list { display: flex; flex-direction: column; gap: var(--space-2); }
+.alert-row { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); border: 1px solid var(--border-color); background: var(--color-white); }
+.alert-row.alert-danger { border-color: var(--color-danger-200); background: var(--color-danger-50); }
+.alert-row.alert-warning { border-color: var(--color-warning-100); background: var(--color-warning-50); }
+.alert-dot { width: 6px; height: 6px; border-radius: var(--border-radius-pill); flex-shrink: 0; }
+.alert-dot.dot-danger { background: var(--color-danger-500); }
+.alert-dot.dot-warning { background: var(--color-warning-500); }
+.alert-dot.dot-info { background: var(--color-info-500); }
+.alert-text { flex: 1; color: var(--color-neutral-700); }
+.alert-count { font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+
+/* ── SECTION SEPARATOR ── */
+.section-sep { display: flex; align-items: center; gap: var(--space-4); margin: var(--space-2) 0; }
+.section-sep::before, .section-sep::after { content: ''; flex: 1; height: 1px; background: var(--border-color); }
+.section-sep-label { font-size: 11px; font-weight: var(--font-weight-medium); color: var(--color-neutral-400); text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+
+/* ── STAGE BAR INLINE ── */
+.stage-bar-inline { display: flex; height: 28px; border-radius: var(--border-radius-md); overflow: hidden; border: 1px solid var(--border-color); }
+.stage-bar-seg { display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: var(--font-weight-medium); color: rgba(255,255,255,0.95); cursor: default; transition: opacity var(--transition-fast); padding: 0 6px; white-space: nowrap; overflow: hidden; }
+.stage-bar-seg:hover { opacity: 0.85; }
+.stage-bar-seg .seg-label { overflow: hidden; text-overflow: ellipsis; }
+
+/* ── ENHANCED GROUP CARD ── */
+.group-card { border-left: 3px solid var(--border-color); }
+.group-card.gc-errors { border-left-color: var(--color-danger-500); background: var(--color-danger-50); }
+.group-card.gc-errors::before { background: #fef5f5; }
+.group-card.gc-errors::after { background: #fef0f0; }
+.group-card.gc-progress { border-left-color: var(--color-brand-500); }
+.group-card.gc-done { border-left-color: var(--color-success-500); background: var(--color-success-50); }
+.group-card.gc-done::before { background: #f0fdf8; }
+.group-card.gc-done::after { background: #ecfdf5; }
+.group-card-detail { font-size: 11px; color: var(--color-neutral-500); margin-top: var(--space-1); }
+.group-card-detail .gc-accent { color: var(--color-brand-600); font-weight: var(--font-weight-medium); }
+.group-card-detail .gc-warn { color: var(--color-warning-600); font-weight: var(--font-weight-medium); }
+.group-card:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-md); }
 
 </style>
 </head>
@@ -661,155 +346,73 @@ body {
 <!-- ── PAGE ── -->
 <div class="page-wrap">
 
-  <!-- ── COMPACT OBSERVABILITY CARD ── -->
-  <div class="card obs-card">
-    <div class="obs-header">
-      <span class="obs-header-title">AI Observability</span>
-      <div class="date-filter">
-        <button class="date-btn active" onclick="setDate(this,'all')">All</button>
-        <button class="date-btn" onclick="setDate(this,'daily')">Daily</button>
-        <button class="date-btn" onclick="setDate(this,'weekly')">Weekly</button>
-        <button class="date-btn" onclick="setDate(this,'monthly')">Monthly</button>
-      </div>
+  <!-- HEADER -->
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <h1 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900);">Observability Hub</h1>
+    <div class="date-filter">
+      <button class="date-btn active" onclick="setDate(this,'all')">All</button>
+      <button class="date-btn" onclick="setDate(this,'daily')">Daily</button>
+      <button class="date-btn" onclick="setDate(this,'weekly')">Weekly</button>
+      <button class="date-btn" onclick="setDate(this,'monthly')">Monthly</button>
     </div>
+  </div>
 
-    <!-- Merged content: Metrics + Charts -->
-    <div class="obs-content-merged">
-      
-      <!-- Left: Compact Metrics -->
-      <div class="obs-metrics-side">
-        <div class="metrics-rows">
-
-          <!-- Row 1: Operations -->
-          <div class="metrics-row row-ops">
-            <div class="metrics-row-label">Ops</div>
-            <div class="metrics-row-items">
-              <div class="stat-item">
-                <div class="stat-label">Loans Today</div>
-                <div class="stat-value">8</div>
-                <div class="stat-meta">2 batches · 32 files</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-label">Avg Time</div>
-                <div class="stat-value">8m 43s</div>
-                <div class="stat-meta">↑ 40s vs yday</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-label">Token Usage</div>
-                <div class="stat-value" style="font-size:var(--font-size-lg)">284K</div>
-                <div style="display:flex; gap:4px; margin-top:4px;">
-                  <span class="token-pill token-in">In 196K</span>
-                  <span class="token-pill token-out">Out 88K</span>
-                </div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-label">Est. Cost</div>
-                <div class="stat-value" style="font-size:var(--font-size-lg)">$1.42</div>
-                <div class="stat-meta">$0.18/loan avg</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Row 2: AI Quality -->
-          <div class="metrics-row row-quality">
-            <div class="metrics-row-label">Quality</div>
-            <div class="metrics-row-items">
-              <div class="stat-item">
-                <div class="stat-label">Confidence</div>
-                <div class="stat-value" style="color:var(--color-success-600)">91%</div>
-                <div class="confidence-gauge">
-                  <div class="confidence-bar-track"><div class="confidence-bar-fill" style="width:91%; background:var(--color-success-500)"></div></div>
-                </div>
-                <div class="stat-meta">Classif. 94% · UW 88%</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-label">Tech Errors</div>
-                <div class="stat-value danger">1</div>
-                <div class="stat-meta">LLM parse failure</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-label">Guardrails</div>
-                <div class="stat-value" style="color:var(--color-warning-600)">1</div>
-                <div class="stat-meta">Out-of-scope query</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-label">Grounding</div>
-                <div class="stat-value" style="color:var(--color-success-600)">0</div>
-                <div class="stat-meta">No hallucinations</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Row 3: Feedback -->
-          <div class="metrics-row row-feedback">
-            <div class="metrics-row-label">Feedback</div>
-            <div class="metrics-row-items">
-              <div class="stat-item">
-                <div class="stat-label">UW Agreement</div>
-                <div class="stat-value" style="color:var(--color-success-600)">96%</div>
-                <div class="stat-meta">Target ≥ 95%</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-label">Sentiment</div>
-                <div class="stat-value">83%</div>
-                <div class="sentiment-bar">
-                  <div class="sentiment-up" style="width:83%"></div>
-                  <div class="sentiment-down" style="width:17%"></div>
-                </div>
-                <div class="stat-meta">5 👍  1 👎</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-label">Flags</div>
-                <div class="stat-value" style="color:var(--color-warning-600)">3</div>
-                <div class="stat-meta">Need human review</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-label">Success Rate</div>
-                <div class="stat-value">37.5%</div>
-                <div class="stat-meta">Week avg 74%</div>
-              </div>
-            </div>
-          </div>
-
+  <div class="bento-grid" style="grid-template-columns: repeat(3, 1fr);">
+    <!-- Card 1: Operations Summary -->
+    <div class="bento-card" style="padding: var(--space-3);">
+      <div class="bento-title">Operations</div>
+      <div class="ops-grid">
+        <div class="ops-cell">
+          <div class="ops-num" id="ops-total">—</div>
+          <div class="ops-label">Loans Today</div>
+          <div class="ops-sub" id="ops-sub-total">Loading…</div>
         </div>
-      </div>
-
-      <!-- Right: Charts -->
-      <div class="obs-charts-side">
-        <div>
-          <div class="obs-chart-label">Stage Breakdown</div>
-          <div class="stage-bar">
-            <div class="stage-seg" style="background:var(--stage-ingest);   width:12.5%" title="Ingest · 1">1</div>
-            <div class="stage-seg" style="background:var(--stage-classify); width:12.5%" title="Classify · 1">1</div>
-            <div class="stage-seg" style="background:var(--stage-qc-check); width:12.5%" title="QC Check · 1">1</div>
-            <div class="stage-seg" style="background:var(--stage-code-map); width:12.5%" title="Code Map · 1">1</div>
-            <div class="stage-seg" style="background:var(--color-success-500);width:37.5%" title="Completed · 3">3</div>
-            <div class="stage-seg" style="background:var(--color-danger-500); width:12.5%" title="Failed · 1">✕</div>
-          </div>
-          <div class="stage-legend">
-            <div class="stage-legend-item"><div class="stage-ldot" style="background:var(--stage-ingest)"></div>Ingest 1</div>
-            <div class="stage-legend-item"><div class="stage-ldot" style="background:var(--stage-classify)"></div>Classify 1</div>
-            <div class="stage-legend-item"><div class="stage-ldot" style="background:var(--stage-qc-check)"></div>QC Check 1</div>
-            <div class="stage-legend-item"><div class="stage-ldot" style="background:var(--stage-code-map)"></div>Code Map 1</div>
-            <div class="stage-legend-item"><div class="stage-ldot" style="background:var(--color-success-500)"></div><span style="color:var(--color-success-600);font-weight:600">Done 3</span></div>
-            <div class="stage-legend-item"><div class="stage-ldot" style="background:var(--color-danger-500)"></div><span style="color:var(--color-danger-600);font-weight:600">Failed 1</span></div>
-          </div>
+        <div class="ops-cell">
+          <div class="ops-num" id="ops-avg-time">—</div>
+          <div class="ops-label">Avg Time</div>
+          <div class="ops-sub" id="ops-sub-avg-time">Loading…</div>
         </div>
-        <div>
-          <div class="obs-chart-label">Avg Stage Time · Model</div>
-          <div class="tp-list">
-            <div class="tp-row"><div class="tp-label" style="color:var(--stage-ingest)">Ingest</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-ingest);width:18%"></div></div><div class="tp-time">0:28</div><div class="tp-delta down">↓7s</div><span class="tp-model">—</span></div>
-            <div class="tp-row"><div class="tp-label" style="color:var(--stage-classify)">Classify</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-classify);width:38%"></div></div><div class="tp-time">1:02</div><div class="tp-delta flat">—</div><span class="tp-model">Haiku</span></div>
-            <div class="tp-row"><div class="tp-label" style="color:var(--stage-qc-check)">QC Check</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-qc-check);width:100%"></div></div><div class="tp-time">2:44</div><div class="tp-delta up">↑18s</div><span class="tp-model">Sonnet</span></div>
-            <div class="tp-row"><div class="tp-label" style="color:var(--stage-code-map)">Code Map</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-code-map);width:55%"></div></div><div class="tp-time">1:31</div><div class="tp-delta down">↓4s</div><span class="tp-model">Sonnet</span></div>
-            <div class="tp-row"><div class="tp-label" style="color:var(--stage-report-gen)">Report Gen</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-report-gen);width:42%"></div></div><div class="tp-time">1:08</div><div class="tp-delta flat">—</div><span class="tp-model">Sonnet</span></div>
-            <div class="tp-row"><div class="tp-label" style="color:var(--stage-uw-report)">UW Report</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-uw-report);width:68%"></div></div><div class="tp-time">1:50</div><div class="tp-delta up">↑22s</div><span class="tp-model">Sonnet</span></div>
-          </div>
+        <div class="ops-cell">
+          <div class="ops-num" id="ops-completed">—</div>
+          <div class="ops-label">Completed</div>
+          <div class="ops-sub" id="ops-sub-completed">Loading…</div>
+        </div>
+        <div class="ops-cell danger">
+          <div class="ops-num danger" id="ops-exceptions">—</div>
+          <div class="ops-label">Exceptions</div>
+          <div class="ops-sub" id="ops-sub-exceptions">Loading…</div>
         </div>
       </div>
     </div>
 
-  </div><!-- /obs-card -->
+    <!-- Card 2: Stage Throughput -->
+    <div class="bento-card" style="padding: var(--space-3);">
+      <div class="bento-title">Stage Throughput <span style="font-size:11px;font-weight:400;color:var(--color-neutral-400);margin-left:4px;">vs. prev batch</span></div>
+      <div class="tp-list" style="gap: 6px;">
+        <div class="tp-row"><div class="tp-label" style="color:var(--stage-ingest)">Ingest</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-ingest);width:18%"></div></div><div class="tp-time">0:28</div><div class="tp-delta down">↓7s</div></div>
+        <div class="tp-row"><div class="tp-label" style="color:var(--stage-classify)">Classify</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-classify);width:38%"></div></div><div class="tp-time">1:02</div><div class="tp-delta flat">—</div></div>
+        <div class="tp-row"><div class="tp-label" style="color:var(--stage-qc-check)">QC Check</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-qc-check);width:100%"></div></div><div class="tp-time">2:44</div><div class="tp-delta up">↑18s</div></div>
+        <div class="tp-row"><div class="tp-label" style="color:var(--stage-code-map)">Code Map</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-code-map);width:55%"></div></div><div class="tp-time">1:31</div><div class="tp-delta down">↓4s</div></div>
+        <div class="tp-row"><div class="tp-label" style="color:var(--stage-report-gen)">Report Gen</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-report-gen);width:42%"></div></div><div class="tp-time">1:08</div><div class="tp-delta flat">—</div></div>
+        <div class="tp-row"><div class="tp-label" style="color:var(--stage-uw-report)">UW Report</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-uw-report);width:68%"></div></div><div class="tp-time">1:50</div><div class="tp-delta up">↑22s</div></div>
+      </div>
+    </div>
+
+    <!-- Card 3: Alerts & Errors -->
+    <div class="bento-card" style="padding: var(--space-3);">
+      <div class="bento-title">Alerts & Errors</div>
+      <div class="alert-list">
+        <div class="alert-row alert-danger">
+          <div class="alert-dot dot-danger"></div>
+          <span class="alert-text">Exceptions (Mostly Classify)</span>
+          <span class="alert-count" style="color:var(--color-danger-600)">2</span>
+        </div>
+      </div>
+    </div>
+  </div><!-- /bento-grid -->
+
+  <!-- Pipeline Header -->
+  <h2 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); margin: 4px 0 0 0;">Pipeline</h2>
 
   <!-- ── KANBAN SECTION ── -->
   <div class="kanban-section">
@@ -822,54 +425,28 @@ body {
         <span class="search-shortcut">/</span>
       </div>
 
-      <div style="width: 1px; height: 24px; background: var(--border-color); margin: 0 var(--space-2);"></div>
-
-      <!-- Sorting -->
-      <div style="display:flex; align-items:center; gap:var(--space-2);">
-        <span style="font-size:10px; color:var(--color-neutral-400); text-transform:uppercase; font-weight:600;">Sort</span>
-        <select class="filter-select" id="sortSelect" onchange="renderBoard()">
-          <option value="newest">Newest first</option>
-          <option value="oldest">Oldest first</option>
-        </select>
-      </div>
-
-      <div style="width: 1px; height: 24px; background: var(--border-color); margin: 0 var(--space-2);"></div>
-
-      <!-- Filtering -->
-      <div style="display:flex; align-items:center; gap:var(--space-2);">
-        <span style="font-size:10px; color:var(--color-neutral-400); text-transform:uppercase; font-weight:600;">Filter</span>
-        <select class="filter-select" id="dateFilter" onchange="renderBoard()">
-          <option value="">All time</option>
-          <option value="today">Today</option>
-          <option value="week">This week</option>
-        </select>
-      </div>
+      <button class="view-btn" id="sortBtn" onclick="toggleSort()" style="border:1px solid var(--border-color);border-radius:var(--border-radius-md);background:var(--color-white);margin-left:4px;">Sort: Newest</button>
 
       <div class="toolbar-spacer"></div>
 
-      <div class="kanban-summary">
-        <div class="ks-item"><span class="ks-num success" id="ks-completed">3</span> <span>Completed</span></div>
-        <div class="ks-item"><span class="ks-num info" id="ks-progress">3</span> <span>In Progress</span></div>
-      </div>
+      <label style="display:flex; align-items:center; gap:6px; font-size:var(--font-size-sm); color:var(--color-neutral-700); cursor:pointer;">
+        <input type="checkbox" id="groupedToggle" checked onchange="toggleGrouping()" style="accent-color:var(--color-brand-600); width:14px; height:14px;">
+        Grouped
+      </label>
 
-      <div style="width: 1px; height: 24px; background: var(--border-color); margin: 0 var(--space-2);"></div>
+      <div style="width: 1px; height: 16px; background: var(--border-color); margin: 0 var(--space-2);"></div>
 
-      <div style="display:flex; align-items:center; gap:var(--space-2);">
-        <span style="font-size:10px; color:var(--color-neutral-400); text-transform:uppercase; font-weight:600;">View</span>
-        <div class="view-toggle">
-          <button class="view-btn active" id="btn-simplified" onclick="setView('simplified')">Status</button>
-          <button class="view-btn" id="btn-detailed" onclick="setView('detailed')">Stage</button>
-        </div>
-      </div>
-
-      <div style="display:flex; align-items:center; gap:var(--space-2);">
-        <span style="font-size:10px; color:var(--color-neutral-400); text-transform:uppercase; font-weight:600;">Grouping</span>
-        <div class="view-toggle">
-          <button class="view-btn active" id="btn-ungrouped" onclick="setGrouping(false)">Ungrouped</button>
-          <button class="view-btn" id="btn-grouped" onclick="setGrouping(true)">Grouped</button>
-        </div>
+      <div class="view-toggle">
+        <button class="view-btn" id="btn-simplified" onclick="setView('simplified')">Status</button>
+        <button class="view-btn active" id="btn-detailed" onclick="setView('detailed')">Stage</button>
       </div>
     </div>
+
+    <!-- Error Strip (rendered dynamically) -->
+    <div id="error-strip-container"></div>
+
+    <!-- Stage Breakdown (rendered dynamically) -->
+    <div class="stage-bar-inline" id="stage-bar-container" style="margin-bottom: var(--space-3);"></div>
 
     <!-- Kanban board -->
     <div class="kanban-board" id="kanbanBoard"></div>
@@ -917,28 +494,35 @@ function fileChips(files) {
 /* ── LOAN CARD HTML ── */
 function loanCardHTML(l) {
   const progressBar = (l.status === 'in-progress' || l.status === 'blocked')
-    ? `<div class="loan-progress-bar-wrap">
-         <div class="loan-progress-bar-track"><div class="loan-progress-bar-fill" style="width:${Math.round((l.stepsComplete/6)*100)}%"></div></div>
-         <div class="loan-progress-steps">${l.stepsComplete} of 6 steps complete</div>
+    ? `<div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--color-neutral-500); margin-bottom: 4px;">
+         <span>${l.stepsComplete} of 6 stages complete</span>
+         <span>${l.date}</span>
+       </div>
+       <div class="loan-progress-bar-wrap" style="position:relative; height:4px; border-radius:var(--border-radius-pill); background:var(--color-neutral-200); overflow:hidden;">
+         <div style="position:absolute; top:0; left:0; bottom:0; width:100%; background: linear-gradient(to right, var(--stage-ingest), var(--stage-classify), var(--stage-qc-check), var(--stage-code-map), var(--stage-report-gen), var(--stage-uw-report)); clip-path: inset(0 calc(100% - ${Math.round((l.stepsComplete/6)*100)}%) 0 0);"></div>
        </div>`
     : '';
   const reasonText = (l.status === 'failed')
-    ? `<div style="font-size: var(--font-size-xs); color: var(--color-danger-600); margin-bottom: var(--space-2);">${l.reason}</div>`
+    ? `<div style="font-size: var(--font-size-xs); color: var(--color-danger-600); margin-bottom: var(--space-2); display:flex; justify-content:space-between; align-items:center;">
+         ${l.reason}
+         <button onclick="retryLoan(event, '${l.id}')" style="background:var(--color-white); border:1px solid var(--color-danger-300); color:var(--color-danger-600); padding:2px 8px; border-radius:var(--border-radius-sm); font-size:10px; cursor:pointer;">Retry</button>
+       </div>`
     : '';
   const errorClass = (l.status === 'failed') ? ' loan-card-error' : '';
+  const footerDate = (l.status !== 'in-progress' && l.status !== 'blocked') 
+    ? `<div class="loan-card-footer"><div class="loan-card-date">${l.date}</div></div>` 
+    : '';
+
   return `
-    <div class="loan-card${errorClass}" onclick="goLoan('${l.id}')">
-      <div class="loan-card-header">
-        <span class="loan-card-id">${l.id}</span>
-        ${statusIcon(l.status)}
+    <div class="loan-card${errorClass}" onclick="goLoan('${l.id}')" style="padding:var(--space-2) var(--space-3);">
+      <div class="loan-card-header" style="flex-direction:row; align-items:baseline; justify-content:flex-start; margin-bottom:2px;">
+        <span class="loan-card-id" style="font-size:var(--font-size-sm);">${l.id}</span>
+        <span class="loan-card-sub" style="font-size:10px; margin-left:6px; margin-bottom:0;">${l.sub}</span>
+        <div style="margin-left:auto;">${statusIcon(l.status)}</div>
       </div>
-      <div class="loan-card-sub">${l.sub}</div>
-      <div class="loan-card-files">${fileChips(l.files)}</div>
       ${reasonText}
       ${progressBar}
-      <div class="loan-card-footer">
-        <div class="loan-card-date">${l.date}</div>
-      </div>
+      ${footerDate}
     </div>`;
 }
 
@@ -947,38 +531,54 @@ function groupCardHTML(loans, col) {
   if (!loans.length) return '';
   const vendors = {};
   let errorCount = 0;
+  let blockedCount = 0;
+  let progressCount = 0;
   loans.forEach(l => {
     const v = l.vendor.charAt(0).toUpperCase() + l.vendor.slice(1);
     vendors[v] = (vendors[v] || 0) + 1;
     if (l.status === 'failed') errorCount++;
+    if (l.status === 'blocked') blockedCount++;
+    if (l.status === 'in-progress') progressCount++;
   });
-  
+
   const vendorTags = Object.entries(vendors).map(([v, c]) => `<span class="badge badge-gray">${c} ${v}</span>`).join('');
-  const errorTag = errorCount > 0 ? `<div style="margin-top:var(--space-2); font-size:10px; color:var(--color-danger-600); font-weight:600;">${errorCount} Need Attention</div>` : '';
-  
-  let msg = "On track";
-  if (col.id === 'todo') msg = "Need to plan";
-  if (col.id === 'progress') msg = "Processing";
-  if (col.id === 'done') msg = "Ready for review";
-  if (col.id === 'errors' || errorCount > 0) msg = "Action required";
+
+  // Status line
+  let statusLine = 'All clear';
+  if (col.id === 'errors') statusLine = `${errorCount} failed`;
+  else if (col.id === 'progress') {
+    const parts = [];
+    if (progressCount) parts.push(`${progressCount} processing`);
+    if (blockedCount) parts.push(`${blockedCount} blocked`);
+    statusLine = parts.join(' \u00b7 ') || 'Processing';
+  }
+  else if (col.id === 'done') statusLine = 'Ready for review';
+  else if (col.id === 'todo') statusLine = 'Awaiting processing';
+
+  // Card color class
+  let gcClass = '';
+  if (col.id === 'errors') gcClass = ' gc-errors';
+  else if (col.id === 'progress') gcClass = ' gc-progress';
+  else if (col.id === 'done') gcClass = ' gc-done';
+
+  // Bottleneck / attention hint
+  let detail = '';
+  if (col.id === 'errors') detail = `<div class="group-card-detail"><span class="gc-warn">${errorCount} need attention</span></div>`;
+  else if (col.id === 'progress') detail = blockedCount > 0 ? `<div class="group-card-detail">Bottleneck: <span class="gc-warn">QC rules</span></div>` : `<div class="group-card-detail"><span class="gc-accent">\u2195 89% avg confidence</span></div>`;
+  else if (col.id === 'done') detail = `<div class="group-card-detail"><span class="gc-accent">\u2195 91% avg confidence</span></div>`;
 
   return `
-    <div class="group-card" onclick="alert('Viewing grouped details for ${loans.length} loans...')">
+    <div class="group-card${gcClass}" onclick="alert('Viewing grouped details for ${loans.length} loans...')">
       <div class="group-card-title">${loans.length} Loans</div>
-      <div class="group-card-meta">${msg}</div>
+      <div class="group-card-meta">${statusLine}</div>
       <div class="group-card-vendors">${vendorTags}</div>
-      ${errorTag}
+      ${detail}
     </div>
   `;
 }
 
 /* ── SIMPLIFIED COLUMNS ── */
 const SIMPLIFIED_COLS = [
-  {
-    id: 'errors', label: 'Errors', colorClass: 'danger',
-    icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#ef4444" stroke-width="1.5"/><line x1="8" y1="5" x2="8" y2="8" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11.5" r="0.75" fill="#ef4444"/></svg>`,
-    filter: l => l.status === 'failed'
-  },
   {
     id: 'todo', label: 'To Do', colorClass: '',
     icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#d4d4d4" stroke-width="1.5"/></svg>`,
@@ -1007,14 +607,26 @@ const DETAILED_COLS = [
   { id:'done',       label:'Done',         stageVar: null,                filter: l => l.status === 'completed' },
 ];
 
-/* ── FILTER LOANS ── */
+/* ── FILTER & SORT LOANS ── */
+let sortDesc = true;
+function toggleSort() {
+  sortDesc = !sortDesc;
+  document.getElementById('sortBtn').textContent = sortDesc ? 'Sort: Newest' : 'Sort: Oldest';
+  renderBoard();
+}
+
 function getFiltered() {
   const search   = document.getElementById('searchInput').value.toLowerCase().trim();
 
-  return LOANS.filter(l => {
+  let res = LOANS.filter(l => {
     if (search && !l.id.toLowerCase().includes(search)) return false;
     return true;
   });
+  
+  if (!sortDesc) {
+    res.reverse();
+  }
+  return res;
 }
 
 
@@ -1071,23 +683,117 @@ function colHTML(col, loans, isDetailed) {
 function renderBoard() {
   const filtered = getFiltered();
   const board    = document.getElementById('kanbanBoard');
-  const cols     = currentView === 'simplified' ? SIMPLIFIED_COLS : DETAILED_COLS;
-  const isDetail = currentView === 'detailed';
+  const useSimplified = currentView === 'simplified' || isGrouped;
+  const cols     = useSimplified ? SIMPLIFIED_COLS : DETAILED_COLS;
+  const isDetail = !useSimplified;
 
   board.className = `kanban-board${isDetail ? ' detailed' : ''}`;
   board.innerHTML = cols.map(col => {
     const colLoans = filtered.filter(col.filter);
     return colHTML(col, colLoans, isDetail);
   }).join('');
+}
 
-  // Update summary
-  const completed = filtered.filter(l => l.status === 'completed').length;
-  const inprog    = filtered.filter(l => ['in-progress','blocked'].includes(l.status)).length;
-  document.getElementById('ks-completed').textContent = completed;
-  document.getElementById('ks-progress').textContent  = inprog;
+/* ── RENDER METRICS (Operations card) ── */
+function renderMetrics() {
+  const total      = LOANS.length;
+  const completed  = LOANS.filter(l => l.status === 'completed').length;
+  const inPipeline = LOANS.filter(l => ['in-progress','blocked'].includes(l.status)).length;
+  const exceptions = LOANS.filter(l => l.status === 'failed').length;
+
+  document.getElementById('ops-total').textContent      = total;
+  document.getElementById('ops-avg-time').textContent   = '8m 43s';
+  document.getElementById('ops-completed').textContent  = completed;
+  document.getElementById('ops-exceptions').textContent = exceptions;
+
+  document.getElementById('ops-sub-total').innerHTML      = `+12% vs previous batch<br><span class="accent">All sources active</span>`;
+  document.getElementById('ops-sub-avg-time').innerHTML   = `<span class="err">↑ 40s</span> vs yesterday<br><span>Bottleneck: QC</span>`;
+  document.getElementById('ops-sub-completed').innerHTML  = `Loans ready for review<br><span class="accent">All clear</span>`;
+  const shared = exceptions >= 2 ? `<span class="err">${exceptions - 1} share same root cause</span><br>` : '';
+  document.getElementById('ops-sub-exceptions').innerHTML = `${shared}Needs attention`;
+}
+
+/* ── RENDER STAGE BAR ── */
+function renderStageBar() {
+  const total = LOANS.length;
+  if (!total) return;
+
+  const STAGE_DEFS = [
+    { key:'ingest',     label:'Ingest',   cssVar:'--stage-ingest'     },
+    { key:'classify',   label:'Classify', cssVar:'--stage-classify'   },
+    { key:'qc-check',   label:'QC',       cssVar:'--stage-qc-check'   },
+    { key:'code-map',   label:'CodeMap',  cssVar:'--stage-code-map'   },
+    { key:'report-gen', label:'Report',   cssVar:'--stage-report-gen' },
+    { key:'uw-report',  label:'UW',       cssVar:'--stage-uw-report'  },
+  ];
+
+  const stageCounts = {};
+  let completedCount = 0, failedCount = 0;
+
+  LOANS.forEach(l => {
+    if (l.status === 'completed')  completedCount++;
+    else if (l.status === 'failed') failedCount++;
+    else if (l.stage) stageCounts[l.stage] = (stageCounts[l.stage] || 0) + 1;
+  });
+
+  const segs = [];
+  STAGE_DEFS.forEach(s => {
+    const count = stageCounts[s.key] || 0;
+    if (count > 0) {
+      const pct = (count / total * 100).toFixed(1);
+      segs.push(`<div class="stage-bar-seg" style="background:var(${s.cssVar});width:${pct}%;" title="${s.label} · ${count}"><span class="seg-label">${s.label}</span> ${count}</div>`);
+    }
+  });
+  if (completedCount > 0) {
+    const pct = (completedCount / total * 100).toFixed(1);
+    segs.push(`<div class="stage-bar-seg" style="background:var(--color-success-500);width:${pct}%;" title="Completed · ${completedCount}"><span class="seg-label">Done</span> ${completedCount}</div>`);
+  }
+  if (failedCount > 0) {
+    const pct = (failedCount / total * 100).toFixed(1);
+    segs.push(`<div class="stage-bar-seg" style="background:var(--color-danger-500);width:${pct}%;" title="Failed · ${failedCount}"><span class="seg-label">Failed</span> ${failedCount}</div>`);
+  }
+
+  document.getElementById('stage-bar-container').innerHTML = segs.join('');
+}
+
+/* ── RENDER ERROR STRIP ── */
+function renderErrorStrip() {
+  const failed = LOANS.filter(l => l.status === 'failed');
+  const container = document.getElementById('error-strip-container');
+  if (!failed.length) { container.innerHTML = ''; return; }
+
+  const cards = failed.map(l => {
+    const stageColor = l.stage ? `var(--stage-${l.stage})` : 'var(--color-danger-500)';
+    const stageLabel = l.stage ? l.stage.charAt(0).toUpperCase() + l.stage.slice(1) : 'Unknown';
+    return `
+      <div class="error-card" onclick="goLoan('${l.id}')">
+        <div class="error-card-top">
+          <span class="error-card-id">${l.id}</span>
+          <span class="error-card-stage" style="background:${stageColor}">${stageLabel}</span>
+        </div>
+        <div class="error-card-reason">${l.reason}</div>
+        <div class="error-card-footer">
+          <span class="error-card-date">${l.date}</span>
+        </div>
+      </div>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="error-strip" id="error-strip">
+      <div class="error-strip-header" onclick="document.getElementById('error-strip').classList.toggle('collapsed')">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2.5v4M7 9h.01M2 12.5l5-9 5 9H2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="error-strip-title">${failed.length} loan${failed.length > 1 ? 's' : ''} failed — requires attention</span>
+        <svg class="error-strip-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="error-strip-body">${cards}</div>
+    </div>`;
 }
 
 /* ── VIEW & GROUPING TOGGLES ── */
+// Initialize defaults: Detailed View (Stage) and Grouped = true
+let currentView = 'detailed';
+let isGrouped = true;
+
 function setView(mode) {
   currentView = mode;
   document.getElementById('btn-simplified').classList.toggle('active', mode === 'simplified');
@@ -1095,10 +801,8 @@ function setView(mode) {
   renderBoard();
 }
 
-function setGrouping(grouped) {
-  isGrouped = grouped;
-  document.getElementById('btn-ungrouped').classList.toggle('active', !grouped);
-  document.getElementById('btn-grouped').classList.toggle('active', grouped);
+function toggleGrouping() {
+  isGrouped = document.getElementById('groupedToggle').checked;
   renderBoard();
 }
 
@@ -1128,12 +832,16 @@ function showToast(msg) {
 }
 
 /* ── INIT ── */
+renderMetrics();
+renderStageBar();
+renderErrorStrip();
 renderBoard();
 </script>
-<!-- Design Switcher -->
-<div style="position: fixed; bottom: 20px; right: 20px; background: var(--color-white); border: 1px solid var(--border-color); border-radius: 20px; padding: 4px; display: flex; gap: 4px; box-shadow: var(--shadow-md); z-index: 9999;">
-  <a href="dashboard.html" style="text-decoration: none; padding: 6px 12px; border-radius: 16px; font-size: 12px; font-weight: 600; color: var(--color-neutral-500);">V1 (Current)</a>
-  <a href="dashboard-v2.html" style="text-decoration: none; padding: 6px 12px; border-radius: 16px; font-size: 12px; font-weight: 600; color: var(--color-neutral-900); background: #f4f4f5;">V2 (Exploration)</a>
+
+<!-- V1 / V2 Switcher -->
+<div style="position:fixed;bottom:20px;right:20px;background:var(--color-white);border:1px solid var(--border-color);border-radius:20px;padding:4px;display:flex;gap:4px;box-shadow:var(--shadow-md);z-index:9999;">
+  <a href="dashboard.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-neutral-500);">V1</a>
+  <a href="dashboard-v2.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-white);background:var(--color-neutral-900);">V2</a>
 </div>
 
 </body>
