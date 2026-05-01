@@ -528,15 +528,6 @@ body {
 .stage-dot.is-idle      { background: var(--color-neutral-400); }
 .stage-name { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.stage-activity {
-  font-size: var(--font-size-xs); color: var(--color-neutral-500); line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  min-height: calc(var(--font-size-xs) * 1.4 * 2);
-}
-
 .stage-stats { display: flex; flex-direction: column; gap: 6px; }
 .stage-stat { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); min-width: 0; }
 .stage-stat-label { font-size: 10px; font-weight: var(--font-weight-semibold); color: var(--color-neutral-500); letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
@@ -1325,7 +1316,6 @@ function renderStages() {
           <span class="stage-dot is-${s.status}"></span>
           <span class="stage-name">${s.name}</span>
         </div>
-        <div class="stage-activity">${s.activity}</div>
         <div class="stage-stats">
           <div class="stage-stat">
             <span class="stage-stat-label">Success</span>
