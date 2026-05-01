@@ -81,70 +81,6 @@ body {
 }
 .page-header-spacer { flex: 1; }
 
-/* ── SEARCH ── */
-.search-wrap-top { position: relative; }
-.search-input-top {
-  display: flex; align-items: center; gap: 8px;
-  width: 280px;
-  padding: 7px 12px;
-  background: var(--color-white);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  font-size: var(--font-size-sm);
-  color: var(--color-neutral-900);
-  font-family: var(--font-family-base);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-}
-.search-input-top:focus-within {
-  border-color: var(--color-brand-400);
-  box-shadow: 0 0 0 3px var(--color-brand-100);
-}
-.search-input-top svg { color: var(--color-neutral-400); flex-shrink: 0; }
-.search-input-top input {
-  flex: 1; border: none; outline: none; background: transparent;
-  font-size: var(--font-size-sm); font-family: var(--font-family-base);
-  color: var(--color-neutral-900); padding: 0; min-width: 0;
-}
-.search-input-top input::placeholder { color: var(--color-neutral-400); }
-.search-kbd {
-  font-family: var(--font-family-mono); font-size: 10px;
-  color: var(--color-neutral-400);
-  background: var(--color-neutral-50);
-  border: 1px solid var(--border-color);
-  border-radius: 3px; padding: 1px 5px;
-}
-.search-results {
-  position: absolute; top: calc(100% + 6px); right: 0;
-  width: 360px; max-height: 360px; overflow-y: auto;
-  background: var(--color-white);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  box-shadow: var(--shadow-lg);
-  z-index: var(--z-popover);
-  display: none;
-}
-.search-results.is-open { display: block; }
-.search-result-row {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px; cursor: pointer;
-  border-bottom: 1px solid var(--border-color);
-  transition: background-color var(--transition-fast);
-}
-.search-result-row:last-child { border-bottom: none; }
-.search-result-row:hover, .search-result-row.is-active { background: var(--color-neutral-50); }
-.search-result-id { font-family: var(--font-family-mono); font-size: 12px; font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
-.search-result-meta { font-size: 11px; color: var(--color-neutral-500); margin-left: auto; }
-.search-result-stage { font-size: 10px; font-weight: var(--font-weight-medium); padding: 1px 6px; border-radius: var(--border-radius-sm); color: var(--color-white); white-space: nowrap; }
-.search-result-status {
-  font-size: 10px; font-weight: var(--font-weight-medium);
-  padding: 1px 8px; border-radius: var(--border-radius-pill);
-  white-space: nowrap;
-}
-.search-result-status.completed   { background: var(--color-success-100); color: var(--color-success-700); }
-.search-result-status.in-progress { background: var(--color-info-100);    color: var(--color-info-700); }
-.search-result-status.blocked     { background: var(--color-warning-100); color: var(--color-warning-700); }
-.search-result-status.failed      { background: var(--color-danger-100);  color: var(--color-danger-700); }
-.search-empty { padding: 20px 12px; font-size: var(--font-size-sm); color: var(--color-neutral-400); text-align: center; }
 
 /* ── LOAN DRAWER ── */
 .drawer-overlay {
@@ -621,6 +557,18 @@ body {
     <a class="topbar-nav-item" href="reports.html">Reports</a>
   </nav>
   <div class="topbar-right">
+    <div class="search-wrap-top" role="search">
+      <label class="search-input-top">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <input id="loanSearch" type="text" placeholder="Search loans by ID…" aria-label="Search loans by ID" autocomplete="off"
+               oninput="onSearchInput()" onfocus="onSearchInput()" onkeydown="onSearchKey(event)"/>
+        <span class="search-kbd">/</span>
+      </label>
+      <div class="search-results" id="searchResults"></div>
+    </div>
     <div class="user-avatar">SU</div>
   </div>
 </header>
@@ -635,19 +583,6 @@ body {
       <button class="date-btn" onclick="setDate(this)">Daily</button>
       <button class="date-btn" onclick="setDate(this)">Weekly</button>
       <button class="date-btn" onclick="setDate(this)">Monthly</button>
-    </div>
-    <div class="page-header-spacer"></div>
-    <div class="search-wrap-top">
-      <label class="search-input-top">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <input id="loanSearch" type="text" placeholder="Search loans by ID…" autocomplete="off"
-               oninput="onSearchInput()" onfocus="onSearchInput()" onkeydown="onSearchKey(event)"/>
-        <span class="search-kbd">/</span>
-      </label>
-      <div class="search-results" id="searchResults"></div>
     </div>
   </div>
 

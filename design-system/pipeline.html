@@ -343,6 +343,18 @@ body {
     <a class="topbar-nav-item" href="reports.html">Reports</a>
   </nav>
   <div class="topbar-right">
+    <div class="search-wrap-top" role="search">
+      <label class="search-input-top">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <input id="loanSearch" type="text" placeholder="Search loans by ID…" aria-label="Search loans by ID" autocomplete="off"
+               oninput="onSearchInput()" onfocus="onSearchInput()" onkeydown="onSearchKey(event)"/>
+        <span class="search-kbd">/</span>
+      </label>
+      <div class="search-results" id="searchResults"></div>
+    </div>
     <div class="user-avatar">SU</div>
   </div>
 </header>
@@ -358,29 +370,6 @@ body {
       <button class="date-btn" onclick="setDate(this)">Daily</button>
       <button class="date-btn" onclick="setDate(this)">Weekly</button>
       <button class="date-btn" onclick="setDate(this)">Monthly</button>
-    </div>
-  </div>
-
-  <div class="summary-strip">
-    <div class="summary-tile">
-      <span class="summary-tile-label">To Do</span>
-      <span class="summary-tile-value" id="t-todo">—</span>
-      <span class="summary-tile-sub">queued, not yet started</span>
-    </div>
-    <div class="summary-tile">
-      <span class="summary-tile-label">In Progress</span>
-      <span class="summary-tile-value" id="t-inflight">—</span>
-      <span class="summary-tile-sub">running across all stages</span>
-    </div>
-    <div class="summary-tile">
-      <span class="summary-tile-label">Completed</span>
-      <span class="summary-tile-value" id="t-completed">—</span>
-      <span class="summary-tile-sub">UW report generated</span>
-    </div>
-    <div class="summary-tile">
-      <span class="summary-tile-label">Failed</span>
-      <span class="summary-tile-value" id="t-failed">—</span>
-      <span class="summary-tile-sub">ingest / classify errors</span>
     </div>
   </div>
 
@@ -473,22 +462,17 @@ function fmtMMSSh(sec) {
 }
 
 function renderSummary() {
-  const todo = LOANS.filter(l => l.status === 'todo').length;
   const inFlight = LOANS.filter(l => l.status === 'in-progress' || l.status === 'blocked').length;
   const completed = LOANS.filter(l => l.status === 'completed').length;
   const failed = LOANS.filter(l => l.status === 'failed').length;
-  document.getElementById('t-todo').textContent = todo;
-  document.getElementById('t-inflight').textContent = inFlight;
-  document.getElementById('t-completed').textContent = completed;
-  document.getElementById('t-failed').textContent = failed;
   document.getElementById('pipeline-subtitle').textContent = `${inFlight} loans in flight · ${completed} completed · ${failed} failed`;
 }
 
 const STATUS_COLS = [
-  { key: 'todo',        label: 'To Do',       color: 'var(--color-neutral-400)',  metaLabel: 'Avg wait',     metaValue: '—' },
-  { key: 'in-progress', label: 'In Progress', color: 'var(--color-info-500)',     metaLabel: 'Avg latency',  metaValue: '7m 43s' },
-  { key: 'completed',   label: 'Completed',   color: 'var(--color-success-500)',  metaLabel: 'Avg E2E',      metaValue: '7m 43s' },
-  { key: 'failed',      label: 'Failed',      color: 'var(--color-danger-500)',   metaLabel: 'Needs review', metaValue: '—' },
+  { key: 'todo',        label: 'To Do',       color: 'var(--color-neutral-400)' },
+  { key: 'in-progress', label: 'In Progress', color: 'var(--color-info-500)' },
+  { key: 'completed',   label: 'Completed',   color: 'var(--color-success-500)' },
+  { key: 'failed',      label: 'Failed',      color: 'var(--color-danger-500)' },
 ];
 
 function renderKanban() {
@@ -522,10 +506,6 @@ function renderKanban() {
             <span class="col-dot" style="background:${col.color}"></span>
             <span class="col-title">${col.label}</span>
             <span class="col-count">${total}</span>
-          </div>
-          <div class="col-meta">
-            <span class="col-meta-label">${col.metaLabel}</span>
-            <span class="col-meta-value">${col.metaValue}</span>
           </div>
         </div>
         <div class="col-body">${cards}</div>
@@ -602,6 +582,61 @@ function setDate(btn) {
   btn.parentElement.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 }
+
+/* ── SEARCH DROPDOWN ── */
+let searchActiveIndex = -1;
+function getSearchMatches(q) {
+  q = (q || '').trim().toLowerCase();
+  if (!q) return LOANS.slice(0, 8);
+  return LOANS.filter(l => l.id.toLowerCase().includes(q)).slice(0, 8);
+}
+function onSearchInput() {
+  const input = document.getElementById('loanSearch');
+  const results = document.getElementById('searchResults');
+  const matches = getSearchMatches(input.value);
+  searchActiveIndex = -1;
+  if (!matches.length) {
+    results.innerHTML = `<div class="search-empty">No loans match "${input.value}"</div>`;
+  } else {
+    results.innerHTML = matches.map((l, i) => {
+      const stage = l.stage ? `<span class="search-result-stage" style="background:var(--color-neutral-500)">${STAGE_LABELS[l.stage] || ''}</span>` : '';
+      const status = l.status.replace('-', ' ');
+      return `
+        <div class="search-result-row" data-loan-id="${l.id}" data-idx="${i}" onclick="openDrawer('${l.id}')">
+          <span class="search-result-id">${l.id}</span>
+          <span class="search-result-status ${l.status}">${status}</span>
+          ${stage}
+        </div>`;
+    }).join('');
+  }
+  results.classList.add('is-open');
+}
+function onSearchKey(e) {
+  const results = document.getElementById('searchResults');
+  const rows = results.querySelectorAll('.search-result-row');
+  if (e.key === 'Escape') { results.classList.remove('is-open'); e.target.blur(); return; }
+  if (e.key === 'ArrowDown') { e.preventDefault(); searchActiveIndex = Math.min(rows.length - 1, searchActiveIndex + 1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); searchActiveIndex = Math.max(0, searchActiveIndex - 1); }
+  else if (e.key === 'Enter') {
+    if (searchActiveIndex >= 0 && rows[searchActiveIndex]) openDrawer(rows[searchActiveIndex].dataset.loanId);
+    else if (rows[0]) openDrawer(rows[0].dataset.loanId);
+    return;
+  } else { return; }
+  rows.forEach((r, i) => r.classList.toggle('is-active', i === searchActiveIndex));
+  if (rows[searchActiveIndex]) rows[searchActiveIndex].scrollIntoView({ block: 'nearest' });
+}
+document.addEventListener('click', (e) => {
+  const wrap = document.querySelector('.search-wrap-top');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('searchResults').classList.remove('is-open');
+  }
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+    e.preventDefault();
+    document.getElementById('loanSearch').focus();
+  }
+});
 
 renderSummary();
 renderKanban();
@@ -691,6 +726,8 @@ function fileCardHTML(f) {
 function openDrawer(loanId) {
   const loan = LOANS.find(l => l.id === loanId);
   if (!loan) return;
+  const sr = document.getElementById('searchResults'); if (sr) sr.classList.remove('is-open');
+  const si = document.getElementById('loanSearch'); if (si) si.blur();
   const idShort = loan.id.replace('LN-000', 'LN');
   const traceId = `${idShort}—${Date.now().toString().slice(-10)}`;
 
