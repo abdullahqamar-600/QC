@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QC Appraisal — Alerts</title>
+<title>QC Appraisal — Pipeline</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="components.css">
@@ -13,8 +13,7 @@ html, body { height: 100%; }
 body {
   background: var(--surface-page);
   min-width: 1024px;
-  display: flex;
-  flex-direction: column;
+  display: flex; flex-direction: column;
   overflow: hidden;
   color: var(--color-neutral-900);
   font-family: var(--font-family-base);
@@ -33,15 +32,13 @@ body {
 .topbar-nav-item {
   display: flex; align-items: center;
   padding: 0 var(--space-4);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm); font-weight: var(--font-weight-medium);
   color: var(--color-neutral-500);
   text-decoration: none;
   border-bottom: 2px solid transparent;
   transition: color var(--transition-fast), border-color var(--transition-fast);
   white-space: nowrap;
-  position: relative;
-  top: 1px;
+  position: relative; top: 1px;
 }
 .topbar-nav-item:hover { color: var(--color-neutral-900); }
 .topbar-nav-item.active {
@@ -54,118 +51,137 @@ body {
 
 /* ── PAGE ── */
 .page-wrap {
-  flex: 1; overflow-y: auto;
-  padding: var(--space-6) var(--space-8) var(--space-8);
-  display: flex; flex-direction: column; gap: var(--space-6);
+  flex: 1; overflow: hidden;
+  padding: var(--space-5) var(--space-8) var(--space-5);
+  display: flex; flex-direction: column; gap: var(--space-4);
   min-height: 0;
 }
-.page-header { display: flex; align-items: baseline; gap: var(--space-4); }
+.page-header {
+  display: flex; align-items: center; gap: var(--space-4);
+  flex-shrink: 0;
+}
 .page-title {
   font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold);
   letter-spacing: -0.02em; line-height: 1.1; color: var(--color-neutral-900); margin: 0;
 }
-.page-count {
-  font-size: var(--font-size-sm); font-weight: var(--font-weight-medium);
-  color: var(--color-neutral-400);
+.page-subtitle {
+  font-size: var(--font-size-sm); color: var(--color-neutral-500);
 }
+.header-spacer { flex: 1; }
 
-/* ── FILTER BAR ── */
-.filter-bar { display: flex; align-items: center; gap: var(--space-3); }
-.filter-search {
-  display: flex; align-items: center; gap: 8px;
-  padding: 7px var(--space-3);
-  border: 1px solid var(--border-color); border-radius: var(--border-radius-md);
-  background: var(--color-white); flex: 1;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+.date-filter { display: flex; gap: 2px; background: var(--color-neutral-100); border-radius: var(--border-radius-md); padding: 3px; border: 1px solid var(--border-color); }
+.date-btn {
+  padding: 4px var(--space-3); border-radius: var(--border-radius-sm); border: none;
+  font-family: var(--font-family-base); font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium); color: var(--color-neutral-600);
+  background: transparent; cursor: pointer; transition: all var(--transition-fast); white-space: nowrap;
 }
-.filter-search:focus-within { border-color: var(--color-brand-400); box-shadow: 0 0 0 3px var(--color-brand-100); }
-.filter-search svg { color: var(--color-neutral-400); flex-shrink: 0; }
-.filter-search input { flex: 1; border: none; outline: none; background: transparent; font-size: var(--font-size-sm); font-family: var(--font-family-base); color: var(--color-neutral-900); }
-.filter-search input::placeholder { color: var(--color-neutral-400); }
-.filter-select {
-  padding: 7px var(--space-3); border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md); background: var(--color-white);
-  font-size: var(--font-size-sm); font-family: var(--font-family-base);
-  color: var(--color-neutral-700); cursor: pointer; appearance: none;
-  padding-right: var(--space-7); background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239ca3af' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 10px center;
-}
-.requeue-all-btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 7px var(--space-4); border-radius: var(--border-radius-md);
-  border: 1px solid var(--color-brand-600); background: var(--color-brand-600);
-  font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold);
-  color: var(--color-white); cursor: pointer;
-  transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
-}
-.requeue-all-btn:hover { background: var(--color-brand-700); box-shadow: 0 4px 12px rgba(79,70,229,.25); }
+.date-btn.active { background: var(--color-white); color: var(--color-neutral-900); box-shadow: var(--shadow-xs); }
+.date-btn:hover:not(.active) { color: var(--color-neutral-900); }
 
-/* ── TABLE ── */
-.table-wrap {
+/* ── SUMMARY STRIP ── */
+.summary-strip {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3); flex-shrink: 0;
+}
+.summary-tile {
   background: var(--color-white);
   border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-xl);
-  overflow: hidden;
-}
-table { width: 100%; border-collapse: collapse; }
-thead { background: var(--color-neutral-50); border-bottom: 1px solid var(--border-color); }
-thead th {
+  border-radius: var(--border-radius-lg);
   padding: var(--space-3) var(--space-4);
-  text-align: left; font-size: 11px;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-neutral-500);
-  text-transform: uppercase; letter-spacing: 0.06em;
-  white-space: nowrap;
+  display: flex; flex-direction: column; gap: 2px;
 }
-thead th:last-child { text-align: right; }
-tbody tr {
-  border-bottom: 1px solid var(--color-neutral-100);
-  transition: background-color var(--transition-fast);
-  cursor: pointer;
-}
-tbody tr:last-child { border-bottom: none; }
-tbody tr:hover { background: var(--color-neutral-50); }
-tbody td {
-  padding: var(--space-3) var(--space-4);
-  font-size: var(--font-size-sm);
-  vertical-align: middle;
-}
-tbody td:last-child { text-align: right; }
-
-.td-loan-id { font-family: var(--font-family-mono); font-size: 12px; font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); white-space: nowrap; }
-.stage-pill {
-  display: inline-flex; align-items: center;
-  padding: 2px 8px; border-radius: var(--border-radius-sm);
+.summary-tile-label {
   font-size: 10px; font-weight: var(--font-weight-semibold);
-  color: var(--color-white); white-space: nowrap;
+  color: var(--color-neutral-500); letter-spacing: 0.06em; text-transform: uppercase;
 }
-.root-cause-tag {
-  display: inline-flex; align-items: center;
-  padding: 2px 8px; border-radius: var(--border-radius-pill);
-  font-size: 11px; font-weight: var(--font-weight-medium);
-  background: var(--color-neutral-100); color: var(--color-neutral-700);
-  white-space: nowrap;
+.summary-tile-value {
+  font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em; color: var(--color-neutral-900); line-height: 1.1;
+  font-variant-numeric: tabular-nums;
 }
-.root-cause-tag.timeout { background: var(--color-warning-100); color: var(--color-warning-700); }
-.root-cause-tag.missing { background: var(--color-danger-100); color: var(--color-danger-700); }
-.root-cause-tag.parse { background: var(--color-info-100); color: var(--color-info-700); }
-.root-cause-tag.schema { background: var(--color-brand-100); color: var(--color-brand-700); }
-.td-reason { color: var(--color-neutral-600); max-width: 260px; }
-.td-duration { font-variant-numeric: tabular-nums; color: var(--color-neutral-700); font-weight: var(--font-weight-medium); white-space: nowrap; }
-.td-since { font-size: 12px; color: var(--color-neutral-400); white-space: nowrap; }
-.td-retries { font-variant-numeric: tabular-nums; color: var(--color-neutral-500); text-align: center; }
-.retry-btn {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 4px 10px; border-radius: var(--border-radius-md);
-  border: 1px solid var(--color-danger-200);
-  background: var(--color-white); color: var(--color-danger-600);
-  font-size: 12px; font-weight: var(--font-weight-medium);
-  font-family: var(--font-family-base); cursor: pointer;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast);
-}
-.retry-btn:hover { background: var(--color-danger-50); border-color: var(--color-danger-300); }
+.summary-tile-sub { font-size: 11px; color: var(--color-neutral-500); }
 
-/* ── LOAN DRAWER (V1 — same as dashboard.html) ── */
+/* ── KANBAN BOARD ── */
+.kanban {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--space-3);
+  flex: 1; min-height: 0;
+}
+.col {
+  display: flex; flex-direction: column;
+  background: var(--color-neutral-50);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  min-height: 0;
+}
+.col-head {
+  padding: var(--space-3) var(--space-3);
+  border-bottom: 1px solid var(--border-color);
+  display: flex; flex-direction: column; gap: var(--space-2);
+  flex-shrink: 0;
+  background: var(--color-white);
+  border-top-left-radius: var(--border-radius-lg);
+  border-top-right-radius: var(--border-radius-lg);
+}
+.col-title-row { display: flex; align-items: center; gap: var(--space-2); }
+.col-dot { width: 8px; height: 8px; border-radius: var(--border-radius-pill); flex-shrink: 0; }
+.col-title { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.col-count {
+  font-family: var(--font-family-mono); font-size: 11px; font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-700);
+  background: var(--color-neutral-100);
+  padding: 2px 8px; border-radius: var(--border-radius-pill);
+}
+.col-meta { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
+.col-meta-label { font-size: 10px; font-weight: var(--font-weight-semibold); color: var(--color-neutral-500); letter-spacing: 0.06em; text-transform: uppercase; }
+.col-meta-value { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); font-variant-numeric: tabular-nums; }
+
+.col-body {
+  flex: 1; overflow-y: auto;
+  padding: var(--space-2);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.col-empty { padding: var(--space-4) var(--space-3); text-align: center; color: var(--color-neutral-400); font-size: var(--font-size-xs); }
+
+.loan-card {
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.loan-card:hover { border-color: var(--border-color-hover); box-shadow: var(--shadow-sm); }
+.loan-card.is-blocked { border-left: 3px solid var(--color-warning-500); }
+.loan-card.is-failed  { border-left: 3px solid var(--color-danger-500); background: var(--color-danger-50); }
+.loan-card-top { display: flex; align-items: center; gap: var(--space-2); }
+.loan-card-id { font-family: var(--font-family-mono); font-size: 11px; font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+.loan-card-pill {
+  font-size: 9px; font-weight: var(--font-weight-bold);
+  padding: 1px 6px; border-radius: var(--border-radius-sm);
+  letter-spacing: 0.04em; text-transform: uppercase;
+  margin-left: auto;
+}
+.loan-card-pill.blocked { background: var(--color-warning-100); color: var(--color-warning-700); }
+.loan-card-pill.failed  { background: var(--color-danger-100); color: var(--color-danger-700); }
+.loan-card-progress {
+  height: 4px; background: var(--color-neutral-100); border-radius: var(--border-radius-pill);
+  overflow: hidden; position: relative;
+}
+.loan-card-progress-fill {
+  position: absolute; inset: 0 auto 0 0; border-radius: var(--border-radius-pill);
+  background: var(--color-info-500);
+}
+.loan-card-progress-fill.blocked { background: var(--color-warning-500); }
+.loan-card-time {
+  font-size: 10px; color: var(--color-neutral-500); font-variant-numeric: tabular-nums;
+  display: flex; justify-content: space-between; gap: var(--space-2);
+}
+
+/* ── LOAN DRAWER (V1) ── */
 .drawer-overlay {
   position: fixed; inset: 0;
   background: rgba(15, 23, 42, 0.4);
@@ -175,7 +191,6 @@ tbody td:last-child { text-align: right; }
   z-index: 9000;
 }
 .drawer-overlay.is-open { opacity: 1; pointer-events: auto; }
-
 .drawer-panel {
   position: fixed; top: 0; right: 0; bottom: 0;
   width: 540px; max-width: 92vw;
@@ -188,7 +203,6 @@ tbody td:last-child { text-align: right; }
   display: flex; flex-direction: column;
 }
 .drawer-panel.is-open { transform: translateX(0); }
-
 .drawer-header {
   display: flex; align-items: center; gap: var(--space-3);
   padding: var(--space-4) var(--space-5);
@@ -210,10 +224,8 @@ tbody td:last-child { text-align: right; }
 .drawer-meta-date { font-size: 11px; color: var(--color-neutral-500); }
 .drawer-close {
   width: 32px; height: 32px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  background: var(--color-white);
-  color: var(--color-neutral-500);
+  border: 1px solid var(--border-color); border-radius: var(--border-radius-md);
+  background: var(--color-white); color: var(--color-neutral-500);
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; flex-shrink: 0;
   transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
@@ -236,11 +248,8 @@ tbody td:last-child { text-align: right; }
   background: var(--color-white);
   padding: var(--space-4) var(--space-3) var(--space-3);
   display: flex; flex-direction: column; align-items: center; gap: 6px;
-  transition: border-color var(--transition-fast), background-color var(--transition-fast);
-  cursor: default;
-  position: relative;
+  cursor: default; position: relative;
 }
-.file-card:hover { border-color: var(--border-color-hover); background: var(--color-neutral-50); }
 .file-card-icon { position: relative; width: 48px; height: 60px; }
 .file-card-icon svg { width: 48px; height: 60px; }
 .file-card-type {
@@ -260,8 +269,7 @@ tbody td:last-child { text-align: right; }
 .file-card-flags { font-size: 11px; color: var(--color-danger-600); font-weight: var(--font-weight-medium); margin-top: 2px; }
 .file-card-badge {
   position: absolute; top: -6px; right: -6px;
-  min-width: 22px; height: 22px;
-  padding: 0 6px;
+  min-width: 22px; height: 22px; padding: 0 6px;
   background: var(--color-danger-500); color: var(--color-white);
   border-radius: var(--border-radius-pill);
   font-size: 11px; font-weight: var(--font-weight-bold);
@@ -269,13 +277,12 @@ tbody td:last-child { text-align: right; }
   box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
 }
 .output-section {
-  background: linear-gradient(135deg, var(--color-danger-50) 0%, transparent 70%);
+  background: linear-gradient(135deg, var(--color-success-50) 0%, transparent 70%);
   border-radius: var(--border-radius-lg);
   padding: var(--space-3);
   margin: 0 calc(-1 * var(--space-3));
 }
 
-/* pipeline card — parity with V2 loan-detail */
 .pipeline-card {
   background: var(--color-white);
   border: 1px solid var(--border-color);
@@ -295,18 +302,16 @@ tbody td:last-child { text-align: right; }
 .step-icon.running { background: var(--color-info-100); color: var(--color-info-600); animation: step-pulse 1.5s ease-in-out infinite; }
 .step-icon.todo    { background: var(--color-white); color: var(--color-neutral-300); border: 1.5px solid var(--border-color); }
 .step-icon.error   { background: var(--color-danger-100); color: var(--color-danger-600); }
-.step-icon.skipped { background: var(--color-neutral-50); color: var(--color-neutral-300); border: 1.5px dashed var(--border-color); }
 @keyframes step-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,.25)} 50%{box-shadow:0 0 0 5px rgba(59,130,246,.08)} }
 .step-col-body { padding-bottom: var(--space-3); }
 .step-name-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
 .step-name { font-size: var(--font-size-base); font-weight: var(--font-weight-medium); color: var(--color-neutral-900); }
-.step-name.todo    { color: var(--color-neutral-400); }
-.step-name.skipped { color: var(--color-neutral-400); }
-.step-name.error   { color: var(--color-danger-700); }
+.step-name.todo { color: var(--color-neutral-400); }
+.step-name.error { color: var(--color-danger-700); }
 .step-name-time { font-size: var(--font-size-xs); color: var(--color-neutral-400); font-family: var(--font-family-mono); white-space: nowrap; }
 .step-sub { font-size: var(--font-size-sm); color: var(--color-neutral-500); margin-bottom: var(--space-1); }
 .step-sub.running { color: var(--color-info-600); font-weight: var(--font-weight-medium); }
-.step-sub.error   { color: var(--color-danger-600); }
+.step-sub.error { color: var(--color-danger-600); }
 .step-col-time { text-align: right; padding-bottom: var(--space-3); display: flex; align-items: flex-start; justify-content: flex-end; }
 .step-dur-pill { display: inline-block; font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); background: var(--color-neutral-100); padding: 1px 6px; border-radius: var(--border-radius-pill); }
 </style>
@@ -325,8 +330,8 @@ tbody td:last-child { text-align: right; }
   </a>
   <nav class="topbar-nav" aria-label="Main">
     <a class="topbar-nav-item" href="dashboard.html">Observability</a>
-    <a class="topbar-nav-item" href="pipeline.html">Pipeline</a>
-    <a class="topbar-nav-item active" href="exceptions.html">Alerts</a>
+    <a class="topbar-nav-item active" href="pipeline.html">Pipeline</a>
+    <a class="topbar-nav-item" href="exceptions.html">Alerts</a>
     <a class="topbar-nav-item" href="reports.html">Reports</a>
   </nav>
   <div class="topbar-right">
@@ -337,58 +342,41 @@ tbody td:last-child { text-align: right; }
 <div class="page-wrap">
 
   <div class="page-header">
-    <h1 class="page-title">Alerts</h1>
-    <span class="page-count" id="exCount">15 items</span>
+    <h1 class="page-title">Pipeline</h1>
+    <span class="page-subtitle" id="pipeline-subtitle">— loans in flight</span>
+    <div class="header-spacer"></div>
+    <div class="date-filter">
+      <button class="date-btn active" onclick="setDate(this)">All</button>
+      <button class="date-btn" onclick="setDate(this)">Daily</button>
+      <button class="date-btn" onclick="setDate(this)">Weekly</button>
+      <button class="date-btn" onclick="setDate(this)">Monthly</button>
+    </div>
   </div>
 
-  <!-- Filter bar -->
-  <div class="filter-bar">
-    <label class="filter-search">
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-        <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/>
-        <path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
-      <input type="text" placeholder="Search by loan ID or reason…" id="searchInput" oninput="filterTable()">
-    </label>
-    <select class="filter-select" id="stageFilter" onchange="filterTable()">
-      <option value="">All stages</option>
-      <option>Ingest</option>
-      <option>Classify</option>
-      <option>QC Check</option>
-      <option>Code Map</option>
-      <option>Report Gen</option>
-      <option>UW Report</option>
-    </select>
-    <select class="filter-select" id="causeFilter" onchange="filterTable()">
-      <option value="">All root causes</option>
-      <option>Missing file</option>
-      <option>LLM parse error</option>
-      <option>API timeout</option>
-      <option>Schema error</option>
-      <option>OCR failure</option>
-    </select>
-    <button class="requeue-all-btn">↻ Re-queue all (15)</button>
+  <div class="summary-strip">
+    <div class="summary-tile">
+      <span class="summary-tile-label">In Flight</span>
+      <span class="summary-tile-value" id="t-inflight">—</span>
+      <span class="summary-tile-sub">across all stages</span>
+    </div>
+    <div class="summary-tile">
+      <span class="summary-tile-label">Blocked</span>
+      <span class="summary-tile-value" id="t-blocked">—</span>
+      <span class="summary-tile-sub">awaiting reviewer / overdue</span>
+    </div>
+    <div class="summary-tile">
+      <span class="summary-tile-label">Failed</span>
+      <span class="summary-tile-value" id="t-failed">—</span>
+      <span class="summary-tile-sub">ingest / classify errors</span>
+    </div>
+    <div class="summary-tile">
+      <span class="summary-tile-label">End-to-End Avg</span>
+      <span class="summary-tile-value" id="t-avg">—</span>
+      <span class="summary-tile-sub">sum of stage averages</span>
+    </div>
   </div>
 
-  <!-- Table -->
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Loan ID</th>
-          <th>Stage</th>
-          <th>Root Cause</th>
-          <th>Detail</th>
-          <th>In Queue</th>
-          <th>Since</th>
-          <th style="text-align:center">Retries</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody id="exTable"></tbody>
-    </table>
-  </div>
-
+  <div class="kanban" id="kanban"></div>
 </div>
 
 <!-- LOAN DRAWER -->
@@ -412,75 +400,146 @@ tbody td:last-child { text-align: right; }
 
 <!-- V1 / V2 switcher -->
 <div style="position:fixed;bottom:20px;right:20px;background:var(--color-white);border:1px solid var(--border-color);border-radius:20px;padding:4px;display:flex;gap:4px;box-shadow:var(--shadow-md);z-index:9999;">
-  <a href="exceptions.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-white);background:var(--color-neutral-900);">V1</a>
-  <a href="exceptions-v2.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-neutral-500);">V2</a>
+  <a href="pipeline.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-white);background:var(--color-neutral-900);">V1</a>
+  <a href="dashboard-v2.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-neutral-500);">V2</a>
 </div>
 
 <script>
-const STAGE_COLORS = {
-  'Ingest':      'var(--stage-ingest)',
-  'Classify':    'var(--stage-classify)',
-  'QC Check':    'var(--stage-qc-check)',
-  'Code Map':    'var(--stage-code-map)',
-  'Report Gen':  'var(--stage-report-gen)',
-  'UW Report':   'var(--stage-uw-report)',
-};
-const STAGE_KEYS = {
-  'Ingest':'ingest','Classify':'classify','QC Check':'qc-check',
-  'Code Map':'code-map','Report Gen':'report-gen','UW Report':'uw-report'
-};
+const STAGE_AVG_SEC = { ingest: 28, classify: 62, 'qc-check': 164, 'code-map': 91, 'report-gen': 68, 'uw-report': 110 };
 const STAGE_LABELS = { ingest:'Ingest', classify:'Classify', 'qc-check':'QC Check', 'code-map':'Code Map', 'report-gen':'Report Gen', 'uw-report':'UW Report' };
 const STAGE_ORDER = ['ingest','classify','qc-check','code-map','report-gen','uw-report'];
-const STAGE_AVG_SEC = { ingest: 28, classify: 62, 'qc-check': 164, 'code-map': 91, 'report-gen': 68, 'uw-report': 110 };
 
-const EXCEPTIONS = [
-  { id:'LN-000089', stage:'Ingest',     cause:'Missing file',    causeClass:'missing', detail:'SSR FNM file not found in batch folder',             queue:'3h 51m', since:'Apr 30, 5:55 AM',  retries:2 },
-  { id:'LN-000121', stage:'Ingest',     cause:'Missing file',    causeClass:'missing', detail:'Appraisal PDF absent from intake directory',          queue:'2h 14m', since:'Apr 30, 7:32 AM',  retries:0 },
-  { id:'LN-000122', stage:'Classify',   cause:'LLM parse error', causeClass:'parse',   detail:'Model response did not match expected JSON schema',   queue:'2h 13m', since:'Apr 30, 7:33 AM',  retries:1 },
-  { id:'LN-000134', stage:'QC Check',   cause:'API timeout',     causeClass:'timeout', detail:'Checklist scoring API exceeded 30 s threshold',       queue:'1h 58m', since:'Apr 30, 7:48 AM',  retries:3 },
-  { id:'LN-000140', stage:'Code Map',   cause:'Schema error',    causeClass:'schema',  detail:'Property type field missing from mapped output',      queue:'1h 44m', since:'Apr 30, 8:02 AM',  retries:0 },
-  { id:'LN-000153', stage:'Report Gen', cause:'LLM parse error', causeClass:'parse',   detail:'Token limit exceeded during UW narrative generation', queue:'1h 31m', since:'Apr 30, 8:15 AM',  retries:1 },
-  { id:'LN-000160', stage:'UW Report',  cause:'Missing file',    causeClass:'missing', detail:'Comparable sales XML not attached to batch',           queue:'1h 22m', since:'Apr 30, 8:24 AM',  retries:0 },
-  { id:'LN-000171', stage:'Classify',   cause:'OCR failure',     causeClass:'missing', detail:'Appraisal scan confidence below 72% threshold',       queue:'1h 09m', since:'Apr 30, 8:37 AM',  retries:2 },
-  { id:'LN-000183', stage:'QC Check',   cause:'API timeout',     causeClass:'timeout', detail:'Rate limit hit on external property data service',    queue:'58m',    since:'Apr 30, 8:48 AM',  retries:1 },
-  { id:'LN-000195', stage:'Ingest',     cause:'Schema error',    causeClass:'schema',  detail:'Loan number format does not match LN-XXXXXX pattern', queue:'47m',    since:'Apr 30, 8:59 AM',  retries:0 },
-  { id:'LN-000201', stage:'Code Map',   cause:'LLM parse error', causeClass:'parse',   detail:'Output contained unescaped JSON control characters',  queue:'38m',    since:'Apr 30, 9:08 AM',  retries:1 },
-  { id:'LN-000214', stage:'Report Gen', cause:'API timeout',     causeClass:'timeout', detail:'Report generation service cold-start exceeded limit', queue:'29m',    since:'Apr 30, 9:17 AM',  retries:0 },
-  { id:'LN-000228', stage:'QC Check',   cause:'Missing file',    causeClass:'missing', detail:'Borrower income verification document not found',     queue:'21m',    since:'Apr 30, 9:25 AM',  retries:0 },
-  { id:'LN-000239', stage:'UW Report',  cause:'Schema error',    causeClass:'schema',  detail:'DTI ratio field returned as string, expected float',  queue:'14m',    since:'Apr 30, 9:32 AM',  retries:0 },
-  { id:'LN-000247', stage:'Classify',   cause:'OCR failure',     causeClass:'missing', detail:'Signature page illegible — rescan requested',         queue:'6m',     since:'Apr 30, 9:40 AM',  retries:0 },
-];
+/* Same generator pattern as dashboard.html so loan IDs/states match */
+const LOANS = (() => {
+  const inFlight = { ingest:8, classify:14, 'qc-check':12, 'code-map':10, 'report-gen':9, 'uw-report':7 };
+  const out = [];
+  out.push({ id:'LN-000121', status:'failed', stage:'uw-report', timeTakenSec: 0, avgSec: 110 });
+  out.push({ id:'LN-000122', status:'failed', stage:'code-map', timeTakenSec: 0, avgSec: 91 });
+  let id = 200;
+  STAGE_ORDER.forEach(stage => {
+    const n = inFlight[stage];
+    const avg = STAGE_AVG_SEC[stage];
+    for (let i = 0; i < n; i++) {
+      const isBlocked = i % 9 === 0;
+      const takenPct = isBlocked ? 1.05 : 0.2 + (i / Math.max(1, n - 1)) * 0.75;
+      out.push({
+        id: `LN-${String(id++).padStart(6,'0')}`,
+        status: isBlocked ? 'blocked' : 'in-progress',
+        stage, avgSec: avg, timeTakenSec: Math.round(avg * takenPct)
+      });
+    }
+  });
+  return out;
+})();
 
-function renderTable(data) {
-  const tbody = document.getElementById('exTable');
-  tbody.innerHTML = data.map(ex => `
-    <tr onclick="openDrawer('${ex.id}')">
-      <td class="td-loan-id">${ex.id}</td>
-      <td><span class="stage-pill" style="background:${STAGE_COLORS[ex.stage]}">${ex.stage}</span></td>
-      <td><span class="root-cause-tag ${ex.causeClass}">${ex.cause}</span></td>
-      <td class="td-reason">${ex.detail}</td>
-      <td class="td-duration">${ex.queue}</td>
-      <td class="td-since">${ex.since}</td>
-      <td class="td-retries">${ex.retries}</td>
-      <td><button class="retry-btn" onclick="event.stopPropagation()">↻ Retry</button></td>
-    </tr>
-  `).join('');
-  document.getElementById('exCount').textContent = data.length + ' item' + (data.length !== 1 ? 's' : '');
+function fmtMMSS(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${String(s).padStart(2,'0')}`;
+}
+function fmtMMSSh(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}m ${String(s).padStart(2,'0')}s`;
 }
 
-function filterTable() {
-  const q     = document.getElementById('searchInput').value.toLowerCase();
-  const stage = document.getElementById('stageFilter').value;
-  const cause = document.getElementById('causeFilter').value;
-  const filtered = EXCEPTIONS.filter(ex =>
-    (!q     || ex.id.toLowerCase().includes(q) || ex.detail.toLowerCase().includes(q)) &&
-    (!stage || ex.stage === stage) &&
-    (!cause || ex.cause === cause)
-  );
-  renderTable(filtered);
+function renderSummary() {
+  const inFlight = LOANS.filter(l => l.status === 'in-progress' || l.status === 'blocked').length;
+  const blocked = LOANS.filter(l => l.status === 'blocked').length;
+  const failed = LOANS.filter(l => l.status === 'failed').length;
+  const avg = STAGE_ORDER.reduce((s, k) => s + STAGE_AVG_SEC[k], 0);
+  document.getElementById('t-inflight').textContent = inFlight;
+  document.getElementById('t-blocked').textContent = blocked;
+  document.getElementById('t-failed').textContent = failed;
+  document.getElementById('t-avg').textContent = fmtMMSSh(avg);
+  document.getElementById('pipeline-subtitle').textContent = `${inFlight} loans in flight · ${failed} failed`;
 }
 
-renderTable(EXCEPTIONS);
+function renderKanban() {
+  const root = document.getElementById('kanban');
+  const byStage = {};
+  STAGE_ORDER.forEach(s => byStage[s] = []);
+  LOANS.forEach(l => {
+    if (l.stage && byStage[l.stage]) byStage[l.stage].push(l);
+  });
+
+  // Each column shows: in-progress (sorted by progress desc) + blocked (top) + failed (top)
+  root.innerHTML = STAGE_ORDER.map(stage => {
+    const loans = byStage[stage] || [];
+    const failed = loans.filter(l => l.status === 'failed');
+    const blocked = loans.filter(l => l.status === 'blocked');
+    const running = loans.filter(l => l.status === 'in-progress')
+      .sort((a, b) => (b.timeTakenSec / b.avgSec) - (a.timeTakenSec / a.avgSec));
+    const ordered = [...failed, ...blocked, ...running];
+    const total = ordered.length;
+    const dotClass = blocked.length || failed.length ? 'is-blocked' : 'is-running';
+    const dotColor = blocked.length || failed.length
+      ? 'var(--color-warning-500)'
+      : 'var(--color-success-500)';
+
+    const cards = ordered.length === 0
+      ? `<div class="col-empty">No loans in this stage</div>`
+      : ordered.map(l => loanCardHTML(l)).join('');
+
+    return `
+      <div class="col">
+        <div class="col-head">
+          <div class="col-title-row">
+            <span class="col-dot" style="background:${dotColor}"></span>
+            <span class="col-title">${STAGE_LABELS[stage]}</span>
+            <span class="col-count">${total}</span>
+          </div>
+          <div class="col-meta">
+            <span class="col-meta-label">Avg latency</span>
+            <span class="col-meta-value">${fmtMMSS(STAGE_AVG_SEC[stage])}</span>
+          </div>
+        </div>
+        <div class="col-body">${cards}</div>
+      </div>`;
+  }).join('');
+
+  root.addEventListener('click', (e) => {
+    const card = e.target.closest('.loan-card');
+    if (!card || !card.dataset.loanId) return;
+    openDrawer(card.dataset.loanId);
+  });
+}
+
+function loanCardHTML(l) {
+  const cls = l.status === 'failed' ? 'is-failed' : l.status === 'blocked' ? 'is-blocked' : '';
+  const pill = l.status === 'failed'
+    ? '<span class="loan-card-pill failed">Failed</span>'
+    : l.status === 'blocked'
+      ? '<span class="loan-card-pill blocked">Blocked</span>'
+      : '';
+  const pct = l.status === 'failed'
+    ? 100
+    : Math.min(100, Math.round((l.timeTakenSec / l.avgSec) * 100));
+  const fillCls = l.status === 'blocked' || l.status === 'failed' ? 'blocked' : '';
+  const elapsed = `${fmtMMSS(l.timeTakenSec)} / ${fmtMMSS(l.avgSec)}`;
+  return `
+    <div class="loan-card ${cls}" data-loan-id="${l.id}">
+      <div class="loan-card-top">
+        <span class="loan-card-id">${l.id}</span>
+        ${pill}
+      </div>
+      <div class="loan-card-progress">
+        <div class="loan-card-progress-fill ${fillCls}" style="width:${pct}%"></div>
+      </div>
+      <div class="loan-card-time">
+        <span>${elapsed}</span>
+        <span>${pct}%</span>
+      </div>
+    </div>`;
+}
+
+function setDate(btn) {
+  btn.parentElement.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+renderSummary();
+renderKanban();
 
 /* ── DRAWER (V1 — same shape as dashboard.html) ── */
 const ICON_CHECK_DWR = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
@@ -491,36 +550,44 @@ const FILE_SVG_DWR = `<svg viewBox="0 0 48 60" fill="none">
   <path d="M32 0v6a4 4 0 0 0 4 4h6" stroke="#e5e7eb" stroke-width="1.2" fill="#f9fafb"/>
 </svg>`;
 
-function fmtMMSSdash(sec) {
-  const m = Math.floor(sec / 60);
-  const s = sec % 60;
-  return `${m}:${String(s).padStart(2,'0')}`;
-}
-
 function buildSteps(loan) {
   const ts = '9:41 AM';
   const out = STAGE_ORDER.map(s => ({
     stage: s, name: STAGE_LABELS[s], status: 'todo', sub: 'Waiting', time: '', dur: ''
   }));
   if (loan.status === 'completed') {
-    out.forEach(st => { st.status = 'done'; st.sub = 'Completed'; st.time = ts; st.dur = fmtMMSSdash(STAGE_AVG_SEC[st.stage]); });
+    out.forEach(st => { st.status = 'done'; st.sub = 'Completed'; st.time = ts; st.dur = fmtMMSS(STAGE_AVG_SEC[st.stage]); });
   } else if (loan.status === 'failed') {
     const idx = STAGE_ORDER.indexOf(loan.stage);
     if (idx >= 0) {
       for (let i = 0; i < idx; i++) {
         out[i].status = 'done'; out[i].sub = 'Completed'; out[i].time = ts;
-        out[i].dur = fmtMMSSdash(STAGE_AVG_SEC[out[i].stage]);
+        out[i].dur = fmtMMSS(STAGE_AVG_SEC[out[i].stage]);
       }
       out[idx].status = 'error';
       out[idx].sub = 'Failed — see Alerts';
       out[idx].time = ts;
+    }
+  } else {
+    const idx = STAGE_ORDER.indexOf(loan.stage);
+    if (idx >= 0) {
+      for (let i = 0; i < idx; i++) {
+        out[i].status = 'done'; out[i].sub = 'Completed'; out[i].time = ts;
+        out[i].dur = fmtMMSS(STAGE_AVG_SEC[out[i].stage]);
+      }
+      const isBlocked = loan.status === 'blocked';
+      out[idx].status = isBlocked ? 'error' : 'running';
+      out[idx].time = ts;
+      out[idx].sub = isBlocked
+        ? 'Blocked — overdue'
+        : `Running · ${fmtMMSS(loan.timeTakenSec || 0)} / ${fmtMMSS(loan.avgSec || STAGE_AVG_SEC[loan.stage])}`;
     }
   }
   return out;
 }
 
 function stepHTMLDwr(s) {
-  const icons = { done: ICON_CHECK_DWR, running: ICON_SPIN_DWR, todo: '', error: ICON_X_DWR, skipped: '' };
+  const icons = { done: ICON_CHECK_DWR, running: ICON_SPIN_DWR, todo: '', error: ICON_X_DWR };
   const durPill = (s.dur && s.status === 'done') ? `<div class="step-dur-pill">${s.dur}</div>` : '';
   const subClass = s.status === 'running' ? 'running' : s.status === 'error' ? 'error' : '';
   return `
@@ -557,33 +624,42 @@ function fileCardHTML(f) {
 }
 
 function openDrawer(loanId) {
-  const ex = EXCEPTIONS.find(e => e.id === loanId);
-  if (!ex) return;
-  const stageKey = STAGE_KEYS[ex.stage];
-  const loan = { id: ex.id, status: 'failed', stage: stageKey };
-
+  const loan = LOANS.find(l => l.id === loanId);
+  if (!loan) return;
   const idShort = loan.id.replace('LN-000', 'LN');
   const traceId = `${idShort}—${Date.now().toString().slice(-10)}`;
 
   document.getElementById('drawerLoanId').textContent = idShort;
   document.getElementById('drawerSubId').textContent = traceId;
-  document.getElementById('drawerDate').textContent = ex.since;
+  document.getElementById('drawerDate').textContent = 'Apr 30, 9:41 AM';
   const statusEl = document.getElementById('drawerStatus');
   statusEl.className = 'drawer-status ' + loan.status;
-  statusEl.textContent = 'Failed';
+  statusEl.textContent = loan.status === 'in-progress' ? 'In Progress'
+                       : loan.status.charAt(0).toUpperCase() + loan.status.slice(1);
 
   const sourceFiles = [
-    { type: 'pdf',  name: `${idShort}_appraisal.pdf`,    meta: '4.2 MB · ' + ex.since },
-    { type: 'ssr',  name: `${idShort}_ssr_response.json`, meta: '186 KB · ' + ex.since },
-    { type: 'xml',  name: `${idShort}_uad.xml`,           meta: '92 KB · ' + ex.since },
+    { type: 'pdf',  name: `${idShort}_appraisal.pdf`,    meta: '4.2 MB · Apr 30, 9:41 AM' },
+    { type: 'ssr',  name: `${idShort}_ssr_response.json`, meta: '186 KB · Apr 30, 9:41 AM' },
+    { type: 'xml',  name: `${idShort}_uad.xml`,           meta: '92 KB · Apr 30, 9:41 AM' },
   ];
+  const outputFiles = loan.status === 'completed' ? [
+    { type: 'qc', name: 'QC Report',         meta: 'Generated Apr 30', flags: 5 },
+    { type: 'uw', name: 'Underwriter Packet', meta: `${idShort}_uw_packet.pdf` },
+  ] : [];
 
   const steps = buildSteps(loan);
   const stepsHTML = steps.map(stepHTMLDwr).join('');
   const stepsDoneCount = steps.filter(s => s.status === 'done').length;
 
-  // Failed loans: no QC Report → Pipeline State on top, Input Report at bottom.
-  let body = `
+  let body = '';
+  if (outputFiles.length) {
+    body += `
+      <section class="output-section">
+        <div class="drawer-section-title">QC Report <span class="drawer-section-meta">${outputFiles.length} files</span></div>
+        <div class="file-grid cols-2">${outputFiles.map(fileCardHTML).join('')}</div>
+      </section>`;
+  }
+  body += `
     <div class="pipeline-card">
       <div class="pipeline-card-header">
         <span class="pipeline-card-title">Pipeline Steps</span>

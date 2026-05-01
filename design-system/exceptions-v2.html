@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QC Appraisal — Alerts</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="components.css">
+<style>
+html, body { height: 100%; }
+body {
+  background: var(--surface-page);
+  min-width: 1024px;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  color: var(--color-neutral-900);
+  font-family: var(--font-family-base);
+}
+
+/* ── SIDE NAV (shared) ── */
+.sidenav {
+  width: 216px; flex-shrink: 0; height: 100%;
+  background: var(--color-white);
+  border-right: 1px solid var(--border-color);
+  display: flex; flex-direction: column;
+  padding: var(--space-5) var(--space-3);
+  z-index: var(--z-sticky);
+  overflow: hidden;
+  transition: width 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.sidenav.is-collapsed { width: 52px; }
+.sidenav.is-collapsed .sidenav-header { justify-content: center; }
+.sidenav.is-collapsed .sidenav-logo { display: none; }
+.sidenav.is-collapsed .sidenav-collapse-btn { margin: 0; width: 26px; height: 26px; }
+.sidenav.is-collapsed .sidenav-collapse-btn .toggle-icon { transform: scaleX(-1); }
+.sidenav.is-collapsed .sidenav-item > span { display: none; }
+.sidenav.is-collapsed .sidenav-item { justify-content: center; padding: 9px 0; }
+.sidenav.is-collapsed .sidenav-footer { justify-content: center; }
+.sidenav.is-collapsed .sidenav-footer > div:last-child { display: none; }
+
+.sidenav-header {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-5);
+}
+.sidenav-collapse-btn {
+  width: 22px; height: 22px; flex-shrink: 0; margin-left: auto;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border-color); border-radius: var(--border-radius-sm);
+  background: transparent; color: var(--color-neutral-400); cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+.sidenav-collapse-btn:hover { background: var(--color-neutral-50); color: var(--color-neutral-700); border-color: var(--color-neutral-300); }
+.sidenav-collapse-btn .toggle-icon { transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1); }
+.sidenav-logo {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-5);
+  text-decoration: none;
+}
+.sidenav-logo-icon {
+  width: 26px; height: 26px; border-radius: var(--border-radius-md);
+  background: var(--color-neutral-900);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sidenav-logo-name { font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+.sidenav-section-label {
+  font-size: 10px; font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-400); text-transform: uppercase;
+  letter-spacing: 0.07em; padding: 0 var(--space-3); margin-bottom: var(--space-2);
+}
+.sidenav-items { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.sidenav-item {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: 9px var(--space-3); border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm); font-weight: var(--font-weight-medium);
+  color: var(--color-neutral-600); text-decoration: none;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+.sidenav-item svg { flex-shrink: 0; color: var(--color-neutral-400); transition: color var(--transition-fast); }
+.sidenav-item:hover { background: var(--color-neutral-50); color: var(--color-neutral-900); }
+.sidenav-item:hover svg { color: var(--color-neutral-600); }
+.sidenav-item.active { background: var(--color-brand-50); color: var(--color-brand-700); font-weight: var(--font-weight-semibold); }
+.sidenav-item.active svg { color: var(--color-brand-600); }
+.sidenav-footer {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3); border-top: 1px solid var(--border-color); margin-top: var(--space-4);
+}
+.sidenav-user-avatar {
+  width: 30px; height: 30px; border-radius: var(--border-radius-pill);
+  background: var(--color-brand-100);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: var(--font-weight-semibold);
+  color: var(--color-brand-600); border: 1px solid var(--border-color); flex-shrink: 0;
+}
+.sidenav-user-name { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-700); }
+.sidenav-user-role { font-size: 11px; color: var(--color-neutral-400); }
+
+/* ── PAGE ── */
+.page-wrap {
+  flex: 1; overflow-y: auto;
+  padding: var(--space-6) var(--space-7) var(--space-8);
+  display: flex; flex-direction: column; gap: var(--space-6);
+  min-height: 0;
+}
+.page-header { display: flex; align-items: baseline; gap: var(--space-4); }
+.page-title {
+  font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em; line-height: 1.1; color: var(--color-neutral-900); margin: 0;
+}
+.page-count {
+  font-size: var(--font-size-sm); font-weight: var(--font-weight-medium);
+  color: var(--color-neutral-400);
+}
+
+/* ── FILTER BAR ── */
+.filter-bar { display: flex; align-items: center; gap: var(--space-3); }
+.filter-search {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px var(--space-3);
+  border: 1px solid var(--border-color); border-radius: var(--border-radius-md);
+  background: var(--color-white); flex: 1;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.filter-search:focus-within { border-color: var(--color-brand-400); box-shadow: 0 0 0 3px var(--color-brand-100); }
+.filter-search svg { color: var(--color-neutral-400); flex-shrink: 0; }
+.filter-search input { flex: 1; border: none; outline: none; background: transparent; font-size: var(--font-size-sm); font-family: var(--font-family-base); color: var(--color-neutral-900); }
+.filter-search input::placeholder { color: var(--color-neutral-400); }
+.filter-select {
+  padding: 7px var(--space-3); border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md); background: var(--color-white);
+  font-size: var(--font-size-sm); font-family: var(--font-family-base);
+  color: var(--color-neutral-700); cursor: pointer; appearance: none;
+  padding-right: var(--space-7); background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239ca3af' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center;
+}
+.filter-spacer { flex: 1; }
+.requeue-all-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px var(--space-4); border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-brand-600); background: var(--color-brand-600);
+  font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold);
+  color: var(--color-white); cursor: pointer;
+  transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.requeue-all-btn:hover { background: var(--color-brand-700); box-shadow: 0 4px 12px rgba(79,70,229,.25); }
+
+/* ── TABLE ── */
+.table-wrap {
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-xl);
+  overflow: hidden;
+}
+table { width: 100%; border-collapse: collapse; }
+thead { background: var(--color-neutral-50); border-bottom: 1px solid var(--border-color); }
+thead th {
+  padding: var(--space-3) var(--space-4);
+  text-align: left; font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-500);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+thead th:last-child { text-align: right; }
+tbody tr {
+  border-bottom: 1px solid var(--color-neutral-100);
+  transition: background-color var(--transition-fast);
+  cursor: pointer;
+}
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--color-neutral-50); }
+tbody td {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-sm);
+  vertical-align: middle;
+}
+tbody td:last-child { text-align: right; }
+
+.td-loan-id { font-family: var(--font-family-mono); font-size: 12px; font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); white-space: nowrap; }
+.stage-pill {
+  display: inline-flex; align-items: center;
+  padding: 2px 8px; border-radius: var(--border-radius-sm);
+  font-size: 10px; font-weight: var(--font-weight-semibold);
+  color: var(--color-white); white-space: nowrap;
+}
+.root-cause-tag {
+  display: inline-flex; align-items: center;
+  padding: 2px 8px; border-radius: var(--border-radius-pill);
+  font-size: 11px; font-weight: var(--font-weight-medium);
+  background: var(--color-neutral-100); color: var(--color-neutral-700);
+  white-space: nowrap;
+}
+.root-cause-tag.timeout { background: var(--color-warning-100); color: var(--color-warning-700); }
+.root-cause-tag.missing { background: var(--color-danger-100); color: var(--color-danger-700); }
+.root-cause-tag.parse { background: var(--color-info-100); color: var(--color-info-700); }
+.root-cause-tag.schema { background: var(--color-brand-100); color: var(--color-brand-700); }
+.td-reason { color: var(--color-neutral-600); max-width: 260px; }
+.td-duration { font-variant-numeric: tabular-nums; color: var(--color-neutral-700); font-weight: var(--font-weight-medium); white-space: nowrap; }
+.td-since { font-size: 12px; color: var(--color-neutral-400); white-space: nowrap; }
+.td-retries { font-variant-numeric: tabular-nums; color: var(--color-neutral-500); text-align: center; }
+.retry-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-danger-200);
+  background: var(--color-white); color: var(--color-danger-600);
+  font-size: 12px; font-weight: var(--font-weight-medium);
+  font-family: var(--font-family-base); cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+.retry-btn:hover { background: var(--color-danger-50); border-color: var(--color-danger-300); }
+
+/* ── SUMMARY CHIPS ── */
+.summary-row { display: flex; gap: var(--space-3); }
+.summary-chip {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  min-width: 120px;
+}
+.summary-chip-label { font-size: 10px; font-weight: var(--font-weight-semibold); color: var(--color-neutral-500); text-transform: uppercase; letter-spacing: 0.06em; }
+.summary-chip-value { font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); letter-spacing: -0.02em; color: var(--color-neutral-900); line-height: 1; }
+.summary-chip-value.danger { color: var(--color-danger-600); }
+.summary-chip-sub { font-size: 11px; color: var(--color-neutral-500); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ── SIDE NAV ── -->
+<nav class="sidenav is-collapsed" aria-label="Main">
+  <div class="sidenav-header">
+    <a class="sidenav-logo" href="dashboard-v2.html">
+      <div class="sidenav-logo-icon">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <path d="M8 1.5L2.5 3.5V8c0 3.04 2.4 5.87 5.5 6.5 3.1-.63 5.5-3.46 5.5-6.5V3.5L8 1.5Z" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/>
+          <path d="M5.5 8L7 9.5L10.5 6" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="sidenav-logo-name">QC Appraisal</span>
+    </a>
+    <button class="sidenav-collapse-btn" onclick="toggleNav()" title="Collapse sidebar">
+      <svg class="toggle-icon" width="13" height="13" viewBox="0 0 16 16" fill="none">
+        <path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+  <div class="sidenav-items">
+    <a class="sidenav-item" href="dashboard-v2.html" title="Observability">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+        <rect x="1.5" y="1.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/>
+        <rect x="9.5" y="1.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/>
+        <rect x="1.5" y="9.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/>
+        <rect x="9.5" y="9.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/>
+      </svg>
+      <span>Observability</span>
+    </a>
+    <a class="sidenav-item active" href="exceptions-v2.html" title="Exceptions">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+        <path d="M8 2v5l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.4"/>
+      </svg>
+      <span>Alerts</span>
+    </a>
+    <a class="sidenav-item" href="reports-v2.html" title="Reports">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+        <rect x="2.5" y="1.5" width="11" height="13" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M5 5.5h6M5 8h6M5 10.5h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+      <span>Reports</span>
+    </a>
+  </div>
+
+  <div class="sidenav-footer">
+    <div class="sidenav-user-avatar">SU</div>
+    <div>
+      <div class="sidenav-user-name">Sue</div>
+      <div class="sidenav-user-role">QC Evaluator</div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── PAGE ── -->
+<div class="page-wrap">
+
+  <div class="page-header">
+    <h1 class="page-title">Alerts</h1>
+    <span class="page-count" id="exCount">15 items</span>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <label class="filter-search">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+        <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <input type="text" placeholder="Search by loan ID or reason…" id="searchInput" oninput="filterTable()">
+    </label>
+    <select class="filter-select" id="stageFilter" onchange="filterTable()">
+      <option value="">All stages</option>
+      <option>Ingest</option>
+      <option>Classify</option>
+      <option>QC Check</option>
+      <option>Code Map</option>
+      <option>Report Gen</option>
+      <option>UW Report</option>
+    </select>
+    <select class="filter-select" id="causeFilter" onchange="filterTable()">
+      <option value="">All root causes</option>
+      <option>Missing file</option>
+      <option>LLM parse error</option>
+      <option>API timeout</option>
+      <option>Schema error</option>
+      <option>OCR failure</option>
+    </select>
+    <button class="requeue-all-btn">↻ Re-queue all (15)</button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Loan ID</th>
+          <th>Stage</th>
+          <th>Root Cause</th>
+          <th>Detail</th>
+          <th>In Queue</th>
+          <th>Since</th>
+          <th style="text-align:center">Retries</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="exTable"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+const STAGE_COLORS = {
+  'Ingest':      'var(--stage-ingest)',
+  'Classify':    'var(--stage-classify)',
+  'QC Check':    'var(--stage-qc-check)',
+  'Code Map':    'var(--stage-code-map)',
+  'Report Gen':  'var(--stage-report-gen)',
+  'UW Report':   'var(--stage-uw-report)',
+};
+
+const EXCEPTIONS = [
+  { id:'LN-000089', stage:'Ingest',     cause:'Missing file',    causeClass:'missing', detail:'SSR FNM file not found in batch folder',             queue:'3h 51m', since:'Apr 30, 5:55 AM',  retries:2 },
+  { id:'LN-000121', stage:'Ingest',     cause:'Missing file',    causeClass:'missing', detail:'Appraisal PDF absent from intake directory',          queue:'2h 14m', since:'Apr 30, 7:32 AM',  retries:0 },
+  { id:'LN-000122', stage:'Classify',   cause:'LLM parse error', causeClass:'parse',   detail:'Model response did not match expected JSON schema',   queue:'2h 13m', since:'Apr 30, 7:33 AM',  retries:1 },
+  { id:'LN-000134', stage:'QC Check',   cause:'API timeout',     causeClass:'timeout', detail:'Checklist scoring API exceeded 30 s threshold',       queue:'1h 58m', since:'Apr 30, 7:48 AM',  retries:3 },
+  { id:'LN-000140', stage:'Code Map',   cause:'Schema error',    causeClass:'schema',  detail:'Property type field missing from mapped output',      queue:'1h 44m', since:'Apr 30, 8:02 AM',  retries:0 },
+  { id:'LN-000153', stage:'Report Gen', cause:'LLM parse error', causeClass:'parse',   detail:'Token limit exceeded during UW narrative generation', queue:'1h 31m', since:'Apr 30, 8:15 AM',  retries:1 },
+  { id:'LN-000160', stage:'UW Report',  cause:'Missing file',    causeClass:'missing', detail:'Comparable sales XML not attached to batch',           queue:'1h 22m', since:'Apr 30, 8:24 AM',  retries:0 },
+  { id:'LN-000171', stage:'Classify',   cause:'OCR failure',     causeClass:'missing', detail:'Appraisal scan confidence below 72% threshold',       queue:'1h 09m', since:'Apr 30, 8:37 AM',  retries:2 },
+  { id:'LN-000183', stage:'QC Check',   cause:'API timeout',     causeClass:'timeout', detail:'Rate limit hit on external property data service',    queue:'58m',    since:'Apr 30, 8:48 AM',  retries:1 },
+  { id:'LN-000195', stage:'Ingest',     cause:'Schema error',    causeClass:'schema',  detail:'Loan number format does not match LN-XXXXXX pattern', queue:'47m',    since:'Apr 30, 8:59 AM',  retries:0 },
+  { id:'LN-000201', stage:'Code Map',   cause:'LLM parse error', causeClass:'parse',   detail:'Output contained unescaped JSON control characters',  queue:'38m',    since:'Apr 30, 9:08 AM',  retries:1 },
+  { id:'LN-000214', stage:'Report Gen', cause:'API timeout',     causeClass:'timeout', detail:'Report generation service cold-start exceeded limit', queue:'29m',    since:'Apr 30, 9:17 AM',  retries:0 },
+  { id:'LN-000228', stage:'QC Check',   cause:'Missing file',    causeClass:'missing', detail:'Borrower income verification document not found',     queue:'21m',    since:'Apr 30, 9:25 AM',  retries:0 },
+  { id:'LN-000239', stage:'UW Report',  cause:'Schema error',    causeClass:'schema',  detail:'DTI ratio field returned as string, expected float',  queue:'14m',    since:'Apr 30, 9:32 AM',  retries:0 },
+  { id:'LN-000247', stage:'Classify',   cause:'OCR failure',     causeClass:'missing', detail:'Signature page illegible — rescan requested',         queue:'6m',     since:'Apr 30, 9:40 AM',  retries:0 },
+];
+
+function renderTable(data) {
+  const tbody = document.getElementById('exTable');
+  tbody.innerHTML = data.map(ex => `
+    <tr style="cursor:pointer;" onclick="window.location.href='loan-detail.html?id=${ex.id}'">
+      <td class="td-loan-id">${ex.id}</td>
+      <td><span class="stage-pill" style="background:${STAGE_COLORS[ex.stage]}">${ex.stage}</span></td>
+      <td><span class="root-cause-tag ${ex.causeClass}">${ex.cause}</span></td>
+      <td class="td-reason">${ex.detail}</td>
+      <td class="td-duration">${ex.queue}</td>
+      <td class="td-since">${ex.since}</td>
+      <td class="td-retries">${ex.retries}</td>
+      <td><button class="retry-btn" onclick="event.stopPropagation()">↻ Retry</button></td>
+    </tr>
+  `).join('');
+  document.getElementById('exCount').textContent = data.length + ' item' + (data.length !== 1 ? 's' : '');
+}
+
+function filterTable() {
+  const q     = document.getElementById('searchInput').value.toLowerCase();
+  const stage = document.getElementById('stageFilter').value;
+  const cause = document.getElementById('causeFilter').value;
+  const filtered = EXCEPTIONS.filter(ex =>
+    (!q     || ex.id.toLowerCase().includes(q) || ex.detail.toLowerCase().includes(q)) &&
+    (!stage || ex.stage === stage) &&
+    (!cause || ex.cause === cause)
+  );
+  renderTable(filtered);
+}
+
+renderTable(EXCEPTIONS);
+
+function toggleNav() {
+  const nav = document.querySelector('.sidenav');
+  nav.classList.toggle('is-collapsed');
+  try { localStorage.setItem('navCollapsed', nav.classList.contains('is-collapsed')); } catch(e){}
+}
+(function() {
+  try {
+    const pref = localStorage.getItem('navCollapsed');
+    const nav = document.querySelector('.sidenav');
+    if (pref === 'false') nav.classList.remove('is-collapsed');
+    else nav.classList.add('is-collapsed');
+  } catch(e){}
+})();
+</script>
+
+<!-- V1 / V2 switcher -->
+<div style="position:fixed;bottom:20px;right:20px;background:var(--color-white);border:1px solid var(--border-color);border-radius:20px;padding:4px;display:flex;gap:4px;box-shadow:var(--shadow-md);z-index:9999;">
+  <a href="exceptions.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-neutral-500);">V1</a>
+  <a href="exceptions-v2.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-white);background:var(--color-neutral-900);">V2</a>
+</div>
+</body>
+</html>

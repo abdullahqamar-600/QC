@@ -46,15 +46,16 @@ body {
 
 /* ── DEMO BAR ── */
 .demo-bar {
-  background: var(--color-neutral-950);
+  background: var(--color-neutral-50);
+  border-bottom: 1px solid var(--border-color);
   padding: var(--space-2) var(--space-8);
   display: flex; align-items: center; gap: var(--space-2);
   flex-shrink: 0;
 }
 .demo-label { font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); color: var(--color-neutral-500); letter-spacing: var(--letter-spacing-wider); text-transform: uppercase; margin-right: var(--space-1); }
-.demo-btn { padding: 3px 12px; border-radius: var(--border-radius-pill); border: 1px solid var(--color-neutral-700); background: transparent; color: var(--color-neutral-500); font-size: var(--font-size-xs); font-family: var(--font-family-base); font-weight: var(--font-weight-medium); cursor: pointer; transition: all var(--transition-fast); }
-.demo-btn:hover { border-color: var(--color-neutral-500); color: var(--color-neutral-300); }
-.demo-btn.active { background: var(--color-neutral-700); border-color: var(--color-neutral-600); color: var(--color-white); }
+.demo-btn { padding: 3px 12px; border-radius: var(--border-radius-pill); border: 1px solid var(--border-color); background: var(--color-white); color: var(--color-neutral-600); font-size: var(--font-size-xs); font-family: var(--font-family-base); font-weight: var(--font-weight-medium); cursor: pointer; transition: all var(--transition-fast); }
+.demo-btn:hover { border-color: var(--color-neutral-400); color: var(--color-neutral-900); }
+.demo-btn.active { background: var(--color-neutral-900); border-color: var(--color-neutral-900); color: var(--color-white); }
 
 /* ── BREADCRUMB ── */
 .breadcrumb {
@@ -127,7 +128,7 @@ body {
 /* ── MAIN GRID ── */
 .detail-grid {
   display: grid;
-  grid-template-columns: 308px 1fr;
+  grid-template-columns: minmax(360px, 33%) 1fr;
   gap: var(--space-5);
   align-items: start;
 }
@@ -138,36 +139,40 @@ body {
   position: sticky; top: 0;
 }
 
-/* ── SCORE CARD ── */
-.score-card { padding: var(--space-6); }
-.score-section-label { font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); color: var(--color-neutral-500); letter-spacing: var(--letter-spacing-wider); text-transform: uppercase; margin-bottom: var(--space-5); }
-.score-main { display: flex; align-items: center; gap: var(--space-5); margin-bottom: var(--space-5); }
-.score-ring-wrap { position: relative; width: 76px; height: 76px; flex-shrink: 0; }
-.score-ring-wrap svg { width: 76px; height: 76px; transform: rotate(-90deg); }
-.score-ring-bg { fill: none; stroke: var(--color-neutral-100); stroke-width: 7; }
-.score-ring-fill { fill: none; stroke-width: 7; stroke-linecap: round; transition: stroke-dashoffset 0.8s cubic-bezier(.4,0,.2,1); }
-.score-ring-fill.green  { stroke: var(--color-success-500); }
-.score-ring-fill.yellow { stroke: var(--color-warning-500); }
-.score-ring-fill.red    { stroke: var(--color-danger-500); }
-.score-ring-fill.gray   { stroke: var(--color-neutral-200); }
-.score-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.score-number { font-size: 22px; font-weight: var(--font-weight-bold); color: var(--color-neutral-900); line-height: 1; }
-.score-denom { font-size: var(--font-size-xs); color: var(--color-neutral-400); }
-.score-number.na { font-size: var(--font-size-lg); color: var(--color-neutral-400); }
-.score-info { flex: 1; }
-.score-verdict { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); margin-bottom: 3px; }
-.score-checks { font-size: var(--font-size-sm); color: var(--color-neutral-500); margin-bottom: var(--space-2); }
-.score-conf-badge { display: inline-flex; align-items: center; gap: 4px; font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); padding: 2px 8px; border-radius: var(--border-radius-pill); }
-.score-conf-badge.high   { background: var(--color-success-100); color: var(--color-success-600); }
-.score-conf-badge.medium { background: var(--color-warning-100); color: var(--color-warning-600); }
-.score-conf-badge.na     { background: var(--color-neutral-100); color: var(--color-neutral-500); }
-.score-breakdown { border-top: 1px solid var(--border-color); padding-top: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
-.score-row { display: flex; align-items: center; gap: var(--space-3); }
-.score-row-label { font-size: var(--font-size-sm); color: var(--color-neutral-600); width: 96px; flex-shrink: 0; }
-.score-row-bar { flex: 1; height: 4px; background: var(--color-neutral-100); border-radius: var(--border-radius-pill); overflow: hidden; }
-.score-row-fill { height: 100%; border-radius: var(--border-radius-pill); background: var(--color-success-500); }
-.score-row-fill.warn { background: var(--color-warning-500); }
-.score-row-pct { font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); width: 28px; text-align: right; flex-shrink: 0; }
+/* ── SCORE CARD (modern) ── */
+.score-card { padding: var(--space-6) var(--space-6) var(--space-5); position: relative; overflow: hidden; }
+.score-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(120% 80% at 0% 0%, var(--color-success-50) 0%, transparent 55%);
+  pointer-events: none; opacity: 0.7;
+}
+.score-card.is-warn::before  { background: radial-gradient(120% 80% at 0% 0%, var(--color-warning-50) 0%, transparent 55%); }
+.score-card.is-risk::before  { background: radial-gradient(120% 80% at 0% 0%, var(--color-danger-50) 0%, transparent 55%); }
+.score-card > * { position: relative; }
+
+.score-section-label { font-size: 10px; font-weight: var(--font-weight-semibold); color: var(--color-neutral-500); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: var(--space-4); }
+
+.score-hero { display: flex; align-items: flex-end; gap: var(--space-3); margin-bottom: var(--space-2); }
+.score-hero-num { font-size: 56px; font-weight: var(--font-weight-bold); line-height: 0.9; letter-spacing: -0.03em; color: var(--color-neutral-900); font-variant-numeric: tabular-nums; }
+.score-hero-num.green  { color: var(--color-success-600); }
+.score-hero-num.yellow { color: var(--color-warning-600); }
+.score-hero-num.red    { color: var(--color-danger-600); }
+.score-hero-num.na     { font-size: 32px; color: var(--color-neutral-400); }
+.score-hero-denom { font-size: var(--font-size-base); color: var(--color-neutral-400); margin-bottom: 6px; font-variant-numeric: tabular-nums; }
+.score-verdict { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); margin-bottom: 2px; }
+.score-checks { font-size: var(--font-size-sm); color: var(--color-neutral-500); margin-bottom: var(--space-5); }
+
+.score-breakdown { display: flex; flex-direction: column; gap: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--border-color); }
+.score-row { display: flex; flex-direction: column; gap: 6px; }
+.score-row-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
+.score-row-label { font-size: var(--font-size-sm); color: var(--color-neutral-700); font-weight: var(--font-weight-medium); }
+.score-row-pct { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); font-variant-numeric: tabular-nums; }
+.score-row-bar { height: 6px; background: var(--color-neutral-100); border-radius: var(--border-radius-pill); overflow: hidden; }
+.score-row-fill { height: 100%; border-radius: var(--border-radius-pill); background: var(--color-success-500); transition: width 0.6s cubic-bezier(.4,0,.2,1); }
+.score-row-fill.good { background: linear-gradient(90deg, var(--color-success-400), var(--color-success-500)); }
+.score-row-fill.warn { background: linear-gradient(90deg, var(--color-warning-400), var(--color-warning-500)); }
+.score-row-fill.risk { background: linear-gradient(90deg, var(--color-danger-400), var(--color-danger-500)); }
+
 .score-empty { text-align: center; padding: var(--space-3) 0 var(--space-1); }
 .score-empty-icon { font-size: 28px; margin-bottom: var(--space-2); opacity: 0.3; }
 .score-empty-text { font-size: var(--font-size-sm); color: var(--color-neutral-400); }
@@ -205,10 +210,6 @@ body {
 .step-counter { font-size: var(--font-size-sm); color: var(--color-neutral-400); }
 .step-counter strong { font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
 
-/* total duration bar */
-.duration-total-bar { height: 3px; background: var(--color-neutral-100); border-radius: var(--border-radius-pill); margin-bottom: var(--space-3); overflow: hidden; display: flex; gap: 2px; }
-.dtb-seg { height: 100%; border-radius: var(--border-radius-pill); transition: width 0.6s ease; }
-
 /* steps */
 .pipeline-steps { display: flex; flex-direction: column; }
 .pipeline-step { display: grid; grid-template-columns: 32px 1fr auto; gap: 0 var(--space-3); position: relative; }
@@ -223,30 +224,22 @@ body {
 @keyframes step-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,.25)} 50%{box-shadow:0 0 0 5px rgba(59,130,246,.08)} }
 
 .step-col-body { padding-bottom: var(--space-3); }
-.step-name { font-size: var(--font-size-base); font-weight: var(--font-weight-medium); color: var(--color-neutral-900); margin-bottom: 2px; }
+.step-name-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
+.step-name { font-size: var(--font-size-base); font-weight: var(--font-weight-medium); color: var(--color-neutral-900); }
 .step-name.todo    { color: var(--color-neutral-400); }
 .step-name.skipped { color: var(--color-neutral-400); }
 .step-name.error   { color: var(--color-danger-700); }
+.step-name-time { font-size: var(--font-size-xs); color: var(--color-neutral-400); font-family: var(--font-family-mono); white-space: nowrap; }
 .step-sub { font-size: var(--font-size-sm); color: var(--color-neutral-500); margin-bottom: var(--space-1); }
 .step-sub.running { color: var(--color-info-600); font-weight: var(--font-weight-medium); }
 .step-sub.error   { color: var(--color-danger-600); }
 .step-tags { display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center; }
 .step-tag { display: inline-flex; align-items: center; gap: 3px; font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); padding: 2px 8px; border-radius: var(--border-radius-pill); }
-.step-tag.conf-high   { background: var(--color-success-100); color: var(--color-success-600); }
-.step-tag.conf-med    { background: var(--color-warning-100); color: var(--color-warning-600); }
-.step-tag.conf-low    { background: var(--color-danger-100); color: var(--color-danger-600); }
-.step-tag.items       { background: var(--color-neutral-100); color: var(--color-neutral-600); }
 .step-tag.flag-count  { background: var(--color-warning-50); color: var(--color-warning-600); border: 1px solid var(--color-warning-100); }
-.step-tag.running-tag { background: var(--color-info-50); color: var(--color-info-600); border: 1px solid var(--color-info-100); }
 .step-tag svg { width: 10px; height: 10px; }
 
-/* duration mini-bar */
-.step-dur-bar { margin-top: var(--space-1); height: 3px; background: var(--color-neutral-100); border-radius: var(--border-radius-pill); overflow: hidden; max-width: 240px; }
-.step-dur-bar-fill { height: 100%; border-radius: var(--border-radius-pill); }
-
-.step-col-time { text-align: right; padding-bottom: var(--space-3); }
-.step-time  { font-size: var(--font-size-xs); color: var(--color-neutral-400); white-space: nowrap; font-family: var(--font-family-mono); }
-.step-dur-pill { display: inline-block; margin-top: 4px; font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); background: var(--color-neutral-100); padding: 1px 6px; border-radius: var(--border-radius-pill); }
+.step-col-time { text-align: right; padding-bottom: var(--space-3); display: flex; align-items: flex-start; justify-content: flex-end; }
+.step-dur-pill { display: inline-block; font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); background: var(--color-neutral-100); padding: 1px 6px; border-radius: var(--border-radius-pill); }
 
 /* ── EVIDENCE CARD ── */
 .evidence-card { padding: var(--space-4) var(--space-5); }
@@ -305,7 +298,7 @@ body {
 
 <!-- TOPBAR -->
 <header class="topbar" style="display:flex;align-items:center;">
-  <a href="dashboard.html" class="topbar-logo" style="text-decoration:none;">
+  <a href="dashboard-v2.html" class="topbar-logo" id="ld-logo-link" style="text-decoration:none;">
     <div class="topbar-logo-icon">
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
         <path d="M8 1.5L2.5 3.5V8c0 3.04 2.4 5.87 5.5 6.5 3.1-.63 5.5-3.46 5.5-6.5V3.5L8 1.5Z" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/>
@@ -329,7 +322,7 @@ body {
       <span class="topbar-stat-value success">3</span>
     </div>
     <div class="topbar-stat">
-      <span class="topbar-stat-label">EXCEPTIONS</span>
+      <span class="topbar-stat-label">ALERTS</span>
       <span class="topbar-stat-value danger">2</span>
     </div>
     <div class="user-avatar">SU</div>
@@ -347,15 +340,31 @@ body {
 
 <!-- BREADCRUMB -->
 <div class="breadcrumb">
-  <a href="dashboard.html" class="back-btn">
+  <a href="dashboard-v2.html" class="back-btn" id="ld-back-link">
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     Dashboard
   </a>
   <span class="bc-sep">›</span>
-  <span class="bc-crumb">Pipeline</span>
+  <a href="exceptions.html" class="bc-crumb" id="ld-bc-alerts">Alerts</a>
   <span class="bc-sep">›</span>
   <span class="bc-crumb current" id="bc-loan-id">LN-000123</span>
 </div>
+
+<script>
+/* Adapt back link to whichever dashboard the user came from */
+(function() {
+  try {
+    const ref = document.referrer || '';
+    const isV1 = /\/dashboard\.html(\?|#|$)/.test(ref);
+    if (isV1) {
+      const logo = document.getElementById('ld-logo-link');
+      const back = document.getElementById('ld-back-link');
+      if (logo) logo.href = 'dashboard.html';
+      if (back) back.href = 'dashboard.html';
+    }
+  } catch(e){}
+})();
+</script>
 
 <!-- LOAN HERO -->
 <div class="loan-hero">
@@ -411,7 +420,7 @@ body {
     <div class="detail-sidebar">
 
       <!-- QC SCORE -->
-      <div class="detail-card score-card">
+      <div class="detail-card score-card" id="score-card">
         <div class="score-section-label">QC Score</div>
         <div id="score-content"></div>
       </div>
@@ -445,7 +454,6 @@ body {
           <span class="pipeline-card-title">Pipeline Steps</span>
           <span class="step-counter"><strong id="steps-done">2</strong> / 6 completed</span>
         </div>
-        <div class="duration-total-bar" id="duration-bar"></div>
         <div class="pipeline-steps" id="pipeline-steps"></div>
       </div>
 
@@ -732,39 +740,24 @@ function scoreHTML(s) {
       <div class="score-empty-text">Score available after<br>QC Checklist completes</div>
     </div>`;
   }
-  const r = 34;
-  const circ = 2 * Math.PI * r;
-  const pct = s.value / s.total;
-  const dashOffset = circ * (1 - pct);
-  const ringClass = s.confidence === 'high' ? 'green' : s.confidence === 'medium' ? 'yellow' : 'red';
+  const numClass = s.confidence === 'high' ? 'green' : s.confidence === 'medium' ? 'yellow' : 'red';
+  const tone = b => b.pct >= 80 ? 'good' : b.pct >= 60 ? 'warn' : 'risk';
   const rows = s.breakdown.map(b => `
     <div class="score-row">
-      <span class="score-row-label">${b.label}</span>
-      <div class="score-row-bar"><div class="score-row-fill ${b.warn ? 'warn' : ''}" style="width:${b.pct}%"></div></div>
-      <span class="score-row-pct">${b.pct}%</span>
+      <div class="score-row-head">
+        <span class="score-row-label">${b.label}</span>
+        <span class="score-row-pct">${b.pct}%</span>
+      </div>
+      <div class="score-row-bar"><div class="score-row-fill ${tone(b)}" style="width:${b.pct}%"></div></div>
     </div>`).join('');
 
   return `
-  <div class="score-main">
-    <div class="score-ring-wrap">
-      <svg viewBox="0 0 76 76">
-        <circle class="score-ring-bg" cx="38" cy="38" r="${r}"/>
-        <circle class="score-ring-fill ${ringClass}" cx="38" cy="38" r="${r}"
-          stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${dashOffset.toFixed(1)}"/>
-      </svg>
-      <div class="score-center">
-        <span class="score-number">${s.value}</span>
-        <span class="score-denom">/ ${s.total}</span>
-      </div>
-    </div>
-    <div class="score-info">
-      <div class="score-verdict">${s.verdict}</div>
-      <div class="score-checks">${s.checks}</div>
-      <span class="score-conf-badge ${s.confidence}">
-        AI Confidence · ${s.confidence.charAt(0).toUpperCase() + s.confidence.slice(1)}
-      </span>
-    </div>
+  <div class="score-hero">
+    <span class="score-hero-num ${numClass}">${s.value}</span>
+    <span class="score-hero-denom">/ ${s.total}</span>
   </div>
+  <div class="score-verdict">${s.verdict}</div>
+  <div class="score-checks">${s.checks}</div>
   <div class="score-breakdown">${rows}</div>`;
 }
 
@@ -773,28 +766,19 @@ function stepHTML(step, i) {
     done: ICON_CHECK, running: ICON_SPIN,
     todo: '', error: ICON_X, skipped: ICON_SKIP
   };
-  const stageColor = STAGE_COLORS[step.name] || 'var(--color-neutral-300)';
-  const stageBg    = STAGE_BG[step.name] || 'var(--color-neutral-100)';
 
   let tags = '';
-  if (step.conf !== null && step.conf !== undefined) {
-    const cls = step.conf >= 90 ? 'conf-high' : step.conf >= 75 ? 'conf-med' : 'conf-low';
-    tags += `<span class="step-tag ${cls}">${ICON_CLOCK} AI Confidence ${step.conf}%</span>`;
-  }
   if (step.flags) {
     tags += `<span class="step-tag flag-count">⚑ ${step.flags} flagged</span>`;
   }
-  if (step.status === 'running') {
-    tags += `<span class="step-tag running-tag">${ICON_SPIN} Running</span>`;
-  }
 
-  const durBar = (step.durPct && step.status === 'done')
-    ? `<div class="step-dur-bar"><div class="step-dur-bar-fill" style="width:${step.durPct}%;background:${stageColor}"></div></div>`
+  const inlineTime = step.time
+    ? `<span class="step-name-time">${step.time}</span>`
     : '';
 
-  const timeCol = step.time
-    ? `<div class="step-time">${step.time}</div>${step.dur ? `<div class="step-dur-pill">${step.dur}</div>` : ''}`
-    : `<div class="step-time">—</div>`;
+  const durPill = (step.dur && step.status === 'done')
+    ? `<div class="step-dur-pill">${step.dur}</div>`
+    : '';
 
   return `
   <div class="pipeline-step">
@@ -802,12 +786,14 @@ function stepHTML(step, i) {
       <div class="step-icon ${step.status}">${icons[step.status] || ''}</div>
     </div>
     <div class="step-col-body">
-      <div class="step-name ${step.status}">${step.name}</div>
+      <div class="step-name-row">
+        <span class="step-name ${step.status}">${step.name}</span>
+        ${inlineTime}
+      </div>
       <div class="step-sub ${step.status === 'running' ? 'running' : step.status === 'error' ? 'error' : ''}">${step.sub}</div>
       ${tags ? `<div class="step-tags">${tags}</div>` : ''}
-      ${durBar}
     </div>
-    <div class="step-col-time">${timeCol}</div>
+    <div class="step-col-time">${durPill}</div>
   </div>`;
 }
 
@@ -843,14 +829,6 @@ function evGroupHTML(g) {
   </div>`;
 }
 
-function durationBarHTML(steps) {
-  const done = steps.filter(s => s.status === 'done' && s.durPct);
-  if (!done.length) return '';
-  return done.map(s => {
-    const color = STAGE_COLORS[s.name] || 'var(--color-neutral-300)';
-    return `<div class="dtb-seg" style="width:${s.durPct}%;background:${color}" title="${s.name}: ${s.dur}"></div>`;
-  }).join('');
-}
 
 function setLoanState(key) {
   currentState = key;
@@ -912,6 +890,12 @@ function render() {
 
   // score
   document.getElementById('score-content').innerHTML = scoreHTML(d.qcScore);
+  const scoreCard = document.getElementById('score-card');
+  scoreCard.classList.remove('is-warn', 'is-risk');
+  if (d.qcScore) {
+    if (d.qcScore.confidence === 'medium') scoreCard.classList.add('is-warn');
+    else if (d.qcScore.confidence === 'low') scoreCard.classList.add('is-risk');
+  }
 
   // files
   document.getElementById('output-count').textContent = d.outputFiles.length + ' file' + (d.outputFiles.length !== 1 ? 's' : '');
@@ -923,8 +907,8 @@ function render() {
 
   // steps
   document.getElementById('steps-done').textContent = d.stepsComplete;
-  document.getElementById('duration-bar').innerHTML = durationBarHTML(d.steps);
   document.getElementById('pipeline-steps').innerHTML = d.steps.map((s, i) => stepHTML(s, i)).join('');
+
 
   // evidence
   document.getElementById('ev-groups').innerHTML = renderEvGroups(d);
@@ -946,5 +930,11 @@ function render() {
 
 render();
 </script>
+
+<!-- V1 / V2 switcher -->
+<div style="position:fixed;bottom:20px;right:20px;background:var(--color-white);border:1px solid var(--border-color);border-radius:20px;padding:4px;display:flex;gap:4px;box-shadow:var(--shadow-md);z-index:9999;">
+  <a href="dashboard.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-neutral-500);">V1</a>
+  <a href="dashboard-v2.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-white);background:var(--color-neutral-900);">V2</a>
+</div>
 </body>
 </html>

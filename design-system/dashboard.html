@@ -21,7 +21,7 @@ body {
 
 .topbar {
   position: sticky; top: 0; z-index: var(--z-sticky);
-  flex-shrink: 0; padding: 0 var(--space-6); gap: var(--space-4);
+  flex-shrink: 0; height: 56px; padding: 0 var(--space-8); gap: var(--space-4);
   background: var(--color-white);
   border-bottom: 1px solid var(--border-color);
   display: flex; align-items: stretch;
@@ -63,7 +63,7 @@ body {
 /* ── PAGE LAYOUT ── */
 .page-wrap {
   flex: 1; overflow-y: auto;
-  padding: var(--space-5) var(--space-6) var(--space-6);
+  padding: var(--space-5) var(--space-8) var(--space-6);
   display: flex; flex-direction: column; gap: var(--space-5);
   min-height: 0;
 }
@@ -258,33 +258,40 @@ body {
   margin: 0 calc(-1 * var(--space-3));
 }
 
-/* pipeline steps (ported from loan-detail) */
-.dwr-pipeline-steps { display: flex; flex-direction: column; }
-.dwr-pipeline-step { display: grid; grid-template-columns: 32px 1fr auto; gap: 0 var(--space-3); position: relative; }
-.dwr-step-col-icon { display: flex; flex-direction: column; align-items: center; position: relative; }
-.dwr-pipeline-step:not(:last-child) .dwr-step-col-icon::after {
-  content: ''; position: absolute; left: 13px; top: 29px; bottom: 0;
-  width: 2px; background: var(--border-color); z-index: 0;
+/* pipeline card — parity with V2 loan-detail */
+.pipeline-card {
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-xl);
+  padding: var(--space-4) var(--space-5);
 }
-.dwr-step-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 1; position: relative; }
-.dwr-step-icon.done    { background: var(--color-success-100); color: var(--color-success-600); }
-.dwr-step-icon.running { background: var(--color-info-100);    color: var(--color-info-600); animation: dwr-step-pulse 1.5s ease-in-out infinite; }
-.dwr-step-icon.todo    { background: var(--color-white); color: var(--color-neutral-300); border: 1.5px solid var(--border-color); }
-.dwr-step-icon.error   { background: var(--color-danger-100);  color: var(--color-danger-600); }
-.dwr-step-icon.skipped { background: var(--color-neutral-50);  color: var(--color-neutral-300); border: 1.5px dashed var(--border-color); }
-@keyframes dwr-step-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,.25)} 50%{box-shadow:0 0 0 5px rgba(59,130,246,.08)} }
-.dwr-step-col-body { padding-bottom: var(--space-3); }
-.dwr-step-name-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
-.dwr-step-name { font-size: var(--font-size-base); font-weight: var(--font-weight-medium); color: var(--color-neutral-900); }
-.dwr-step-name.todo    { color: var(--color-neutral-400); }
-.dwr-step-name.skipped { color: var(--color-neutral-400); }
-.dwr-step-name.error   { color: var(--color-danger-700); }
-.dwr-step-name-time { font-size: var(--font-size-xs); color: var(--color-neutral-400); font-family: var(--font-family-mono); white-space: nowrap; }
-.dwr-step-sub { font-size: var(--font-size-sm); color: var(--color-neutral-500); }
-.dwr-step-sub.running { color: var(--color-info-600); font-weight: var(--font-weight-medium); }
-.dwr-step-sub.error   { color: var(--color-danger-600); }
-.dwr-step-col-time { text-align: right; padding-bottom: var(--space-3); }
-.dwr-step-dur-pill { display: inline-block; font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); background: var(--color-neutral-100); padding: 1px 6px; border-radius: var(--border-radius-pill); }
+.pipeline-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3); }
+.pipeline-card-title { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+.step-counter { font-size: var(--font-size-sm); color: var(--color-neutral-400); }
+.step-counter strong { font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+.pipeline-steps { display: flex; flex-direction: column; }
+.pipeline-step { display: grid; grid-template-columns: 32px 1fr auto; gap: 0 var(--space-3); position: relative; }
+.step-col-icon { display: flex; flex-direction: column; align-items: center; position: relative; }
+.pipeline-step:not(:last-child) .step-col-icon::after { content: ''; position: absolute; left: 13px; top: 29px; bottom: 0; width: 2px; background: var(--border-color); z-index: 0; }
+.step-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 1; position: relative; }
+.step-icon.done    { background: var(--color-success-100); color: var(--color-success-600); }
+.step-icon.running { background: var(--color-info-100); color: var(--color-info-600); animation: step-pulse 1.5s ease-in-out infinite; }
+.step-icon.todo    { background: var(--color-white); color: var(--color-neutral-300); border: 1.5px solid var(--border-color); }
+.step-icon.error   { background: var(--color-danger-100); color: var(--color-danger-600); }
+.step-icon.skipped { background: var(--color-neutral-50); color: var(--color-neutral-300); border: 1.5px dashed var(--border-color); }
+@keyframes step-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,.25)} 50%{box-shadow:0 0 0 5px rgba(59,130,246,.08)} }
+.step-col-body { padding-bottom: var(--space-3); }
+.step-name-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
+.step-name { font-size: var(--font-size-base); font-weight: var(--font-weight-medium); color: var(--color-neutral-900); }
+.step-name.todo    { color: var(--color-neutral-400); }
+.step-name.skipped { color: var(--color-neutral-400); }
+.step-name.error   { color: var(--color-danger-700); }
+.step-name-time { font-size: var(--font-size-xs); color: var(--color-neutral-400); font-family: var(--font-family-mono); white-space: nowrap; }
+.step-sub { font-size: var(--font-size-sm); color: var(--color-neutral-500); margin-bottom: var(--space-1); }
+.step-sub.running { color: var(--color-info-600); font-weight: var(--font-weight-medium); }
+.step-sub.error   { color: var(--color-danger-600); }
+.step-col-time { text-align: right; padding-bottom: var(--space-3); display: flex; align-items: flex-start; justify-content: flex-end; }
+.step-dur-pill { display: inline-block; font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); background: var(--color-neutral-100); padding: 1px 6px; border-radius: var(--border-radius-pill); }
 
 /* Date filter */
 .date-filter { display: flex; gap: 2px; background: var(--color-neutral-100); border-radius: var(--border-radius-md); padding: 3px; border: 1px solid var(--border-color); }
@@ -401,11 +408,29 @@ body {
 .stage-cell-name { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-800); flex: 1; }
 .stage-cell-time { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); font-variant-numeric: tabular-nums; }
 
-/* ── EXCEPTIONS CARD (ported from v2) ── */
-.exceptions-card { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-5) var(--space-6); }
-.exceptions-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+/* ── ALERTS CARD (parity with v2) ── */
+.exceptions-card { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4) var(--space-5); }
+.exceptions-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); margin-bottom: var(--space-1); }
+.ex-view-all {
+  display: flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  color: var(--color-neutral-400);
+  text-decoration: none;
+  transition: color var(--transition-fast), border-color var(--transition-fast), background-color var(--transition-fast);
+}
+.ex-view-all:hover { color: var(--color-neutral-700); border-color: var(--color-neutral-400); background: var(--color-neutral-50); }
+.exceptions-list-wrap { position: relative; flex: 1; min-height: 0; }
+.exceptions-list { display: flex; flex-direction: column; gap: var(--space-2); max-height: 160px; overflow-y: auto; }
+.ex-fade {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 48px;
+  background: linear-gradient(to top, var(--color-white) 30%, transparent);
+  pointer-events: none;
+}
 .exceptions-requeue-all {
-  display: inline-flex; align-items: center; gap: 6px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  width: 100%; margin-top: var(--space-1);
   font-family: var(--font-family-base);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
@@ -423,32 +448,112 @@ body {
 .exceptions-requeue-all:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
 .exceptions-requeue-all:disabled { opacity: 0.5; cursor: default; transform: none; box-shadow: none; }
 
-/* Merged heading: "2 Exceptions · 1 shares same root cause" */
-.ex-heading { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.ex-heading { display: flex; align-items: baseline; gap: var(--space-2); flex-wrap: wrap; }
 .ex-heading-count { font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-danger-600); font-variant-numeric: tabular-nums; line-height: 1; }
-.ex-heading-label { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+.ex-heading-label { font-size: var(--font-size-md); font-weight: var(--font-weight-bold); letter-spacing: -0.005em; color: var(--color-neutral-900); }
 .ex-heading-sep { color: var(--color-neutral-300); font-weight: var(--font-weight-medium); }
 .ex-heading-shared { font-size: var(--font-size-sm); color: var(--color-neutral-500); font-weight: var(--font-weight-medium); }
 
-.exceptions-list { display: flex; flex-direction: column; gap: 4px; flex: 1; overflow-y: auto; max-height: 180px; }
 .exceptions-empty { font-size: var(--font-size-xs); color: var(--color-neutral-500); padding: var(--space-3) 0; text-align: center; }
 .exception-row {
-  display: flex; align-items: center; gap: var(--space-2);
-  padding: 5px var(--space-2);
-  background: var(--color-white);
-  border: 1px solid var(--color-danger-200);
+  display: flex; flex-direction: column; gap: var(--space-1);
+  padding: var(--space-3);
+  background: var(--color-danger-50);
+  border: 1px solid var(--color-danger-100);
   border-radius: var(--border-radius-md);
-  font-size: var(--font-size-xs);
   cursor: pointer;
   transition: border-color var(--transition-fast), background-color var(--transition-fast);
 }
-.exception-row:hover { border-color: var(--color-danger-400); background: var(--color-danger-50); }
-.ex-id { font-family: var(--font-family-mono); font-size: 11px; font-weight: var(--font-weight-semibold); color: var(--color-danger-600); flex-shrink: 0; }
+.exception-row:hover { border-color: var(--color-danger-300); }
+.ex-row-top { display: flex; align-items: center; gap: var(--space-2); }
+.ex-id { font-family: var(--font-family-mono); font-size: 11px; font-weight: var(--font-weight-semibold); color: var(--color-danger-700); flex-shrink: 0; }
 .ex-stage { font-size: 10px; font-weight: var(--font-weight-medium); padding: 1px 6px; border-radius: var(--border-radius-sm); color: var(--color-white); white-space: nowrap; flex-shrink: 0; }
-.ex-reason { color: var(--color-neutral-700); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ex-date { font-size: 11px; color: var(--color-neutral-400); flex-shrink: 0; font-variant-numeric: tabular-nums; }
-.ex-retry { font-family: var(--font-family-base); font-size: 11px; font-weight: var(--font-weight-medium); color: var(--color-danger-600); background: var(--color-white); border: 1px solid var(--color-danger-200); border-radius: var(--border-radius-sm); padding: 1px 6px; cursor: pointer; flex-shrink: 0; }
+.ex-date { font-size: 11px; color: var(--color-neutral-400); margin-left: auto; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.ex-retry {
+  font-family: var(--font-family-base);
+  font-size: 11px; font-weight: var(--font-weight-medium);
+  color: var(--color-danger-600);
+  background: var(--color-white);
+  border: 1px solid var(--color-danger-200);
+  border-radius: var(--border-radius-sm);
+  padding: 1px 8px; cursor: pointer; flex-shrink: 0;
+}
 .ex-retry:hover { background: var(--color-danger-100); border-color: var(--color-danger-300); }
+.ex-reason { font-size: var(--font-size-xs); color: var(--color-neutral-700); line-height: 1.4; }
+
+/* ── STAGES (light, horizontal cards) ── */
+.stages-widget {
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-xl);
+  padding: var(--space-5);
+  display: flex; flex-direction: column; gap: var(--space-4);
+  color: var(--color-neutral-900);
+}
+.stages-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
+.stages-title-block { display: flex; flex-direction: column; gap: var(--space-1); }
+.stages-title { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); letter-spacing: -0.01em; line-height: 1.2; }
+.stages-sub { font-size: var(--font-size-sm); color: var(--color-neutral-500); }
+.stages-open {
+  font-size: var(--font-size-sm); font-weight: var(--font-weight-medium);
+  color: var(--color-neutral-500); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: color var(--transition-fast);
+}
+.stages-open:hover { color: var(--color-neutral-900); }
+
+/* Horizontal grid — one card per stage, six side-by-side */
+.stages-list {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+.stage-row {
+  display: flex; flex-direction: column; gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-white);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  min-width: 0;
+}
+.stage-row:hover { border-color: var(--border-color-hover); box-shadow: var(--shadow-sm); }
+
+.stage-label { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
+.stage-dot { width: 8px; height: 8px; border-radius: var(--border-radius-pill); flex-shrink: 0; }
+.stage-dot.is-running   { background: var(--color-success-500); box-shadow: 0 0 0 3px rgba(16,185,129,0.15); }
+.stage-dot.is-blocked   { background: var(--color-warning-500); box-shadow: 0 0 0 3px rgba(245,158,11,0.15); }
+.stage-dot.is-escalated { background: var(--color-warning-500); box-shadow: 0 0 0 3px rgba(245,158,11,0.15); }
+.stage-dot.is-idle      { background: var(--color-neutral-400); }
+.stage-name { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.stage-activity {
+  font-size: var(--font-size-xs); color: var(--color-neutral-500); line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: calc(var(--font-size-xs) * 1.4 * 2);
+}
+
+.stage-stats { display: flex; flex-direction: column; gap: 6px; }
+.stage-stat { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); min-width: 0; }
+.stage-stat-label { font-size: 10px; font-weight: var(--font-weight-semibold); color: var(--color-neutral-500); letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
+.stage-stat-value { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); font-variant-numeric: tabular-nums; }
+
+.stage-status {
+  font-size: 10px; font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--color-neutral-500);
+  white-space: nowrap;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-neutral-100);
+}
+.stage-status.is-running   { color: var(--color-success-600); }
+.stage-status.is-blocked   { color: var(--color-warning-600); }
+.stage-status.is-escalated { color: var(--color-warning-600); }
+.stage-status.is-idle      { color: var(--color-neutral-500); }
 
 /* ── REALTIME LOAN STATUS ── */
 .rt-section {
@@ -518,6 +623,12 @@ body {
     </div>
     QC Appraisal
   </a>
+  <nav class="topbar-nav" aria-label="Main">
+    <a class="topbar-nav-item active" href="dashboard.html">Observability</a>
+    <a class="topbar-nav-item" href="pipeline.html">Pipeline</a>
+    <a class="topbar-nav-item" href="exceptions.html">Alerts</a>
+    <a class="topbar-nav-item" href="reports.html">Reports</a>
+  </nav>
   <div class="topbar-right">
     <div class="user-avatar">SU</div>
   </div>
@@ -549,13 +660,6 @@ body {
     </div>
   </div>
 
-  <nav class="page-nav" aria-label="Main">
-    <a class="page-nav-item active" href="dashboard.html">Observability</a>
-    <a class="page-nav-item" href="dashboard-v2.html">Pipeline</a>
-    <a class="page-nav-item" href="exceptions.html">Exceptions</a>
-    <a class="page-nav-item" href="reports.html">Reports</a>
-  </nav>
-
   <!-- ROW 1: METRIC STRIP -->
   <div class="metric-strip">
     <div class="metric-card">
@@ -586,13 +690,21 @@ body {
       <div class="exceptions-header">
         <div class="ex-heading">
           <span class="ex-heading-count" id="ex-heading-count">—</span>
-          <span class="ex-heading-label" id="ex-heading-label">Exceptions</span>
-          <span class="ex-heading-sep" id="ex-heading-sep">·</span>
+          <span class="ex-heading-label" id="ex-heading-label">Alerts</span>
+          <span class="ex-heading-sep" id="ex-heading-sep" style="display:none;">·</span>
           <span class="ex-heading-shared" id="ex-heading-shared"></span>
         </div>
-        <button class="exceptions-requeue-all" id="requeueAllBtn">↻ Re-queue all</button>
+        <a class="ex-view-all" href="exceptions.html" title="View all alerts">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
       </div>
-      <div class="exceptions-list" id="exceptions-list"></div>
+      <div class="exceptions-list-wrap">
+        <div class="exceptions-list" id="exceptions-list"></div>
+        <div class="ex-fade"></div>
+      </div>
+      <button class="exceptions-requeue-all" id="requeueAllBtn">↻ Re-queue all</button>
     </div>
 
     <div class="bento-card stage-chart-card">
@@ -605,15 +717,20 @@ body {
     </div>
   </div>
 
-  <!-- REALTIME LOAN STATUS -->
-  <div class="rt-section">
-    <div class="rt-header">
-      <div class="rt-pulse"></div>
-      <span class="rt-title">Realtime Loan Status</span>
-      <span class="rt-meta" id="rtMeta">Live · last 30 events</span>
+  <!-- STAGES (live observability) -->
+  <section class="stages-widget" id="pipeline">
+    <div class="stages-head">
+      <div class="stages-title-block">
+        <span class="stages-title">Stages</span>
+        <span class="stages-sub">Live status across the appraisal pipeline</span>
+      </div>
+      <a class="stages-open" href="dashboard-v2.html" title="Open observability">
+        Open observability
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M3.5 8.5L8.5 3.5M8.5 3.5H4.5M8.5 3.5V7.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
     </div>
-    <div class="rt-feed" id="rtFeed"></div>
-  </div>
+    <div class="stages-list" id="stagesList"></div>
+  </section>
 
 
 </div><!-- /page-wrap -->
@@ -721,7 +838,7 @@ function renderStats() {
 
   document.getElementById('m-total').textContent      = total;
   document.getElementById('m-completed').textContent  = completed;
-  document.getElementById('m-throughput').textContent = throughput || '—';
+  document.getElementById('m-throughput').textContent = throughput || '6.8';
   document.getElementById('m-avg-time').textContent   = fmtMMSS(avgEnd);
 }
 
@@ -845,10 +962,10 @@ function renderExceptions() {
   const requeueBtn = document.getElementById('requeueAllBtn');
 
   headCount.textContent = failed.length;
-  headLabel.textContent = failed.length === 1 ? 'Exception' : 'Exceptions';
+  headLabel.textContent = failed.length === 1 ? 'Alert' : 'Alerts';
 
   if (!failed.length) {
-    list.innerHTML = `<div class="exceptions-empty">No exceptions — all loans on track</div>`;
+    list.innerHTML = `<div class="exceptions-empty">No alerts — all loans on track</div>`;
     headSep.style.display = 'none';
     headShared.textContent = '';
     requeueBtn.disabled = true;
@@ -873,13 +990,16 @@ function renderExceptions() {
   list.innerHTML = failed.map(l => {
     const r = reasons[l.id] || { stage: 'ingest', reason: 'Unknown error' };
     const stageColor = `var(--stage-${r.stage})`;
+    const time = l.id === 'LN-000122' ? '9:39 AM' : '9:41 AM';
     return `
-      <div class="exception-row">
-        <span class="ex-id">${l.id}</span>
-        <span class="ex-stage" style="background:${stageColor}">${STAGE_LABEL_SHORT[r.stage]}</span>
+      <div class="exception-row" onclick="openDrawer('${l.id}')">
+        <div class="ex-row-top">
+          <span class="ex-id">${l.id}</span>
+          <span class="ex-stage" style="background:${stageColor}">${STAGE_LABEL_SHORT[r.stage]}</span>
+          <span class="ex-date">${time}</span>
+          <button class="ex-retry" onclick="event.stopPropagation()">Retry</button>
+        </div>
         <span class="ex-reason">${r.reason}</span>
-        <span class="ex-date">9:41 AM</span>
-        <button class="ex-retry">Retry</button>
       </div>`;
   }).join('');
 }
@@ -895,6 +1015,7 @@ function pushFeed(entry) {
 }
 function renderFeed() {
   const feedEl = document.getElementById('rtFeed');
+  if (!feedEl) return;
   feedEl.innerHTML = feed.map(e => {
     const stage = e.stage ? `<span class="rt-stage-chip" style="background:var(--stage-${e.stage})">${STAGE_LABELS[e.stage] || e.stage}</span>` : '';
     let cls = '';
@@ -1078,20 +1199,21 @@ function buildSteps(loan) {
 
 function stepHTMLDwr(s) {
   const icons = { done: ICON_CHECK_DWR, running: ICON_SPIN_DWR, todo: '', error: ICON_X_DWR, skipped: '' };
-  const dur = s.dur && s.status === 'done' ? `<span class="dwr-step-dur-pill">${s.dur}</span>` : '';
+  const durPill = (s.dur && s.status === 'done') ? `<div class="step-dur-pill">${s.dur}</div>` : '';
+  const subClass = s.status === 'running' ? 'running' : s.status === 'error' ? 'error' : '';
   return `
-    <div class="dwr-pipeline-step">
-      <div class="dwr-step-col-icon">
-        <div class="dwr-step-icon ${s.status}">${icons[s.status] || ''}</div>
+    <div class="pipeline-step">
+      <div class="step-col-icon">
+        <div class="step-icon ${s.status}">${icons[s.status] || ''}</div>
       </div>
-      <div class="dwr-step-col-body">
-        <div class="dwr-step-name-row">
-          <span class="dwr-step-name ${s.status}">${s.name}</span>
-          ${s.time ? `<span class="dwr-step-name-time">${s.time}</span>` : ''}
+      <div class="step-col-body">
+        <div class="step-name-row">
+          <span class="step-name ${s.status}">${s.name}</span>
+          ${s.time ? `<span class="step-name-time">${s.time}</span>` : ''}
         </div>
-        <div class="dwr-step-sub ${s.status}">${s.sub}</div>
+        <div class="step-sub ${subClass}">${s.sub}</div>
       </div>
-      <div class="dwr-step-col-time">${dur}</div>
+      <div class="step-col-time">${durPill}</div>
     </div>`;
 }
 
@@ -1147,21 +1269,27 @@ function openDrawer(loanId) {
   const stepsHTML = steps.map(stepHTMLDwr).join('');
   const stepsDoneCount = steps.filter(s => s.status === 'done').length;
 
+  // Section order:
+  //   completed:  QC Report  →  Pipeline State  →  Input Report
+  //   otherwise:  Pipeline State  →  Input Report  (no QC Report yet)
   let body = '';
   if (outputFiles.length) {
     body += `
       <section class="output-section">
-        <div class="drawer-section-title">Output files <span class="drawer-section-meta">${outputFiles.length} ${outputFiles.length === 1 ? 'file' : 'files'}</span></div>
+        <div class="drawer-section-title">QC Report <span class="drawer-section-meta">${outputFiles.length} ${outputFiles.length === 1 ? 'file' : 'files'}</span></div>
         <div class="file-grid cols-2">${outputFiles.map(fileCardHTML).join('')}</div>
       </section>`;
   }
   body += `
+    <div class="pipeline-card">
+      <div class="pipeline-card-header">
+        <span class="pipeline-card-title">Pipeline Steps</span>
+        <span class="step-counter"><strong>${stepsDoneCount}</strong> / ${steps.length} completed</span>
+      </div>
+      <div class="pipeline-steps">${stepsHTML}</div>
+    </div>
     <section>
-      <div class="drawer-section-title">Pipeline steps <span class="drawer-section-meta">${stepsDoneCount} / ${steps.length}</span></div>
-      <div class="dwr-pipeline-steps">${stepsHTML}</div>
-    </section>
-    <section>
-      <div class="drawer-section-title">Source files <span class="drawer-section-meta">${sourceFiles.length} files</span></div>
+      <div class="drawer-section-title">Input Report <span class="drawer-section-meta">${sourceFiles.length} files</span></div>
       <div class="file-grid">${sourceFiles.map(fileCardHTML).join('')}</div>
     </section>`;
 
@@ -1175,19 +1303,58 @@ function closeDrawer() {
   document.getElementById('drawerPanel').classList.remove('is-open');
 }
 
+/* ── STAGES WIDGET RENDER ── */
+const STAGES_DATA = [
+  { key: 'ingest',     name: 'Ingest',     activity: 'Parsing FNM 1004 — LN-000200',           success: '98.4%', latency: '1.8s', today: 412, status: 'running'   },
+  { key: 'classify',   name: 'Classify',   activity: 'Categorizing 14 documents — LN-000287',  success: '92.1%', latency: '8.4s', today: 387, status: 'running'   },
+  { key: 'qc-check',   name: 'QC Check',   activity: 'Validating Fannie guidelines — LN-000275', success: '95.7%', latency: '4.2s', today: 401, status: 'running' },
+  { key: 'code-map',   name: 'Code Map',   activity: 'Awaiting reviewer input — LN-000122',    success: '89.3%', latency: '6.1s', today: 364, status: 'blocked'   },
+  { key: 'report-gen', name: 'Report Gen', activity: 'Drafting UW memo — LN-000288',           success: '91.6%', latency: '5.3s', today: 358, status: 'running'   },
+  { key: 'uw-report',  name: 'UW Report',  activity: 'High-risk flag escalated — LN-000121',   success: '87.2%', latency: '3.9s', today: 341, status: 'escalated' },
+];
+
+function renderStages() {
+  const root = document.getElementById('stagesList');
+  if (!root) return;
+  root.innerHTML = STAGES_DATA.map(s => {
+    const loanMatch = s.activity.match(/LN-\d{6}/);
+    const dataAttr = loanMatch ? ` data-loan-id="${loanMatch[0]}"` : '';
+    return `
+      <div class="stage-row"${dataAttr}>
+        <div class="stage-label">
+          <span class="stage-dot is-${s.status}"></span>
+          <span class="stage-name">${s.name}</span>
+        </div>
+        <div class="stage-activity">${s.activity}</div>
+        <div class="stage-stats">
+          <div class="stage-stat">
+            <span class="stage-stat-label">Success</span>
+            <span class="stage-stat-value">${s.success}</span>
+          </div>
+          <div class="stage-stat">
+            <span class="stage-stat-label">Avg latency</span>
+            <span class="stage-stat-value">${s.latency}</span>
+          </div>
+          <div class="stage-stat">
+            <span class="stage-stat-label">Today</span>
+            <span class="stage-stat-value">${s.today}</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+  root.addEventListener('click', (e) => {
+    const row = e.target.closest('.stage-row');
+    if (!row || !row.dataset.loanId) return;
+    openDrawer(row.dataset.loanId);
+  });
+}
+
 /* ── INIT ── */
 renderStats();
 renderStageChart();
 renderStageGrid();
 renderExceptions();
-// Seed the feed so it isn't empty on first paint
-[
-  { id:'LN-000257', action:'completed',   stage:'',           time: nowSecFmt() },
-  { id:'LN-000262', action:'advanced to', stage:'qc-check',   time: nowSecFmt() },
-  { id:'LN-000259', action:'advanced to', stage:'classify',   time: nowSecFmt() },
-  { id:'LN-000264', action:'ingested',    stage:'ingest',     time: nowSecFmt() },
-].forEach(e => feed.push(e));
-renderFeed();
+renderStages();
 </script>
 
 </body>
