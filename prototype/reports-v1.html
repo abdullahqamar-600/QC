@@ -408,9 +408,8 @@ function openDrawer(loanId) {
     { type: 'ssr',  name: `${idShort}_ssr_response.json`, meta: '186 KB · ' + r.completed },
     { type: 'xml',  name: `${idShort}_uad.xml`,           meta: '92 KB · ' + r.completed },
   ];
-  const flagCount = r.score < 85 ? Math.max(1, Math.round((85 - r.score) / 4)) : 0;
   const outputFiles = [
-    { type: 'qc', name: 'QC Report',         meta: 'Generated ' + r.completed.split(',')[0], flags: flagCount },
+    { type: 'qc', name: 'QC Report',         meta: 'Generated ' + r.completed.split(',')[0] },
     { type: 'uw', name: 'Underwriter Packet', meta: `${idShort}_uw_packet.pdf` },
   ];
 
@@ -432,7 +431,7 @@ function openDrawer(loanId) {
       <div class="pipeline-steps">${stepsHTML}</div>
     </div>
     <section>
-      <div class="drawer-section-title">Input Report <span class="drawer-section-meta">${sourceFiles.length} files</span></div>
+      <div class="drawer-section-title">Input Files <span class="drawer-section-meta">${sourceFiles.length} files</span></div>
       <div class="file-grid">${sourceFiles.map(fileCardHTML).join('')}</div>
     </section>`;
 
