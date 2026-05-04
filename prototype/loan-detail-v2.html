@@ -345,7 +345,7 @@ body {
     Dashboard
   </a>
   <span class="bc-sep">›</span>
-  <a href="exceptions.html" class="bc-crumb" id="ld-bc-alerts">Alerts</a>
+  <a href="alerts-v1.html" class="bc-crumb" id="ld-bc-alerts">Alerts</a>
   <span class="bc-sep">›</span>
   <span class="bc-crumb current" id="bc-loan-id">LN-000123</span>
 </div>
@@ -355,12 +355,12 @@ body {
 (function() {
   try {
     const ref = document.referrer || '';
-    const isV1 = /\/dashboard\.html(\?|#|$)/.test(ref);
+    const isV1 = /\/dashboard-v1\.html(\?|#|$)/.test(ref);
     if (isV1) {
       const logo = document.getElementById('ld-logo-link');
       const back = document.getElementById('ld-back-link');
-      if (logo) logo.href = 'dashboard.html';
-      if (back) back.href = 'dashboard.html';
+      if (logo) logo.href = 'dashboard-v1.html';
+      if (back) back.href = 'dashboard-v1.html';
     }
   } catch(e){}
 })();
@@ -933,7 +933,7 @@ render();
 
 <!-- V1 / V2 switcher -->
 <div style="position:fixed;bottom:20px;right:20px;background:var(--color-white);border:1px solid var(--border-color);border-radius:20px;padding:4px;display:flex;gap:4px;box-shadow:var(--shadow-md);z-index:9999;">
-  <a href="dashboard.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-neutral-500);">V1</a>
+  <a href="dashboard-v1.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-neutral-500);">V1</a>
   <a href="dashboard-v2.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-white);background:var(--color-neutral-900);">V2</a>
 </div>
 </body>

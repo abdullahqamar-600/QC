@@ -724,7 +724,7 @@ body {
       </svg>
       <span>Observability</span>
     </a>
-    <a class="sidenav-item" href="exceptions-v2.html" title="Exceptions">
+    <a class="sidenav-item" href="alerts-v2.html" title="Exceptions">
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
         <path d="M8 2v5l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.4"/>
@@ -814,7 +814,7 @@ body {
           <span class="ex-heading-sep" id="ex-heading-sep" style="display:none;">·</span>
           <span class="ex-heading-shared" id="ex-heading-shared"></span>
         </div>
-        <a class="ex-view-all" href="exceptions-v2.html" title="View all exceptions">
+        <a class="ex-view-all" href="alerts-v2.html" title="View all exceptions">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
             <path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
@@ -1671,7 +1671,7 @@ function setDate(btn, period) {
 }
 
 /* ── NAVIGATION ── */
-function goLoan(id) { window.location.href = 'loan-detail.html?id=' + id; }
+function goLoan(id) { window.location.href = 'loan-detail-v2.html?id=' + id; }
 
 /* ── RETRY ── */
 function retryLoan(e, id) {
@@ -1713,7 +1713,7 @@ function toggleNav() {
 
 <!-- V1 / V2 Switcher -->
 <div style="position:fixed;bottom:20px;right:20px;background:var(--color-white);border:1px solid var(--border-color);border-radius:20px;padding:4px;display:flex;gap:4px;box-shadow:var(--shadow-md);z-index:9999;">
-  <a href="dashboard.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-neutral-500);">V1</a>
+  <a href="dashboard-v1.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-neutral-500);">V1</a>
   <a href="dashboard-v2.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-white);background:var(--color-neutral-900);">V2</a>
 </div>
 

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QC Appraisal — Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="components.css">
+<style>
+html, body { height: 100%; }
+body {
+  background: var(--surface-page);
+  color: var(--color-neutral-900);
+  font-family: var(--font-family-base);
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--space-8);
+}
+
+.router {
+  width: 100%;
+  max-width: 720px;
+  display: flex; flex-direction: column;
+  gap: var(--space-6);
+}
+
+.router-header { text-align: center; }
+.router-title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--space-2);
+}
+.router-subtitle {
+  font-size: var(--font-size-md);
+  color: var(--color-neutral-500);
+  margin: 0;
+}
+
+.router-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.router-card {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  padding: var(--space-5);
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-xl);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.router-card:hover {
+  border-color: var(--border-color-hover);
+  box-shadow: var(--shadow-md);
+}
+.router-card-tag {
+  font-size: 11px; font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--color-brand-600);
+}
+.router-card-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-900);
+}
+.router-card-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-neutral-500);
+  line-height: 1.5;
+}
+
+.router-extras {
+  display: flex; gap: var(--space-3);
+  justify-content: center;
+  font-size: var(--font-size-sm);
+}
+.router-extras a {
+  color: var(--color-neutral-500);
+  text-decoration: none;
+  border-bottom: 1px dashed transparent;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+.router-extras a:hover {
+  color: var(--color-neutral-900);
+  border-bottom-color: var(--color-neutral-300);
+}
+</style>
+</head>
+<body>
+
+<div class="router">
+  <header class="router-header">
+    <h1 class="router-title">QC Appraisal Prototype</h1>
+    <p class="router-subtitle">Two design directions for the QC Observer app. Pick one to explore.</p>
+  </header>
+
+  <div class="router-cards">
+    <a class="router-card" href="dashboard-v1.html">
+      <span class="router-card-tag">V1 — Top nav</span>
+      <span class="router-card-title">Dashboard V1</span>
+      <span class="router-card-desc">Top navigation bar with Observability, Pipeline, Alerts, Reports. Loan click opens a right-side drawer.</span>
+    </a>
+    <a class="router-card" href="dashboard-v2.html">
+      <span class="router-card-tag">V2 — Side nav</span>
+      <span class="router-card-title">Dashboard V2</span>
+      <span class="router-card-desc">Collapsible left sidebar. Loan click navigates to a full-page detail view.</span>
+    </a>
+  </div>
+
+  <div class="router-extras">
+    <a href="showcase.html">Component showcase</a>
+    <span>·</span>
+    <a href="app.html">Older standalone prototype</a>
+  </div>
+</div>
+
+</body>
+</html>

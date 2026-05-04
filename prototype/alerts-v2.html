@@ -258,7 +258,7 @@ tbody td:last-child { text-align: right; }
       </svg>
       <span>Observability</span>
     </a>
-    <a class="sidenav-item active" href="exceptions-v2.html" title="Exceptions">
+    <a class="sidenav-item active" href="alerts-v2.html" title="Exceptions">
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
         <path d="M8 2v5l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.4"/>
@@ -372,7 +372,7 @@ const EXCEPTIONS = [
 function renderTable(data) {
   const tbody = document.getElementById('exTable');
   tbody.innerHTML = data.map(ex => `
-    <tr style="cursor:pointer;" onclick="window.location.href='loan-detail.html?id=${ex.id}'">
+    <tr style="cursor:pointer;" onclick="window.location.href='loan-detail-v2.html?id=${ex.id}'">
       <td class="td-loan-id">${ex.id}</td>
       <td><span class="stage-pill" style="background:${STAGE_COLORS[ex.stage]}">${ex.stage}</span></td>
       <td><span class="root-cause-tag ${ex.causeClass}">${ex.cause}</span></td>
@@ -417,8 +417,8 @@ function toggleNav() {
 
 <!-- V1 / V2 switcher -->
 <div style="position:fixed;bottom:20px;right:20px;background:var(--color-white);border:1px solid var(--border-color);border-radius:20px;padding:4px;display:flex;gap:4px;box-shadow:var(--shadow-md);z-index:9999;">
-  <a href="exceptions.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-neutral-500);">V1</a>
-  <a href="exceptions-v2.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-white);background:var(--color-neutral-900);">V2</a>
+  <a href="alerts-v1.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-neutral-500);">V1</a>
+  <a href="alerts-v2.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-white);background:var(--color-neutral-900);">V2</a>
 </div>
 </body>
 </html>

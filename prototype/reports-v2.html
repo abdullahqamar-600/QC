@@ -243,7 +243,7 @@ tbody td { padding: var(--space-3) var(--space-4); font-size: var(--font-size-sm
       </svg>
       <span>Observability</span>
     </a>
-    <a class="sidenav-item" href="exceptions-v2.html" title="Exceptions">
+    <a class="sidenav-item" href="alerts-v2.html" title="Exceptions">
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
         <path d="M8 2v5l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.4"/>
@@ -344,7 +344,7 @@ function decisionClass(d) { return d === 'Approved' ? 'approved' : d === 'Suspen
 function renderTable(data) {
   const tbody = document.getElementById('rptTable');
   tbody.innerHTML = data.map(r => `
-    <tr style="cursor:pointer;" onclick="window.location.href='loan-detail.html?id=${r.id}'">
+    <tr style="cursor:pointer;" onclick="window.location.href='loan-detail-v2.html?id=${r.id}'">
       <td class="td-loan-id">${r.id}</td>
       <td class="td-borrower">${r.borrower}</td>
       <td class="td-address">${r.address}</td>
@@ -400,7 +400,7 @@ function toggleNav() {
 
 <!-- V1 / V2 switcher -->
 <div style="position:fixed;bottom:20px;right:20px;background:var(--color-white);border:1px solid var(--border-color);border-radius:20px;padding:4px;display:flex;gap:4px;box-shadow:var(--shadow-md);z-index:9999;">
-  <a href="reports.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-neutral-500);">V1</a>
+  <a href="reports-v1.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-neutral-500);">V1</a>
   <a href="reports-v2.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-white);background:var(--color-neutral-900);">V2</a>
 </div>
 </body>

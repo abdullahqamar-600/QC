@@ -195,7 +195,7 @@ body {
 <body>
 
 <header class="topbar">
-  <a class="topbar-logo" href="dashboard.html">
+  <a class="topbar-logo" href="dashboard-v1.html">
     <div class="topbar-logo-icon">
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
         <path d="M8 1.5L2.5 3.5V8c0 3.04 2.4 5.87 5.5 6.5 3.1-.63 5.5-3.46 5.5-6.5V3.5L8 1.5Z" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/>
@@ -205,10 +205,10 @@ body {
     QC Appraisal
   </a>
   <nav class="topbar-nav" aria-label="Main">
-    <a class="topbar-nav-item" href="dashboard.html">Observability</a>
-    <a class="topbar-nav-item active" href="pipeline.html">Pipeline</a>
-    <a class="topbar-nav-item" href="exceptions.html">Alerts</a>
-    <a class="topbar-nav-item" href="reports.html">Reports</a>
+    <a class="topbar-nav-item" href="dashboard-v1.html">Observability</a>
+    <a class="topbar-nav-item active" href="pipeline-v1.html">Pipeline</a>
+    <a class="topbar-nav-item" href="alerts-v1.html">Alerts</a>
+    <a class="topbar-nav-item" href="reports-v1.html">Reports</a>
   </nav>
   <div class="topbar-right">
     <div class="search-wrap-top" role="search">
@@ -265,13 +265,13 @@ body {
 
 <!-- V1 / V2 switcher -->
 <div class="version-switcher">
-  <a href="pipeline.html" class="active">V1</a>
+  <a href="pipeline-v1.html" class="active">V1</a>
   <a href="dashboard-v2.html">V2</a>
 </div>
 
 <script src="v1-shared.js"></script>
 <script>
-/* LOANS data — generator mirrors dashboard.html so IDs and states stay aligned. */
+/* LOANS data — generator mirrors dashboard-v1.html so IDs and states stay aligned. */
 const LOANS = (() => {
   const inFlight = { ingest:8, classify:14, 'qc-check':12, 'code-map':10, 'report-gen':9, 'uw-report':7 };
   const out = [];

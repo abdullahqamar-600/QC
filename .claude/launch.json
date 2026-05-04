@@ -2,9 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "design-system",
+      "name": "prototype",
       "runtimeExecutable": "/usr/bin/python3",
-      "runtimeArgs": ["-m", "http.server", "3456", "--directory", "design-system"],
+      "runtimeArgs": ["-m", "http.server", "3456", "--directory", "prototype"],
       "port": 3456
     }
   ]
