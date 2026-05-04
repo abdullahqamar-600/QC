@@ -1,5 +1,4 @@
 {
-  "cleanUrls": true,
   "rewrites": [
     { "source": "/", "destination": "/prototype/dashboard-v1.html" },
     { "source": "/(.*)", "destination": "/prototype/$1" }
