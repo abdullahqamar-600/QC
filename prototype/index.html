@@ -3,115 +3,176 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QC Appraisal — Prototype</title>
+<title>QC Appraisal — Sign in</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="components.css">
 <style>
 html, body { height: 100%; }
 body {
-  background: var(--surface-page);
+  background-color: #0a1428;
+  background-image:
+    linear-gradient(180deg, rgba(6, 12, 24, 0.20) 0%, rgba(6, 12, 24, 0.55) 100%),
+    url('bg.png');
+  background-size: cover, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: fixed, fixed;
   color: var(--color-neutral-900);
   font-family: var(--font-family-base);
   display: flex; align-items: center; justify-content: center;
-  padding: var(--space-8);
+  padding: var(--space-6);
+  overflow: hidden;
+  min-width: 1024px;
 }
 
-.router {
+.signin-card {
   width: 100%;
-  max-width: 720px;
-  display: flex; flex-direction: column;
-  gap: var(--space-6);
+  max-width: 420px;
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: var(--space-7) var(--space-7) var(--space-6);
+  display: flex; flex-direction: column; gap: var(--space-5);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 8px 24px -4px rgba(0, 0, 0, 0.16),
+    0 32px 64px -12px rgba(0, 0, 0, 0.22);
 }
 
-.router-header { text-align: center; }
-.router-title {
-  font-size: var(--font-size-3xl);
+.signin-brand {
+  display: flex; align-items: center; gap: var(--space-3);
+}
+.signin-brand-mark {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: url('brand/logo.svg') center/cover no-repeat var(--color-brand-500);
+  flex-shrink: 0;
+}
+.signin-brand-name {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-900);
+  letter-spacing: -0.005em;
+}
+
+.signin-heading {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.signin-title {
+  font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
   letter-spacing: -0.02em;
-  margin: 0 0 var(--space-2);
+  line-height: 1.2;
+  color: var(--color-neutral-900);
+  margin: 0;
 }
-.router-subtitle {
-  font-size: var(--font-size-md);
+.signin-subtitle {
+  font-size: var(--font-size-sm);
   color: var(--color-neutral-500);
   margin: 0;
 }
 
-.router-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
+.signin-form {
+  display: flex; flex-direction: column; gap: var(--space-3);
 }
-
-.router-card {
-  display: flex; flex-direction: column; gap: var(--space-2);
-  padding: var(--space-5);
-  background: var(--color-white);
+.field {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.field-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-neutral-700);
+}
+.field-input {
+  padding: 10px var(--space-3);
   border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-xl);
-  text-decoration: none;
-  color: inherit;
+  border-radius: var(--border-radius-md);
+  background: var(--color-white);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-base);
+  color: var(--color-neutral-900);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
-.router-card:hover {
-  border-color: var(--border-color-hover);
-  box-shadow: var(--shadow-md);
+.field-input:focus {
+  outline: none;
+  border-color: var(--color-brand-500);
+  box-shadow: 0 0 0 3px var(--color-brand-100);
 }
-.router-card-tag {
-  font-size: 11px; font-weight: var(--font-weight-semibold);
-  letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--color-brand-600);
-}
-.router-card-title {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-neutral-900);
-}
-.router-card-desc {
-  font-size: var(--font-size-sm);
-  color: var(--color-neutral-500);
-  line-height: 1.5;
-}
+.field-input::placeholder { color: var(--color-neutral-400); }
 
-.router-extras {
-  display: flex; gap: var(--space-3);
-  justify-content: center;
+.signin-submit {
+  margin-top: var(--space-2);
+  padding: 11px var(--space-4);
+  background: var(--color-brand-600);
+  color: var(--color-white);
+  border: 1px solid var(--color-brand-600);
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-family-base);
   font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset, 0 8px 20px rgba(220, 42, 42, 0.35);
 }
-.router-extras a {
+.signin-submit:hover { background: var(--color-brand-500); transform: translateY(-1px); }
+.signin-submit:focus-visible { outline: none; box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset, 0 8px 20px rgba(220, 42, 42, 0.45), 0 0 0 3px rgba(220, 42, 42, 0.18); }
+.signin-submit:active { transform: translateY(0); }
+
+.signin-foot {
+  display: flex; justify-content: center; gap: 6px;
+  font-size: var(--font-size-sm);
   color: var(--color-neutral-500);
+}
+.signin-foot-link {
+  color: var(--color-neutral-400);
+  font-weight: var(--font-weight-medium);
+  cursor: not-allowed;
   text-decoration: none;
-  border-bottom: 1px dashed transparent;
-  transition: color var(--transition-fast), border-color var(--transition-fast);
 }
-.router-extras a:hover {
-  color: var(--color-neutral-900);
-  border-bottom-color: var(--color-neutral-300);
-}
+.signin-foot-link:hover { color: var(--color-neutral-500); }
 </style>
 </head>
 <body>
 
-<div class="router">
-  <header class="router-header">
-    <h1 class="router-title">QC Appraisal Prototype</h1>
-    <p class="router-subtitle">Open the dashboard to explore the QC Observer app.</p>
+<form class="signin-card" id="signinForm" onsubmit="handleSignin(event)" novalidate>
+
+  <div class="signin-brand">
+    <span class="signin-brand-mark" aria-hidden="true"></span>
+    <span class="signin-brand-name">QC Appraisal</span>
+  </div>
+
+  <header class="signin-heading">
+    <h1 class="signin-title">Sign in</h1>
+    <p class="signin-subtitle">Welcome back. Continue to your QC observer dashboard.</p>
   </header>
 
-  <div class="router-cards">
-    <a class="router-card" href="dashboard-v1.html">
-      <span class="router-card-tag">Dashboard</span>
-      <span class="router-card-title">QC Observer</span>
-      <span class="router-card-desc">Top navigation bar with Observability, Pipeline, Alerts, Reports. Loan click opens a right-side drawer.</span>
-    </a>
+  <div class="signin-form">
+    <label class="field">
+      <span class="field-label">Email</span>
+      <input class="field-input" type="email" name="email" id="email" placeholder="you@company.com" autocomplete="email" required>
+    </label>
+    <label class="field">
+      <span class="field-label">Password</span>
+      <input class="field-input" type="password" name="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+    </label>
+    <button class="signin-submit" type="submit">Sign in</button>
   </div>
 
-  <div class="router-extras">
-    <a href="showcase.html">Component showcase</a>
-    <span>·</span>
-    <a href="app.html">Older standalone prototype</a>
+  <div class="signin-foot">
+    <span>Don't have an account?</span>
+    <span class="signin-foot-link" aria-disabled="true" title="Sign up not available in this prototype">Sign up</span>
   </div>
-</div>
+
+</form>
+
+<script>
+function handleSignin(event) {
+  event.preventDefault();
+  // Prototype: any non-empty values pass.
+  window.location.href = 'dashboard-v1.html';
+}
+</script>
 
 </body>
 </html>
