@@ -1,15 +1,18 @@
 /* ============================================================
    DESIGN TOKENS
-   Source: Relevance AI — Flat, bordered, indigo-accented
+   Brand: Company red (warm scarlet) — derived from logo
    ============================================================ */
 
 :root {
-  /* --- Brand / Primary (Relevance AI Indigo) --- */
-  --color-brand-600: #4f46e5;
-  --color-brand-500: #6366f1; /* Main primary button color */
-  --color-brand-400: #818cf8;
-  --color-brand-100: #e0e7ff;
-  --color-brand-50:  #f3f0ff; /* Subtle active background */
+  /* --- Brand / Primary (Company red) --- */
+  --color-brand-700: #991B1B; /* Deep — text on light bg */
+  --color-brand-600: #B91C1C; /* Hover / pressed */
+  --color-brand-500: #DC2A2A; /* Main primary — matches logo red */
+  --color-brand-400: #EF4444;
+  --color-brand-300: #FCA5A5;
+  --color-brand-200: #FECACA;
+  --color-brand-100: #FEE2E2;
+  --color-brand-50:  #FEF2F2; /* Subtle active background */
 
   /* --- Neutral (Clean/Cool Grays) --- */
   --color-neutral-950: #030712;
@@ -26,24 +29,32 @@
   --color-white:       #ffffff;
 
   /* --- Semantic: Status --- */
+  --color-success-700: #047857;
   --color-success-600: #059669;
   --color-success-500: #10b981; /* 'Published' green */
+  --color-success-200: #a7f3d0;
   --color-success-100: #d1fae5;
   --color-success-50:  #ecfdf5;
 
+  --color-warning-700: #b45309;
   --color-warning-600: #d97706;
   --color-warning-500: #f59e0b;
+  --color-warning-200: #fde68a;
   --color-warning-100: #fef3c7;
   --color-warning-50:  #fffbeb;
 
-  --color-danger-600:  #dc2626;
-  --color-danger-500:  #ef4444;
-  --color-danger-300:  #fca5a5;
-  --color-danger-100:  #fee2e2;
-  --color-danger-50:   #fef2f2;
+  --color-danger-700:  #9F1239;
+  --color-danger-600:  #BE123C; /* Crimson — distinguished from brand red */
+  --color-danger-500:  #E11D48;
+  --color-danger-300:  #FB7185;
+  --color-danger-200:  #FECDD3;
+  --color-danger-100:  #FFE4E6;
+  --color-danger-50:   #FFF1F2;
 
+  --color-info-700:    #1d4ed8;
   --color-info-600:    #2563eb;
   --color-info-500:    #3b82f6;
+  --color-info-200:    #bfdbfe;
   --color-info-100:    #dbeafe;
   --color-info-50:     #eff6ff;
 
@@ -187,10 +198,11 @@
   --topbar-height:     56px;
   --content-max-width: 1280px;
 
-  /* --- Transitions --- */
-  --transition-fast:   150ms ease;
-  --transition-base:   200ms ease;
-  --transition-slow:   300ms ease;
+  /* --- Transitions --- exponential ease-out for natural deceleration */
+  --ease-out-quart:    cubic-bezier(0.25, 1, 0.5, 1);
+  --transition-fast:   150ms var(--ease-out-quart);
+  --transition-base:   200ms var(--ease-out-quart);
+  --transition-slow:   300ms var(--ease-out-quart);
 
   /* --- Z-index scale --- */
   --z-base:     0;

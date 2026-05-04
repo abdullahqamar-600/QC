@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="components.css">
 <link rel="stylesheet" href="v1.css">
 <style>
-/* ── SHELL (V1 — top nav) ── */
+/* ── SHELL (V1 — glass topbar over bg image) ── */
 html, body { height: 100%; }
 body {
-  background: var(--surface-page);
+  background-color: #0a1428;
+  background-image:
+    linear-gradient(180deg, rgba(6, 12, 24, 0.20) 0%, rgba(6, 12, 24, 0.55) 100%),
+    url('bg.png');
+  background-size: cover, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: fixed, fixed;
   min-width: 1024px;
   display: flex;
   flex-direction: column;
@@ -23,82 +30,136 @@ body {
 
 .topbar {
   position: sticky; top: 0; z-index: var(--z-sticky);
-  flex-shrink: 0; height: 56px; padding: 0 var(--space-8); gap: var(--space-4);
-  background: var(--color-white);
-  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0; height: 64px; padding: 0 var(--space-8); gap: var(--space-4);
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(40px) saturate(1.5);
+  -webkit-backdrop-filter: blur(40px) saturate(1.5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
   display: flex; align-items: stretch;
 }
-.topbar-logo { display: flex; align-items: center; gap: var(--space-2); font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); text-decoration: none; }
-.topbar-logo-icon { width: 26px; height: 26px; border-radius: var(--border-radius-md); background: var(--color-neutral-900); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.topbar-logo {
+  display: flex; align-items: center; gap: var(--space-2);
+  font-size: var(--font-size-md); font-weight: var(--font-weight-semibold);
+  color: var(--color-white);
+  text-decoration: none;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+}
 .topbar-nav { display: flex; align-items: stretch; margin-left: var(--space-6); gap: 0; }
 .topbar-nav-item {
   display: flex; align-items: center;
   padding: 0 var(--space-4);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-neutral-500);
+  color: rgba(255, 255, 255, 0.72);
   text-decoration: none;
   border-bottom: 2px solid transparent;
   transition: color var(--transition-fast), border-color var(--transition-fast);
   white-space: nowrap;
   position: relative;
   top: 1px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
 }
-.topbar-nav-item:hover { color: var(--color-neutral-900); }
+.topbar-nav-item:hover { color: var(--color-white); }
+.topbar-nav-item:focus-visible {
+  outline: none;
+  color: var(--color-white);
+  border-radius: 4px;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.6);
+}
 .topbar-nav-item.active {
-  color: var(--color-brand-600);
+  color: var(--color-white);
   font-weight: var(--font-weight-semibold);
-  border-bottom-color: var(--color-brand-600);
+  border-bottom-color: var(--color-white);
 }
 .topbar-right { margin-left: auto; display: flex; align-items: center; gap: var(--space-5); }
-.user-avatar { width: 28px; height: 28px; border-radius: var(--border-radius-pill); background: var(--color-brand-100); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: var(--font-weight-semibold); color: var(--color-brand-600); border: 1px solid var(--border-color); }
+.user-avatar { width: 32px; height: 32px; border-radius: var(--border-radius-pill); background: rgba(255, 255, 255, 0.95); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: var(--font-weight-semibold); color: var(--color-brand-600); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18); }
 
-/* ── PAGE ── */
+/* ── PAGE — centered listing pane that crops to viewport ── */
 .page-wrap {
-  flex: 1; overflow-y: auto;
-  padding: var(--space-6) var(--space-8) var(--space-8);
-  display: flex; flex-direction: column; gap: var(--space-6);
+  flex: 1; overflow: hidden;
+  padding: var(--space-6) var(--space-8);
+  display: flex; flex-direction: column; align-items: center;
   min-height: 0;
 }
-.page-header { display: flex; align-items: baseline; gap: var(--space-4); }
+.list-pane {
+  width: clamp(760px, 78vw, 1100px);
+  max-width: 100%;
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column; gap: var(--space-4);
+}
+.page-header { display: flex; align-items: baseline; gap: var(--space-4); padding: 0 var(--space-2); }
 .page-title {
-  font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold);
-  letter-spacing: -0.02em; line-height: 1.1; color: var(--color-neutral-900); margin: 0;
+  font-size: var(--font-size-3xl); font-weight: var(--font-weight-bold);
+  letter-spacing: -0.025em; line-height: 1.1; color: var(--color-white); margin: 0;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
 }
-.page-count { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-400); }
-
-/* ── FILTER BAR ── */
-.filter-bar { display: flex; align-items: center; gap: var(--space-3); }
-.filter-search {
-  display: flex; align-items: center; gap: 8px;
-  padding: 7px var(--space-3);
-  border: 1px solid var(--border-color); border-radius: var(--border-radius-md);
-  background: var(--color-white); width: 260px;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-}
-.filter-search:focus-within { border-color: var(--color-brand-400); box-shadow: 0 0 0 3px var(--color-brand-100); }
-.filter-search svg { color: var(--color-neutral-400); flex-shrink: 0; }
-.filter-search input { flex: 1; border: none; outline: none; background: transparent; font-size: var(--font-size-sm); font-family: var(--font-family-base); color: var(--color-neutral-900); }
-.filter-search input::placeholder { color: var(--color-neutral-400); }
-.download-btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 7px var(--space-4); border-radius: var(--border-radius-md);
-  border: 1px solid var(--border-color); background: var(--color-white);
+.page-count {
   font-size: var(--font-size-sm); font-weight: var(--font-weight-medium);
-  color: var(--color-neutral-700); cursor: pointer;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  color: rgba(255, 255, 255, 0.7);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
 }
-.download-btn:hover { background: var(--color-neutral-50); border-color: var(--color-neutral-400); }
+
+/* ── FILTER BAR — bare, no containers, floating directly on bg (overrides legacy components.css .filter-bar) ── */
+.filter-bar {
+  display: flex; align-items: center; gap: var(--space-5);
+  padding: 0 var(--space-2);
+  background: transparent;
+  border-bottom: none;
+}
+.filter-search {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 0;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  background: transparent;
+  flex: 0 1 360px;
+  transition: border-color var(--transition-fast);
+}
+.filter-search:focus-within {
+  border-bottom-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+.filter-search svg { color: rgba(255, 255, 255, 0.85); flex-shrink: 0; }
+.filter-search input {
+  flex: 1; border: none; outline: none; background: transparent;
+  font-size: var(--font-size-sm); font-family: var(--font-family-base);
+  color: var(--color-white); padding: 0;
+}
+.filter-search input::placeholder { color: rgba(255, 255, 255, 0.88); }
+.filter-select {
+  padding: 8px 22px 8px 0;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 0;
+  background: transparent;
+  font-size: var(--font-size-sm); font-family: var(--font-family-base);
+  color: var(--color-white); cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='white' stroke-opacity='0.7' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0 center;
+  transition: border-color var(--transition-fast);
+}
+.filter-select:focus-visible { outline: none; border-bottom-color: rgba(255, 255, 255, 0.9); box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9); }
+.filter-select option { background: #0a1428; color: white; }
+
 
 /* ── TABLE ── */
 .table-wrap {
   background: var(--color-white);
   border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-xl);
-  overflow: hidden;
+  border-radius: 8px;
+  overflow: auto;
+  flex: 1; min-height: 0;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 8px 24px -4px rgba(0, 0, 0, 0.16),
+    0 32px 64px -12px rgba(0, 0, 0, 0.22);
 }
 table { width: 100%; border-collapse: collapse; }
-thead { background: var(--color-neutral-50); border-bottom: 1px solid var(--border-color); }
+thead {
+  background: var(--color-neutral-50);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky; top: 0; z-index: 1;
+}
 thead th {
   padding: var(--space-3) var(--space-4); text-align: left;
   font-size: 11px; font-weight: var(--font-weight-semibold);
@@ -153,7 +214,6 @@ tbody td { padding: var(--space-3) var(--space-4); font-size: var(--font-size-sm
   </a>
   <nav class="topbar-nav" aria-label="Main">
     <a class="topbar-nav-item" href="dashboard-v1.html">Observability</a>
-    <a class="topbar-nav-item" href="pipeline-v1.html">Pipeline</a>
     <a class="topbar-nav-item" href="alerts-v1.html">Alerts</a>
     <a class="topbar-nav-item active" href="reports-v1.html">Reports</a>
   </nav>
@@ -175,6 +235,7 @@ tbody td { padding: var(--space-3) var(--space-4); font-size: var(--font-size-sm
 </header>
 
 <div class="page-wrap">
+ <div class="list-pane">
 
   <div class="page-header">
     <h1 class="page-title">Reports</h1>
@@ -182,20 +243,19 @@ tbody td { padding: var(--space-3) var(--space-4); font-size: var(--font-size-sm
   </div>
 
   <div class="filter-bar">
-    <label class="filter-search" style="flex:1">
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+    <label class="filter-search">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
         <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/>
         <path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
       </svg>
-      <input type="text" placeholder="Search by loan ID or borrower…" id="searchInput" oninput="filterTable()">
+      <input type="text" placeholder="Search by loan ID or borrower…" id="searchInput" aria-label="Search reports by loan ID or borrower" oninput="filterTable()">
     </label>
-    <button class="download-btn">
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-        <path d="M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M3 13h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
-      Export CSV
-    </button>
+    <select class="filter-select" id="scoreFilter" aria-label="Filter by QC score" onchange="filterTable()">
+      <option value="">All scores</option>
+      <option value="high">High (90+)</option>
+      <option value="medium">Medium (70–89)</option>
+      <option value="low">Low (under 70)</option>
+    </select>
   </div>
 
   <div class="table-wrap">
@@ -216,7 +276,8 @@ tbody td { padding: var(--space-3) var(--space-4); font-size: var(--font-size-sm
     </table>
   </div>
 
-</div>
+ </div><!-- /list-pane -->
+</div><!-- /page-wrap -->
 
 <!-- LOAN DRAWER -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
@@ -236,12 +297,6 @@ tbody td { padding: var(--space-3) var(--space-4); font-size: var(--font-size-sm
   </div>
   <div class="drawer-body" id="drawerBody"></div>
 </aside>
-
-<!-- V1 / V2 switcher -->
-<div class="version-switcher">
-  <a href="reports-v1.html" class="active">V1</a>
-  <a href="reports-v2.html">V2</a>
-</div>
 
 <script src="v1-shared.js"></script>
 <script>
@@ -303,10 +358,17 @@ function renderTable(data) {
 }
 
 function filterTable() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const filtered = REPORTS.filter(r =>
-    !q || r.id.toLowerCase().includes(q) || r.borrower.toLowerCase().includes(q)
-  );
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const scoreBucket = document.getElementById('scoreFilter').value;
+  const filtered = REPORTS.filter(r => {
+    const matchesQuery = !q || r.id.toLowerCase().includes(q) || r.borrower.toLowerCase().includes(q);
+    const matchesScore =
+      !scoreBucket
+      || (scoreBucket === 'high'   && r.score >= 90)
+      || (scoreBucket === 'medium' && r.score >= 70 && r.score < 90)
+      || (scoreBucket === 'low'    && r.score < 70);
+    return matchesQuery && matchesScore;
+  });
   renderTable(filtered);
 }
 

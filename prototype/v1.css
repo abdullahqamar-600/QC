@@ -236,32 +236,36 @@
 .search-wrap-top { position: relative; }
 .search-input-top {
   display: flex; align-items: center; gap: 8px;
-  width: 240px;
-  padding: 6px 10px;
-  background: var(--color-white);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
+  width: 260px;
+  padding: 7px 12px;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: var(--border-radius-pill);
   font-size: var(--font-size-sm);
-  color: var(--color-neutral-900);
+  color: var(--color-white);
   font-family: var(--font-family-base);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: background var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25) inset;
 }
 .search-input-top:focus-within {
-  border-color: var(--color-brand-400);
-  box-shadow: 0 0 0 3px var(--color-brand-100);
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset, 0 0 0 3px rgba(255, 255, 255, 0.12);
 }
-.search-input-top svg { color: var(--color-neutral-400); flex-shrink: 0; }
+.search-input-top svg { color: rgba(255, 255, 255, 0.7); flex-shrink: 0; }
 .search-input-top input {
   flex: 1; border: none; outline: none; background: transparent;
   font-size: var(--font-size-sm); font-family: var(--font-family-base);
-  color: var(--color-neutral-900); padding: 0; min-width: 0;
+  color: var(--color-white); padding: 0; min-width: 0;
 }
-.search-input-top input::placeholder { color: var(--color-neutral-400); }
+.search-input-top input::placeholder { color: rgba(255, 255, 255, 0.55); }
 .search-kbd {
   font-family: var(--font-family-mono); font-size: 10px;
-  color: var(--color-neutral-400);
-  background: var(--color-neutral-50);
-  border: 1px solid var(--border-color);
+  color: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 3px; padding: 1px 5px;
 }
 

@@ -49,15 +49,28 @@ body {
   text-decoration: none;
 }
 
-.sidebar-logo-icon {
+.sidebar-logo-icon,
+.topbar-logo-icon {
   width: 28px;
   height: 28px;
-  border-radius: var(--border-radius-md);
-  background: var(--color-neutral-900);
+  border-radius: 50%;
+  background: url('brand/logo.svg') center/cover no-repeat var(--color-brand-500);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+}
+
+.topbar-logo-icon {
+  width: 26px;
+  height: 26px;
+}
+
+/* Hide legacy inline SVG placeholders inside the logo mark — the logo is now a background image */
+.sidebar-logo-icon > svg,
+.topbar-logo-icon > svg {
+  display: none;
 }
 
 .sidebar-section-label {
@@ -1160,7 +1173,8 @@ body {
 }
 
 .sidebar-dark .sidebar-logo-icon {
-  background: rgba(255,255,255,0.12);
+  background: url('brand/logo.svg') center/cover no-repeat var(--color-brand-500);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25) inset;
 }
 
 .sidebar-dark .sidebar-section-label {
@@ -1810,3 +1824,45 @@ body {
 .items-center { align-items: center; }
 .justify-between { justify-content: space-between; }
 .flex-1 { flex: 1; }
+
+/* ============================================================
+   SYSTEM RUNNING INDICATOR
+   Subtle animated red gradient at bottom of viewport — signals
+   that the pipeline / system is live. Pure CSS, no HTML needed.
+   ============================================================ */
+body::after {
+  content: '';
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-image: linear-gradient(
+    90deg,
+    rgba(220, 42, 42, 0)    0%,
+    rgba(220, 42, 42, 0.25) 30%,
+    rgba(220, 42, 42, 0.85) 50%,
+    rgba(220, 42, 42, 0.25) 70%,
+    rgba(220, 42, 42, 0)    100%
+  );
+  background-color: rgba(220, 42, 42, 0.06);
+  background-size: 50% 100%;
+  background-repeat: no-repeat;
+  background-position: -50% 0;
+  animation: system-running-scan 4s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+@keyframes system-running-scan {
+  0%   { background-position: -50% 0; }
+  100% { background-position: 150% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::after {
+    animation: none;
+    background-image: none;
+    background-color: var(--color-brand-100);
+  }
+}
