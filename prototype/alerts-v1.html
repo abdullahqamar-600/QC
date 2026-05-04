@@ -429,7 +429,7 @@ function buildSteps(loan) {
         out[i].dur = fmtMMSS(STAGE_AVG_SEC[out[i].stage]);
       }
       out[idx].status = 'error';
-      out[idx].sub = 'Failed — see Alerts';
+      out[idx].sub = 'Failed';
       out[idx].time = ts;
     }
   }
