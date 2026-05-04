@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="components.css">
+<link rel="stylesheet" href="v1.css">
 <style>
 /* ── SHELL (V1 — top nav) ── */
 html, body { height: 100%; }
@@ -189,139 +190,6 @@ body {
   display: flex; justify-content: space-between; gap: var(--space-2);
 }
 
-/* ── LOAN DRAWER (V1) ── */
-.drawer-overlay {
-  position: fixed; inset: 0;
-  background: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(2px);
-  opacity: 0; pointer-events: none;
-  transition: opacity 200ms ease;
-  z-index: 9000;
-}
-.drawer-overlay.is-open { opacity: 1; pointer-events: auto; }
-.drawer-panel {
-  position: fixed; top: 0; right: 0; bottom: 0;
-  width: 540px; max-width: 92vw;
-  background: var(--color-white);
-  border-left: 1px solid var(--border-color);
-  box-shadow: -8px 0 24px rgba(15, 23, 42, 0.08);
-  transform: translateX(100%);
-  transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 9100;
-  display: flex; flex-direction: column;
-}
-.drawer-panel.is-open { transform: translateX(0); }
-.drawer-header {
-  display: flex; align-items: center; gap: var(--space-3);
-  padding: var(--space-4) var(--space-5);
-  border-bottom: 1px solid var(--border-color);
-  flex-shrink: 0;
-}
-.drawer-id { font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-neutral-900); letter-spacing: -0.01em; font-family: var(--font-family-mono); }
-.drawer-status {
-  font-size: 11px; font-weight: var(--font-weight-medium);
-  padding: 3px 10px; border-radius: var(--border-radius-pill);
-  white-space: nowrap;
-}
-.drawer-status.completed   { background: var(--color-success-100); color: var(--color-success-700); }
-.drawer-status.in-progress { background: var(--color-info-100);    color: var(--color-info-700); }
-.drawer-status.blocked     { background: var(--color-warning-100); color: var(--color-warning-700); }
-.drawer-status.failed      { background: var(--color-danger-100);  color: var(--color-danger-700); }
-.drawer-meta { display: flex; flex-direction: column; gap: 2px; margin-left: auto; text-align: right; }
-.drawer-meta-id   { font-family: var(--font-family-mono); font-size: 11px; color: var(--color-neutral-400); }
-.drawer-meta-date { font-size: 11px; color: var(--color-neutral-500); }
-.drawer-close {
-  width: 32px; height: 32px;
-  border: 1px solid var(--border-color); border-radius: var(--border-radius-md);
-  background: var(--color-white); color: var(--color-neutral-500);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; flex-shrink: 0;
-  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
-}
-.drawer-close:hover { background: var(--color-neutral-50); color: var(--color-neutral-900); border-color: var(--border-color-hover); }
-
-.drawer-body {
-  flex: 1; overflow-y: auto;
-  padding: var(--space-5);
-  display: flex; flex-direction: column; gap: var(--space-5);
-}
-.drawer-section-title { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); margin-bottom: var(--space-3); display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
-.drawer-section-meta { font-size: var(--font-size-xs); color: var(--color-neutral-400); font-weight: var(--font-weight-medium); }
-
-.file-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
-.file-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
-.file-card {
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-lg);
-  background: var(--color-white);
-  padding: var(--space-4) var(--space-3) var(--space-3);
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  cursor: default; position: relative;
-}
-.file-card-icon { position: relative; width: 48px; height: 60px; }
-.file-card-icon svg { width: 48px; height: 60px; }
-.file-card-type {
-  position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
-  font-size: 9px; font-weight: var(--font-weight-bold); font-family: var(--font-family-mono);
-  letter-spacing: 0.04em; padding: 1px 6px; border-radius: 3px;
-  white-space: nowrap;
-}
-.file-card-type.pdf  { background: var(--color-danger-50);  color: var(--color-danger-600); }
-.file-card-type.json { background: var(--color-info-50);    color: var(--color-info-600); }
-.file-card-type.ssr  { background: var(--color-info-50);    color: var(--color-info-600); }
-.file-card-type.xml  { background: var(--color-success-50); color: var(--color-success-600); }
-.file-card-type.qc   { background: var(--color-info-50);    color: var(--color-info-600); }
-.file-card-type.uw   { background: var(--color-warning-50); color: var(--color-warning-600); }
-.file-card-name { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); text-align: center; margin-top: 4px; word-break: break-word; }
-.file-card-meta { font-size: 11px; color: var(--color-neutral-400); text-align: center; }
-.file-card-flags { font-size: 11px; color: var(--color-danger-600); font-weight: var(--font-weight-medium); margin-top: 2px; }
-.file-card-badge {
-  position: absolute; top: -6px; right: -6px;
-  min-width: 22px; height: 22px; padding: 0 6px;
-  background: var(--color-danger-500); color: var(--color-white);
-  border-radius: var(--border-radius-pill);
-  font-size: 11px; font-weight: var(--font-weight-bold);
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
-}
-.output-section {
-  background: linear-gradient(135deg, var(--color-success-50) 0%, transparent 70%);
-  border-radius: var(--border-radius-lg);
-  padding: var(--space-3);
-  margin: 0 calc(-1 * var(--space-3));
-}
-
-.pipeline-card {
-  background: var(--color-white);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-xl);
-  padding: var(--space-4) var(--space-5);
-}
-.pipeline-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3); }
-.pipeline-card-title { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
-.step-counter { font-size: var(--font-size-sm); color: var(--color-neutral-400); }
-.step-counter strong { font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
-.pipeline-steps { display: flex; flex-direction: column; }
-.pipeline-step { display: grid; grid-template-columns: 32px 1fr auto; gap: 0 var(--space-3); position: relative; }
-.step-col-icon { display: flex; flex-direction: column; align-items: center; position: relative; }
-.pipeline-step:not(:last-child) .step-col-icon::after { content: ''; position: absolute; left: 13px; top: 29px; bottom: 0; width: 2px; background: var(--border-color); z-index: 0; }
-.step-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 1; position: relative; }
-.step-icon.done    { background: var(--color-success-100); color: var(--color-success-600); }
-.step-icon.running { background: var(--color-info-100); color: var(--color-info-600); animation: step-pulse 1.5s ease-in-out infinite; }
-.step-icon.todo    { background: var(--color-white); color: var(--color-neutral-300); border: 1.5px solid var(--border-color); }
-.step-icon.error   { background: var(--color-danger-100); color: var(--color-danger-600); }
-@keyframes step-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,.25)} 50%{box-shadow:0 0 0 5px rgba(59,130,246,.08)} }
-.step-col-body { padding-bottom: var(--space-3); }
-.step-name-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
-.step-name { font-size: var(--font-size-base); font-weight: var(--font-weight-medium); color: var(--color-neutral-900); }
-.step-name.todo { color: var(--color-neutral-400); }
-.step-name.error { color: var(--color-danger-700); }
-.step-name-time { font-size: var(--font-size-xs); color: var(--color-neutral-400); font-family: var(--font-family-mono); white-space: nowrap; }
-.step-sub { font-size: var(--font-size-sm); color: var(--color-neutral-500); margin-bottom: var(--space-1); }
-.step-sub.running { color: var(--color-info-600); font-weight: var(--font-weight-medium); }
-.step-sub.error { color: var(--color-danger-600); }
-.step-col-time { text-align: right; padding-bottom: var(--space-3); display: flex; align-items: flex-start; justify-content: flex-end; }
-.step-dur-pill { display: inline-block; font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); background: var(--color-neutral-100); padding: 1px 6px; border-radius: var(--border-radius-pill); }
 </style>
 </head>
 <body>
@@ -396,17 +264,14 @@ body {
 </aside>
 
 <!-- V1 / V2 switcher -->
-<div style="position:fixed;bottom:20px;right:20px;background:var(--color-white);border:1px solid var(--border-color);border-radius:20px;padding:4px;display:flex;gap:4px;box-shadow:var(--shadow-md);z-index:9999;">
-  <a href="pipeline.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-white);background:var(--color-neutral-900);">V1</a>
-  <a href="dashboard-v2.html" style="text-decoration:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;color:var(--color-neutral-500);">V2</a>
+<div class="version-switcher">
+  <a href="pipeline.html" class="active">V1</a>
+  <a href="dashboard-v2.html">V2</a>
 </div>
 
+<script src="v1-shared.js"></script>
 <script>
-const STAGE_AVG_SEC = { ingest: 28, classify: 62, 'qc-check': 164, 'code-map': 91, 'report-gen': 68, 'uw-report': 110 };
-const STAGE_LABELS = { ingest:'Ingest', classify:'Classify', 'qc-check':'QC Check', 'code-map':'Code Map', 'report-gen':'Report Gen', 'uw-report':'UW Report' };
-const STAGE_ORDER = ['ingest','classify','qc-check','code-map','report-gen','uw-report'];
-
-/* Same generator pattern as dashboard.html so loan IDs/states match */
+/* LOANS data — generator mirrors dashboard.html so IDs and states stay aligned. */
 const LOANS = (() => {
   const inFlight = { ingest:8, classify:14, 'qc-check':12, 'code-map':10, 'report-gen':9, 'uw-report':7 };
   const out = [];
@@ -449,17 +314,6 @@ const LOANS = (() => {
   });
   return out;
 })();
-
-function fmtMMSS(sec) {
-  const m = Math.floor(sec / 60);
-  const s = sec % 60;
-  return `${m}:${String(s).padStart(2,'0')}`;
-}
-function fmtMMSSh(sec) {
-  const m = Math.floor(sec / 60);
-  const s = sec % 60;
-  return `${m}m ${String(s).padStart(2,'0')}s`;
-}
 
 function renderSummary() {
   const inFlight = LOANS.filter(l => l.status === 'in-progress' || l.status === 'blocked').length;
@@ -583,73 +437,32 @@ function setDate(btn) {
   btn.classList.add('active');
 }
 
-/* ── SEARCH DROPDOWN ── */
-let searchActiveIndex = -1;
-function getSearchMatches(q) {
-  q = (q || '').trim().toLowerCase();
-  if (!q) return LOANS.slice(0, 8);
-  return LOANS.filter(l => l.id.toLowerCase().includes(q)).slice(0, 8);
-}
-function onSearchInput() {
-  const input = document.getElementById('loanSearch');
-  const results = document.getElementById('searchResults');
-  const matches = getSearchMatches(input.value);
-  searchActiveIndex = -1;
-  if (!matches.length) {
-    results.innerHTML = `<div class="search-empty">No loans match "${input.value}"</div>`;
-  } else {
-    results.innerHTML = matches.map((l, i) => {
-      const stage = l.stage ? `<span class="search-result-stage" style="background:var(--color-neutral-500)">${STAGE_LABELS[l.stage] || ''}</span>` : '';
-      const status = l.status.replace('-', ' ');
-      return `
-        <div class="search-result-row" data-loan-id="${l.id}" data-idx="${i}" onclick="openDrawer('${l.id}')">
-          <span class="search-result-id">${l.id}</span>
-          <span class="search-result-status ${l.status}">${status}</span>
-          ${stage}
-        </div>`;
-    }).join('');
-  }
-  results.classList.add('is-open');
-}
-function onSearchKey(e) {
-  const results = document.getElementById('searchResults');
-  const rows = results.querySelectorAll('.search-result-row');
-  if (e.key === 'Escape') { results.classList.remove('is-open'); e.target.blur(); return; }
-  if (e.key === 'ArrowDown') { e.preventDefault(); searchActiveIndex = Math.min(rows.length - 1, searchActiveIndex + 1); }
-  else if (e.key === 'ArrowUp') { e.preventDefault(); searchActiveIndex = Math.max(0, searchActiveIndex - 1); }
-  else if (e.key === 'Enter') {
-    if (searchActiveIndex >= 0 && rows[searchActiveIndex]) openDrawer(rows[searchActiveIndex].dataset.loanId);
-    else if (rows[0]) openDrawer(rows[0].dataset.loanId);
-    return;
-  } else { return; }
-  rows.forEach((r, i) => r.classList.toggle('is-active', i === searchActiveIndex));
-  if (rows[searchActiveIndex]) rows[searchActiveIndex].scrollIntoView({ block: 'nearest' });
-}
-document.addEventListener('click', (e) => {
-  const wrap = document.querySelector('.search-wrap-top');
-  if (wrap && !wrap.contains(e.target)) {
-    document.getElementById('searchResults').classList.remove('is-open');
-  }
-});
-document.addEventListener('keydown', (e) => {
-  if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
-    e.preventDefault();
-    document.getElementById('loanSearch').focus();
-  }
+installSearch({
+  getMatches: (q) => {
+    const term = (q || '').trim().toLowerCase();
+    const all = term ? LOANS.filter(l => l.id.toLowerCase().includes(term)) : LOANS;
+    return all.slice(0, 8);
+  },
+  renderRow: (l, i) => {
+    const stage = l.stage
+      ? `<span class="search-result-stage" style="background:var(--color-neutral-500)">${STAGE_LABELS[l.stage] || ''}</span>`
+      : '';
+    const status = l.status.replace('-', ' ');
+    return `
+      <div class="search-result-row" data-idx="${i}">
+        <span class="search-result-id">${l.id}</span>
+        <span class="search-result-status ${l.status}">${status}</span>
+        ${stage}
+      </div>`;
+  },
+  onSelect: (l) => openDrawer(l.id),
+  emptyLabel: (q) => `No loans match "${q}"`,
 });
 
 renderSummary();
 renderKanban();
 
-/* ── DRAWER (V1 — same shape as dashboard.html) ── */
-const ICON_CHECK_DWR = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-const ICON_X_DWR     = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
-const ICON_SPIN_DWR  = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="2" stroke-dasharray="8 24" stroke-linecap="round"><animateTransform attributeName="transform" type="rotate" from="0 7 7" to="360 7 7" dur="0.8s" repeatCount="indefinite"/></circle></svg>`;
-const FILE_SVG_DWR = `<svg viewBox="0 0 48 60" fill="none">
-  <path d="M6 0h26l10 10v46a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4z" fill="#fff" stroke="#e5e7eb" stroke-width="1.2"/>
-  <path d="M32 0v6a4 4 0 0 0 4 4h6" stroke="#e5e7eb" stroke-width="1.2" fill="#f9fafb"/>
-</svg>`;
-
+/* ── DRAWER ── */
 function buildSteps(loan) {
   const ts = '9:41 AM';
   const out = STAGE_ORDER.map(s => ({
@@ -686,48 +499,9 @@ function buildSteps(loan) {
   return out;
 }
 
-function stepHTMLDwr(s) {
-  const icons = { done: ICON_CHECK_DWR, running: ICON_SPIN_DWR, todo: '', error: ICON_X_DWR };
-  const durPill = (s.dur && s.status === 'done') ? `<div class="step-dur-pill">${s.dur}</div>` : '';
-  const subClass = s.status === 'running' ? 'running' : s.status === 'error' ? 'error' : '';
-  return `
-    <div class="pipeline-step">
-      <div class="step-col-icon">
-        <div class="step-icon ${s.status}">${icons[s.status] || ''}</div>
-      </div>
-      <div class="step-col-body">
-        <div class="step-name-row">
-          <span class="step-name ${s.status}">${s.name}</span>
-          ${s.time ? `<span class="step-name-time">${s.time}</span>` : ''}
-        </div>
-        <div class="step-sub ${subClass}">${s.sub}</div>
-      </div>
-      <div class="step-col-time">${durPill}</div>
-    </div>`;
-}
-
-function fileCardHTML(f) {
-  const badge = f.flags ? `<span class="file-card-badge">${f.flags}</span>` : '';
-  const flagText = f.flags ? `<div class="file-card-flags">${f.flags} flag${f.flags > 1 ? 's' : ''} to review</div>` : '';
-  const meta = f.meta ? `<div class="file-card-meta">${f.meta}</div>` : '';
-  return `
-    <div class="file-card">
-      ${badge}
-      <div class="file-card-icon">
-        ${FILE_SVG_DWR}
-        <span class="file-card-type ${f.type}">${f.type.toUpperCase()}</span>
-      </div>
-      <div class="file-card-name">${f.name}</div>
-      ${meta}
-      ${flagText}
-    </div>`;
-}
-
 function openDrawer(loanId) {
   const loan = LOANS.find(l => l.id === loanId);
   if (!loan) return;
-  const sr = document.getElementById('searchResults'); if (sr) sr.classList.remove('is-open');
-  const si = document.getElementById('loanSearch'); if (si) si.blur();
   const idShort = loan.id.replace('LN-000', 'LN');
   const traceId = `${idShort}—${Date.now().toString().slice(-10)}`;
 
@@ -778,15 +552,6 @@ function openDrawer(loanId) {
   document.getElementById('drawerOverlay').classList.add('is-open');
   document.getElementById('drawerPanel').classList.add('is-open');
 }
-
-function closeDrawer() {
-  document.getElementById('drawerOverlay').classList.remove('is-open');
-  document.getElementById('drawerPanel').classList.remove('is-open');
-}
-
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeDrawer();
-});
 </script>
 
 </body>
