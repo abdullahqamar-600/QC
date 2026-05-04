@@ -303,8 +303,33 @@ body {
 .row-2 { display: grid; grid-template-columns: 1fr 2fr; gap: var(--space-4); }
 
 .stage-chart-card { padding: var(--space-5); }
-.stage-chart-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-3); }
+.stage-chart-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-4); }
+.stage-chart-titleblock { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .stage-chart-sub  { font-size: 11px; color: var(--color-neutral-400); }
+
+.throughput-readout {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+  padding-left: var(--space-4);
+  border-left: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+.throughput-readout-value {
+  font-size: 26px; font-weight: var(--font-weight-bold);
+  color: var(--color-neutral-900); line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  display: flex; align-items: baseline; gap: 4px;
+}
+.throughput-readout-unit {
+  font-size: 12px; font-weight: var(--font-weight-medium);
+  color: var(--color-neutral-400);
+  letter-spacing: 0;
+}
+.throughput-readout-caption {
+  font-size: 10px; font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-500);
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
 .stage-chart {
   width: 100%;
   height: 220px;
@@ -326,23 +351,52 @@ body {
 .stage-chart.is-hovering .sc-line.is-active ~ .sc-dot.is-active,
 .stage-chart .sc-dot.is-active { r: 3; }
 
-.stage-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  column-gap: var(--space-5);
-  row-gap: 2px;
+/* Stage rail — replaces the 3-col legend grid with an inline pipeline-ordered metric strip */
+.stage-rail {
+  display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));
   margin-top: var(--space-4);
+  border-top: 1px solid var(--border-color);
 }
-.stage-cell {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px var(--space-2);
-  border-radius: var(--border-radius-sm);
+.stage-rail-cell {
+  position: relative;
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 12px var(--space-3) var(--space-2);
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--border-color);
+  text-align: left;
+  font: inherit; color: inherit;
   cursor: default;
   transition: background-color var(--transition-fast);
 }
-.stage-cell:hover { background: var(--color-neutral-50); }
-.stage-cell-dot { width: 8px; height: 8px; border-radius: var(--border-radius-pill); flex-shrink: 0; }
-.stage-cell-name { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-800); flex: 1; }
-.stage-cell-time { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); font-variant-numeric: tabular-nums; }
+.stage-rail-cell:last-child { border-right: none; }
+.stage-rail-cell:hover { background: var(--color-neutral-50); }
+.stage-rail-cell::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--rail-color, var(--color-neutral-300));
+}
+.stage-rail-name {
+  font-size: 10px; font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-500);
+  letter-spacing: 0.06em; text-transform: uppercase;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.stage-rail-time {
+  font-size: 16px; font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-900);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+.stage-rail-delta {
+  font-size: 10px; font-variant-numeric: tabular-nums;
+  color: var(--color-neutral-400);
+  display: flex; align-items: center; gap: 3px;
+}
+.stage-rail-delta.up   { color: var(--color-danger-600); }
+.stage-rail-delta.down { color: var(--color-success-600); }
 
 /* ── ALERTS CARD (parity with v2) ── */
 .exceptions-card { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4) var(--space-5); }
@@ -589,7 +643,7 @@ body {
   <!-- ROW 1: METRIC STRIP -->
   <div class="metric-strip">
     <div class="metric-card">
-      <span class="metric-label">Loans Today</span>
+      <span class="metric-label">Files Reviewed</span>
       <span class="metric-value" id="m-total">—</span>
       <span class="metric-trend">vs. prev batch</span>
     </div>
@@ -599,12 +653,12 @@ body {
       <span class="metric-trend up">↑ since last batch</span>
     </div>
     <div class="metric-card">
-      <span class="metric-label">Throughput</span>
-      <span class="metric-value"><span id="m-throughput">—</span><span class="metric-value-unit">/min</span></span>
-      <span class="metric-trend">rolling 60s</span>
+      <span class="metric-label">Median time-to-decision</span>
+      <span class="metric-value" id="m-ttd">7m 12s</span>
+      <span class="metric-trend">batch median</span>
     </div>
     <div class="metric-card">
-      <span class="metric-label">Avg Time</span>
+      <span class="metric-label">Latency</span>
       <span class="metric-value" id="m-avg-time">—</span>
       <span class="metric-trend">end-to-end</span>
     </div>
@@ -635,11 +689,19 @@ body {
 
     <div class="bento-card stage-chart-card">
       <div class="stage-chart-head">
-        <div class="bento-title">Stage Throughput</div>
-        <span class="stage-chart-sub">last 12 batches · seconds</span>
+        <div class="stage-chart-titleblock">
+          <div class="bento-title">Stage Throughput</div>
+          <span class="stage-chart-sub">last 12 batches, seconds</span>
+        </div>
+        <div class="throughput-readout" aria-label="Throughput now">
+          <div class="throughput-readout-value">
+            <span id="m-throughput">6.8</span><span class="throughput-readout-unit">/min</span>
+          </div>
+          <div class="throughput-readout-caption">Throughput, rolling 60s</div>
+        </div>
       </div>
       <div class="stage-chart" id="stageChart"></div>
-      <div class="stage-grid" id="stageGrid"></div>
+      <div class="stage-rail" id="stageGrid" role="list"></div>
     </div>
   </div>
 
@@ -843,17 +905,26 @@ function renderStageChart() {
 function renderStageGrid() {
   const html = STAGE_ORDER.map(s => {
     const last = STAGE_SERIES[s][N_BATCHES - 1];
+    const prev = STAGE_SERIES[s][N_BATCHES - 2];
     const m = Math.floor(last / 60);
     const sec = last % 60;
     const t = `${m}:${String(sec).padStart(2, '0')}`;
+    const diff = last - prev;
+    const pct = prev ? Math.round((diff / prev) * 100) : 0;
+    const deltaCls = diff > 1 ? 'up' : diff < -1 ? 'down' : '';
+    const arrow = diff > 1 ? '▲' : diff < -1 ? '▼' : '·';
+    const deltaStr = diff === 0 ? 'flat' : `${arrow} ${Math.abs(pct)}%`;
     return `
-      <div class="stage-cell" data-stage="${s}"
+      <button class="stage-rail-cell" type="button" data-stage="${s}"
+           style="--rail-color:${STAGE_COLORS[s]}"
            onmouseenter="highlightStage('${s}')"
-           onmouseleave="clearHighlight()">
-        <span class="stage-cell-dot" style="background:${STAGE_COLORS[s]}"></span>
-        <span class="stage-cell-name">${STAGE_LABELS[s]}</span>
-        <span class="stage-cell-time">${t}</span>
-      </div>`;
+           onmouseleave="clearHighlight()"
+           role="listitem"
+           aria-label="${STAGE_LABELS[s]}, latency ${t}, ${deltaStr} vs prior batch">
+        <span class="stage-rail-name">${STAGE_LABELS[s]}</span>
+        <span class="stage-rail-time">${t}</span>
+        <span class="stage-rail-delta ${deltaCls}">${deltaStr} vs prior</span>
+      </button>`;
   }).join('');
   document.getElementById('stageGrid').innerHTML = html;
 }

@@ -175,6 +175,33 @@ body {
   color: var(--color-neutral-900);
 }
 
+.bento-throughput-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--space-3); margin-bottom: var(--space-3);
+}
+.throughput-readout-v2 {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+  padding-left: var(--space-3);
+  border-left: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+.throughput-readout-v2-value {
+  font-size: 22px; font-weight: var(--font-weight-bold);
+  color: var(--color-neutral-900); line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  display: flex; align-items: baseline; gap: 4px;
+}
+.throughput-readout-v2-unit {
+  font-size: 11px; font-weight: var(--font-weight-medium);
+  color: var(--color-neutral-400);
+}
+.throughput-readout-v2-caption {
+  font-size: 10px; font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-500);
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+
 .hero-rate { font-size: var(--font-size-3xl); font-weight: var(--font-weight-bold); line-height: 1; letter-spacing: -0.01em; color: var(--color-neutral-900); }
 .hero-rate .hero-denom { font-weight: var(--font-weight-medium); color: var(--color-neutral-500); }
 .hero-sub { font-size: var(--font-size-sm); color: var(--color-neutral-500); }
@@ -741,11 +768,11 @@ body {
     <div class="bento-card" style="padding: 0; overflow: hidden;">
       <div class="ops-grid">
         <div class="ops-cell">
-          <span class="ops-label">Loans Today</span>
+          <span class="ops-label">Files Reviewed</span>
           <div class="ops-num" id="ops-total">—</div>
         </div>
         <div class="ops-cell">
-          <span class="ops-label">Avg Time</span>
+          <span class="ops-label">Latency</span>
           <div class="ops-num" id="ops-avg-time">—</div>
         </div>
         <div class="ops-cell">
@@ -753,15 +780,21 @@ body {
           <div class="ops-num" id="ops-completed">—</div>
         </div>
         <div class="ops-cell">
-          <span class="ops-label">Throughput</span>
-          <div class="ops-num"><span id="ops-throughput">6.8</span><span class="ops-num-unit">/min</span></div>
+          <span class="ops-label">Median time-to-decision</span>
+          <div class="ops-num" id="ops-ttd">7m 12s</div>
         </div>
       </div>
     </div>
 
     <!-- Card 2: Stage Throughput -->
     <div class="bento-card" style="padding: var(--space-5);">
-      <div class="bento-title">Stage Throughput</div>
+      <div class="bento-throughput-head">
+        <div class="bento-title">Stage Throughput</div>
+        <div class="throughput-readout-v2" aria-label="Throughput now">
+          <span class="throughput-readout-v2-value"><span id="ops-throughput">6.8</span><span class="throughput-readout-v2-unit">/min</span></span>
+          <span class="throughput-readout-v2-caption">rolling 60s</span>
+        </div>
+      </div>
       <div class="tp-list tp-list-balanced">
         <div class="tp-row"><div class="tp-label">Ingest</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-ingest);width:18%"></div></div><div class="tp-time">0:28</div></div>
         <div class="tp-row"><div class="tp-label">Classify</div><div class="tp-bar-wrap"><div class="tp-bar" style="background:var(--stage-classify);width:38%"></div></div><div class="tp-time">1:02</div></div>
