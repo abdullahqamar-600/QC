@@ -390,13 +390,6 @@ body {
   letter-spacing: -0.01em;
   line-height: 1.1;
 }
-.stage-rail-delta {
-  font-size: 10px; font-variant-numeric: tabular-nums;
-  color: var(--color-neutral-400);
-  display: flex; align-items: center; gap: 3px;
-}
-.stage-rail-delta.up   { color: var(--color-danger-600); }
-.stage-rail-delta.down { color: var(--color-success-600); }
 
 /* ── ALERTS CARD (parity with v2) ── */
 .exceptions-card { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4) var(--space-5); }
@@ -905,25 +898,18 @@ function renderStageChart() {
 function renderStageGrid() {
   const html = STAGE_ORDER.map(s => {
     const last = STAGE_SERIES[s][N_BATCHES - 1];
-    const prev = STAGE_SERIES[s][N_BATCHES - 2];
     const m = Math.floor(last / 60);
     const sec = last % 60;
     const t = `${m}:${String(sec).padStart(2, '0')}`;
-    const diff = last - prev;
-    const pct = prev ? Math.round((diff / prev) * 100) : 0;
-    const deltaCls = diff > 1 ? 'up' : diff < -1 ? 'down' : '';
-    const arrow = diff > 1 ? '▲' : diff < -1 ? '▼' : '·';
-    const deltaStr = diff === 0 ? 'flat' : `${arrow} ${Math.abs(pct)}%`;
     return `
       <button class="stage-rail-cell" type="button" data-stage="${s}"
            style="--rail-color:${STAGE_COLORS[s]}"
            onmouseenter="highlightStage('${s}')"
            onmouseleave="clearHighlight()"
            role="listitem"
-           aria-label="${STAGE_LABELS[s]}, latency ${t}, ${deltaStr} vs prior batch">
+           aria-label="${STAGE_LABELS[s]}, latency ${t}">
         <span class="stage-rail-name">${STAGE_LABELS[s]}</span>
         <span class="stage-rail-time">${t}</span>
-        <span class="stage-rail-delta ${deltaCls}">${deltaStr} vs prior</span>
       </button>`;
   }).join('');
   document.getElementById('stageGrid').innerHTML = html;
