@@ -1,6 +1,7 @@
 {
+  "cleanUrls": true,
   "rewrites": [
-    { "source": "/", "destination": "/design-system/dashboard.html" },
-    { "source": "/(.*)", "destination": "/design-system/$1" }
+    { "source": "/", "destination": "/prototype/dashboard-v1.html" },
+    { "source": "/(.*)", "destination": "/prototype/$1" }
   ]
 }
