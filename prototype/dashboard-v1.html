@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QC Appraisal — Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Barlow:wght@500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="components.css">
 <link rel="stylesheet" href="v1.css">
@@ -131,6 +131,7 @@ body {
   white-space: nowrap;
 }
 .metric-bare .metric-value {
+  font-family: var(--font-family-heading);
   font-size: 44px;
   font-weight: var(--font-weight-bold);
   color: var(--color-neutral-900);
@@ -267,7 +268,7 @@ body {
 
 .ex-heading { display: flex; align-items: baseline; gap: var(--space-2); flex-wrap: wrap; }
 .ex-heading-count { font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-danger-600); font-variant-numeric: tabular-nums; line-height: 1; }
-.ex-heading-label { font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); letter-spacing: -0.005em; color: var(--color-neutral-900); }
+.ex-heading-label { font-family: var(--font-family-subheading); font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); letter-spacing: -0.005em; color: var(--color-neutral-900); }
 .ex-heading-sep { color: var(--color-neutral-300); font-weight: var(--font-weight-medium); }
 .ex-heading-shared { font-size: var(--font-size-sm); color: var(--color-neutral-500); font-weight: var(--font-weight-medium); }
 
@@ -318,7 +319,7 @@ body {
 }
 .stages-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); }
 .stages-title-block { display: flex; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; }
-.stages-title { font-size: var(--font-size-xl); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); letter-spacing: -0.02em; line-height: 1.2; }
+.stages-title { font-family: var(--font-family-subheading); font-size: var(--font-size-xl); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); letter-spacing: -0.02em; line-height: 1.2; }
 .stages-sub { font-size: var(--font-size-sm); color: var(--color-neutral-500); }
 .stages-open {
   font-size: var(--font-size-sm); font-weight: var(--font-weight-medium);
